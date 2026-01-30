@@ -115,7 +115,22 @@ export default function Login() {
 
     try {
       await apiClient.login(formData.email, formData.password);
-      router.push('/dashboard');
+      
+      // Check user status
+      const userData = await apiClient.getCurrentUser();
+      
+      // Check if password change is required
+      if (userData.must_change_password) {
+        router.push('/change-password');
+        return;
+      }
+      
+      // Check if user is admin
+      if (userData.is_admin) {
+        router.push('/admin');
+      } else {
+        router.push('/dashboard');
+      }
     } catch (err) {
       setError(err.message);
     } finally {
@@ -191,21 +206,7 @@ export default function Login() {
 
               <Box sx={{ textAlign: 'center', mt: 2 }}>
                 <Typography sx={{ color: '#999', fontSize: '0.9rem' }}>
-                  Don't have an account?{' '}
-                  <Link href="/register" passHref legacyBehavior>
-                    <MuiLink
-                      sx={{
-                        color: '#FF4500',
-                        textDecoration: 'none',
-                        fontWeight: 600,
-                        '&:hover': {
-                          textDecoration: 'underline',
-                        },
-                      }}
-                    >
-                      Register here
-                    </MuiLink>
-                  </Link>
+                  Need access? Contact your administrator.
                 </Typography>
               </Box>
 
