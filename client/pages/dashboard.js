@@ -159,6 +159,310 @@ export default function Dashboard() {
     { role: 'assistant', text: "Hello! I'm ZenX AI. How can I help you with payroll, leave, or HR queries today?" },
   ]);
   const [chatBotInput, setChatBotInput] = useState('');
+  
+  // ZenX AI Training Data - Predefined Queries and Responses
+  const AI_TRAINING_DATA = [
+    // GREETINGS - Random responses
+    {
+      keywords: ['hi', 'hello', 'hai', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings'],
+      response: () => {
+        const responses = [
+          "Hi there! How can I help you today?",
+          "Hello! I'm here to assist you with any HR or payroll queries. What would you like to know?",
+          "Hey! How can I make your day easier? 😊",
+          "Hi! Welcome back! What can I help you with today?",
+          "Hello! I'm ZenX AI, your personal HR assistant. How may I assist you?",
+          "Hi there! Ready to help you with leave, payroll, or any other questions!",
+          "Hey! Great to see you! What brings you here today?"
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    
+    // NEW QUERIES - User Requested
+    {
+      keywords: ['next meeting', 'upcoming meeting', 'meeting today', 'meeting tomorrow', 'when is my meeting'],
+      response: () => {
+        const responses = [
+          "Your next meeting is tomorrow at 11:00 AM.",
+          "You have a meeting scheduled today at 10:30 AM.",
+          "Your next meeting is tomorrow at 14:00 (2:00 PM).",
+          "You have a meeting today at 18:00 (6:00 PM).",
+          "You don't have any meetings scheduled for this week yet."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['annual salary', 'yearly salary', 'total salary', 'ctc', 'annual package', 'yearly pay'],
+      response: `Your annual salary (CTC) is ₹51,60,000. This breaks down to:\n• Gross Monthly Pay: ₹4,70,000\n• Net Monthly Pay: ₹4,30,000 (after deductions)\n• Annual Gross: ₹56,40,000\n• Your January 2026 payslip includes a ₹5,000 monthly increment.\n\nFor detailed breakdown, please check your payslip.`
+    },
+    {
+      keywords: ['annual leave policy', 'leave policy', 'how many leaves', 'leave entitlement', 'vacation policy'],
+      response: `ZenX Connect's Annual Leave Policy:\n\n📅 Annual Leave: 20 days per year\n🏥 Sick Leave: 10 days per year\n🎉 Casual Leave: Included in Annual Leave\n\n• Leaves are credited at the beginning of each calendar year\n• Unused Annual Leave can be carried forward (max 5 days)\n• Sick Leave requires medical certificate for more than 3 consecutive days\n• Leave applications should be submitted at least 3 days in advance\n\nYou currently have 12 Annual Leave and 8 Sick Leave days remaining.`
+    },
+    {
+      keywords: ['salary increment', 'increment policy', 'how increment works', 'when increment', 'pay raise'],
+      response: `Salary Increment Policy:\n\nIncrements are usually based on the project assigned and individual performance. Normally, ₹5,000 gets incremented every year during the annual appraisal cycle.\n\nFactors considered for increment:\n• Project complexity and contribution\n• Performance ratings\n• Market standards\n• Years of experience\n\nYour last increment of ₹5,000 was applied in January 2026!`
+    },
+    {
+      keywords: ['training courses', 'tech courses', 'recommend courses', 'learning suggestions', 'skill development'],
+      response: `Recommended Tech Courses for You:\n\n1️⃣ Full Stack Web Development with React & Node.js\n   • Duration: 8 weeks\n   • Level: Intermediate\n   • Focus: Modern web development frameworks\n\n2️⃣ Cloud Computing with AWS & Azure\n   • Duration: 6 weeks\n   • Level: Intermediate to Advanced\n   • Focus: Cloud architecture and deployment\n\n3️⃣ Python for Data Science & Machine Learning\n   • Duration: 10 weeks\n   • Level: Beginner to Intermediate\n   • Focus: Data analysis, ML algorithms, visualization\n\nAll courses are available on LinkedIn Learning. Check your dashboard for current enrollments!`
+    },
+    {
+      keywords: ['trending courses', 'ai courses', 'artificial intelligence courses', 'popular courses', 'hot courses'],
+      response: `Trending AI Courses Right Now:\n\n🤖 1. Generative AI with ChatGPT & Large Language Models\n   • Hot Topic: Prompt engineering, GPT-4, AI integration\n\n🧠 2. Machine Learning & Deep Learning Fundamentals\n   • Covers: Neural networks, TensorFlow, PyTorch\n\n📊 3. AI for Business Intelligence & Data Analytics\n   • Focus: Predictive analytics, automated insights\n\n🎨 4. Computer Vision & Image Recognition with AI\n   • Topics: OpenCV, image processing, object detection\n\n💬 5. Natural Language Processing (NLP) & Chatbots\n   • Learn: Text analysis, sentiment analysis, conversational AI\n\nEnroll through LinkedIn Learning on your dashboard!`
+    },
+    {
+      keywords: ['salary credited', 'when salary', 'payment day', 'salary credit date', 'when will i get paid'],
+      response: `💰 Salary Credit Schedule:\n\nYour salary gets credited on the last Friday of every month.\n\n• January 2026: Friday, January 31st\n• If last Friday is a holiday, salary is credited on the previous working day\n• Payment time: Usually by 9:00 AM\n\nNext payment: ₹4,30,000 on January 31, 2026 (includes ₹5,000 increment)`
+    },
+    {
+      keywords: ['food policy', 'meal policy', 'lunch policy', 'cafeteria', 'food allowance'],
+      response: `🍽️ Company Food Policy:\n\n• Complimentary lunch is provided in the office cafeteria from 12:30 PM to 2:00 PM on all working days\n• Employees are entitled to one free meal per day (lunch or dinner for those working late)\n• Snacks and beverages (tea, coffee, juices) are available throughout the day in the pantry\n• Monthly meal allowance of ₹2,000 is provided for remote/hybrid employees\n• Special dietary requirements can be accommodated - please inform the cafeteria manager\n• Guests must be registered at reception for cafeteria access\n\nEnjoy your meals! 😊`
+    },
+    {
+      keywords: ['company policies', 'company rules', 'office policy', 'workplace policy', 'what are policies'],
+      response: `📋 Key Company Policies:\n\n1️⃣ Work Hours: Monday-Friday, 9:00 AM - 6:00 PM (flexible hours available)\n\n2️⃣ Dress Code: Business casual; Fridays are casual dress days\n\n3️⃣ Remote Work: Hybrid model - 3 days office, 2 days WFH (manager approval required)\n\n4️⃣ Communication: Use official email for formal communication; Slack for team collaboration\n\n5️⃣ Confidentiality: All company data and client information must be kept confidential\n\n6️⃣ Device Policy: Company laptops should not be used for personal activities; personal devices should not access company networks\n\n7️⃣ Leave Policy: Advance notice required; emergency leaves should be informed immediately\n\nFor detailed policies, please refer to the Employee Handbook or contact HR.`
+    },
+    
+    // ADDITIONAL RANDOM RESPONSES FOR COMMON TOPICS
+    {
+      keywords: ['how to apply leave', 'leave application process', 'applying for leave', 'leave request process'],
+      response: () => {
+        const responses = [
+          "To apply for leave:\n1. Click 'Apply Leave' in Quick Actions\n2. Select leave type (Annual/Sick)\n3. Choose start and end dates\n4. Add a reason (optional)\n5. Submit for approval\n\nYour manager will be notified automatically!",
+          "Leave application is easy! Navigate to Quick Actions → Apply Leave, select your dates and leave type, and submit. You'll get a confirmation email once approved.",
+          "You can apply for leave through the Quick Actions menu on your dashboard. Just click 'Apply Leave', fill in the details, and you're done! Your manager will review it within 24 hours."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['check leave status', 'leave approval status', 'leave request status', 'is my leave approved'],
+      response: () => {
+        const responses = [
+          "Your recent leave requests:\n• March 5-7: Approved ✅\n• February 20: Pending approval ⏳\n\nYou can check detailed status in the Leave Management section.",
+          "All your leave requests have been approved! You can view the full history in the Leave section of your dashboard.",
+          "You have one pending leave request for February 20. Your manager will review it within 24 hours. Approved leaves will appear in your calendar automatically."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['payroll deduction', 'salary deduction', 'why deduction', 'tax deduction', 'pf deduction'],
+      response: () => {
+        const responses = [
+          "Your salary deductions include:\n• Income Tax (TDS): ₹30,000\n• Provident Fund (PF): ₹7,000\n• Professional Tax: ₹2,500\n• Health Insurance: ₹500\n\nTotal Deductions: ₹40,000\nNet Pay: ₹4,30,000\n\nView detailed breakdown in your payslip.",
+          "Standard deductions are applied for tax, PF, and insurance. Your net pay after deductions is ₹4,30,000. All deductions are as per government regulations and company policy.",
+          "Deductions from your gross salary include PF contribution, TDS, professional tax, and insurance premiums. These are statutory deductions and help with your long-term savings and tax planning."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['bonus', 'incentive', 'performance bonus', 'annual bonus', 'variable pay'],
+      response: () => {
+        const responses = [
+          "Annual performance bonus is typically paid in March-April based on your performance ratings and company performance. Your eligibility will be confirmed during appraisal season.",
+          "Performance bonuses are awarded quarterly based on project completion and KPI achievement. Check with your manager about your current performance targets.",
+          "You're eligible for annual bonus and quarterly incentives based on performance. The bonus payout is usually 10-20% of your annual CTC, subject to company and individual performance."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['submit timesheet', 'fill timesheet', 'timesheet deadline', 'timesheet submission'],
+      response: () => {
+        const responses = [
+          "Timesheet submission deadline is every Friday by 5 PM. Click 'Timesheet' in Quick Actions to log your hours. Don't forget to add project codes and descriptions!",
+          "You can submit your timesheet through Quick Actions → Timesheet. Make sure to fill in daily hours, project details, and any notes. Submit before Friday 5 PM to avoid delays in processing.",
+          "Weekly timesheets must be submitted by end of day Friday. You've logged 38 hours this week so far. Click 'Timesheet' to review and submit."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['overtime', 'extra hours', 'working extra', 'overtime pay', 'comp off'],
+      response: () => {
+        const responses = [
+          "Overtime hours are tracked in your timesheet. You can claim comp-off for hours worked beyond 40 hours/week or get overtime pay as per company policy. Talk to your manager for approval.",
+          "Extra hours worked on weekdays can be logged as comp-off. Weekend work requires prior manager approval and is compensated with 2x comp-off or overtime pay based on your preference.",
+          "You've worked 38 hours this week - within normal hours. Any overtime beyond 45 hours/week should be pre-approved by your manager and will be compensated through comp-off or additional pay."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['next review', 'appraisal date', 'review schedule', 'evaluation date', 'when is my review'],
+      response: () => {
+        const responses = [
+          "Your next performance review is scheduled for November 15th with Michael Chen. It will cover your performance over the last 6 months, goal achievement, and career development.",
+          "Annual appraisal cycle is in November. Your review meeting with Michael Chen is on November 15th. Start preparing your self-assessment and achievement highlights!",
+          "Performance reviews happen bi-annually. Your next review is on November 15th. You'll discuss achievements, challenges, goals for next period, and increment/promotion opportunities."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['review feedback', 'appraisal feedback', 'performance feedback', 'review comments'],
+      response: () => {
+        const responses = [
+          "Your last review feedback (May 2025):\n• Technical Skills: Excellent\n• Communication: Very Good\n• Team Collaboration: Outstanding\n• Overall Rating: 4.5/5\n\nKeep up the great work!",
+          "Performance feedback from your last review was very positive! You exceeded expectations in project delivery and team leadership. Areas for development: public speaking and stakeholder management.",
+          "Your manager highlighted your strong technical contributions and proactive approach. Review rating: 4.5/5. Continue focusing on innovation and mentoring junior team members."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['enroll course', 'join training', 'register course', 'course enrollment'],
+      response: () => {
+        const responses = [
+          "You can enroll in any LinkedIn Learning course directly from your dashboard! Browse courses, click on the one you like, and start learning immediately. All courses are free for employees.",
+          "To enroll in training programs:\n1. Check LinkedIn Learning section on dashboard\n2. Click 'Browse Courses'\n3. Select your preferred course\n4. Click 'Enroll' and start learning!\n\nYour progress is tracked automatically.",
+          "Course enrollment is simple! Visit the LinkedIn Learning section, browse available courses, and enroll instantly. You can take multiple courses simultaneously. Certificates are awarded on completion."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['course certificate', 'training certificate', 'completion certificate', 'certification'],
+      response: () => {
+        const responses = [
+          "Congratulations on completing 'AI Integration Basics'! Your certificate is available in your LinkedIn Learning profile. You can download and share it on LinkedIn to showcase your achievement.",
+          "Course certificates are automatically generated upon 100% completion. You can download them from LinkedIn Learning and add them to your profile. These certifications are recognized industry-wide!",
+          "You've earned 1 certificate so far: 'AI Integration Basics' (100% complete). Keep learning! Certificates can be downloaded from your LinkedIn Learning dashboard."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['schedule meeting', 'book meeting', 'arrange meeting', 'meeting room booking'],
+      response: () => {
+        const responses = [
+          "To schedule a meeting:\n1. Use Outlook/Google Calendar\n2. Check room availability in conference room booking system\n3. Invite participants\n4. Add meeting agenda\n\nMeeting rooms can be booked through the office portal.",
+          "You can book meetings through your calendar app. For conference rooms, use the room booking portal at booking.zenxconnect.com. Rooms have video conferencing facilities and can accommodate 4-20 people.",
+          "Schedule meetings via Outlook Calendar. Don't forget to check participant availability and book a conference room if needed. For urgent meetings, contact admin at ext. 101."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['cancel meeting', 'reschedule meeting', 'postpone meeting', 'meeting cancelled'],
+      response: () => {
+        const responses = [
+          "To cancel or reschedule a meeting, update the calendar invite and notify all participants. If it's a recurring meeting, specify whether to update only this instance or the entire series.",
+          "Meetings can be rescheduled through your calendar app. Send an update to all participants with the new time. For last-minute cancellations, call or message participants directly.",
+          "If you need to cancel a meeting, please notify participants at least 2 hours in advance. Update the calendar invite with cancellation reason and propose alternate times if needed."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['attendance policy', 'working hours policy', 'late coming', 'punctuality'],
+      response: () => {
+        const responses = [
+          "Company attendance policy:\n• Core hours: 10 AM - 4 PM (mandatory)\n• Flexible arrival: 9-10 AM\n• Flexible departure: 6-7 PM\n• Minimum 8 hours/day required\n• Late arrivals (after 10 AM) should be informed to manager",
+          "Work timing is 9 AM to 6 PM with flexible 1-hour window. Regular late arrivals may require discussion with HR. Track your attendance through the HR portal.",
+          "Flexible working hours are available - you can start between 9-10 AM and leave between 6-7 PM, maintaining 8 work hours. Repeated late coming may affect performance reviews."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['dress code', 'what to wear', 'office attire', 'clothing policy'],
+      response: () => {
+        const responses = [
+          "Dress code is business casual:\n• Monday-Thursday: Formal shirts, trousers, modest dresses\n• Friday: Casual (jeans allowed, but no shorts/flip-flops)\n• Client meetings: Business formal required\n• Remote days: Your choice!",
+          "We follow business casual dress code. Jeans are allowed on Fridays (Casual Fridays!). Avoid overly casual attire like shorts, tank tops, or flip-flops. Dress formally for client meetings.",
+          "Office dress code: Business casual attire. Keep it professional but comfortable. Fridays are casual dress days where you can wear jeans and sneakers. Always dress appropriately for external meetings."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['it support', 'technical issue', 'laptop problem', 'system issue', 'tech help'],
+      response: () => {
+        const responses = [
+          "For IT support:\n📧 Email: it-support@zenxconnect.com\n📞 Call: Ext 200 or +91-XXXX-XXXXXX\n🎫 Raise ticket: https://helpdesk.zenxconnect.com\n\nSupport hours: 24/7 for critical issues, 9 AM - 6 PM for general queries",
+          "Having technical issues? Contact IT support at ext. 200 or email it-support@zenxconnect.com. For urgent issues (system down, security), call immediately. For routine issues, raise a ticket.",
+          "IT Helpdesk is available 24/7! Call ext. 200 for immediate assistance or log a ticket at the IT portal. Average response time: <30 minutes for critical issues, <4 hours for others."
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    {
+      keywords: ['hr contact', 'hr email', 'hr phone', 'contact hr team', 'hr helpdesk'],
+      response: () => {
+        const responses = [
+          "HR Team Contacts:\n📧 General: hr@zenxconnect.com\n📞 Phone: +91-XXXX-XXXXXX (Ext 150)\n🏢 Office: HR Dept, 2nd Floor\n⏰ Hours: Mon-Fri, 9 AM - 6 PM\n\nFor urgent matters, visit HR office directly!",
+          "Need HR assistance? Contact:\n• Email: hr@zenxconnect.com\n• Call: Ext 150\n• Visit: HR Department (2nd Floor)\n\nThey handle payroll, benefits, policies, grievances, and more!",
+          "HR team is here to help!\n📧 hr@zenxconnect.com\n📞 +91-XXXX-XXXXXX\n\nHR Manager: Sarah Williams (Ext 151)\nPayroll Team: payroll@zenxconnect.com (Ext 152)\n\nOffice hours: 9 AM - 6 PM, Mon-Fri"
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+      }
+    },
+    
+    // EXISTING QUERIES
+    {
+      keywords: ['leave balance', 'remaining leave', 'leaves left', 'vacation days', 'holiday balance'],
+      response: `You have 12 days of Annual Leave remaining out of 20 total days, and 8 days of Sick Leave remaining out of 10 total days. You can apply for leave through the Quick Actions menu.`
+    },
+    {
+      keywords: ['next payroll', 'salary date', 'payment date', 'when paid', 'payday'],
+      response: `Your next payroll payment is scheduled for January 31, 2026. Your estimated net pay is ₹4,30,000, which includes a ₹5,000 increment. You can view your payslip details in the Payroll Summary section.`
+    },
+    {
+      keywords: ['payslip', 'salary slip', 'pay stub', 'view payslip'],
+      response: `You can view your current and previous payslips by clicking on "VIEW PAYSLIP" in the Payroll Summary card, or by selecting "Payslips" from Quick Actions. Your January 2026 payslip includes a ₹5,000 increment.`
+    },
+    {
+      keywords: ['apply leave', 'request leave', 'take leave', 'book vacation', 'submit leave'],
+      response: `To apply for leave, click on "Apply Leave" in the Quick Actions section. You can select the leave type (Annual or Sick), choose dates, and submit your request. Currently, you have 12 Annual Leave days and 8 Sick Leave days available.`
+    },
+    {
+      keywords: ['timesheet', 'log hours', 'submit hours', 'working hours', 'time tracking'],
+      response: `You can manage your timesheet by clicking "Timesheet" in Quick Actions. You can create a new timesheet for the current week or view your existing timesheet. You've worked 38 hours this week.`
+    },
+    {
+      keywords: ['performance review', 'appraisal', 'review meeting', 'evaluation'],
+      response: `Your next performance review is scheduled for November 15th with Michael Chen. This will include a review of your achievements, goals, and development opportunities. Would you like me to add it to your calendar?`
+    },
+    {
+      keywords: ['benefits', 'health insurance', 'medical', 'insurance'],
+      response: `Your benefits package includes health insurance, provident fund, and other perks. For detailed information about your benefits, please contact HR at hr@zenxconnect.com or check the Benefits section in the employee portal.`
+    },
+    {
+      keywords: ['contact hr', 'hr contact', 'reach hr', 'hr help'],
+      response: `You can reach the HR team at:\n📧 Email: hr@zenxconnect.com\n📞 Phone: +91-XXXX-XXXXXX\n🏢 Office Hours: Monday-Friday, 9 AM - 6 PM\n\nFor urgent matters, please call during office hours.`
+    },
+    {
+      keywords: ['training', 'learning', 'courses', 'linkedin learning', 'development'],
+      response: `Great question! You have access to LinkedIn Learning courses. Currently, you're working on "AI Integration in HR Workflows" (72% complete) and have completed "AI Integration Basics" (100%). Check the LinkedIn Learning section on your dashboard to browse more courses.`
+    },
+    {
+      keywords: ['team', 'colleagues', 'manager', 'reporting'],
+      response: `Your reporting manager is Michael Chen. For team-related queries, organizational structure, or collaboration tools, please refer to the Team Directory or contact your manager directly.`
+    },
+    {
+      keywords: ['work from home', 'wfh', 'remote work', 'hybrid'],
+      response: `For information about work-from-home policies, hybrid work arrangements, or remote work requests, please contact your manager or HR. Current company policy and your specific arrangements will be outlined in your employment agreement.`
+    },
+    {
+      keywords: ['project', 'task', 'assignment', 'workload'],
+      response: `You've worked 38 hours this week. Based on your project load, I recommend wrapping up your documentation today to enjoy a meeting-free Friday. Use the Timesheet feature to track your hours across different projects.`
+    },
+    {
+      keywords: ['holiday', 'public holiday', 'company holiday', 'festival'],
+      response: `For information about company holidays, public holidays, and festival leave, please check the Company Calendar or contact HR. Remember to plan your leave applications accordingly.`
+    },
+    {
+      keywords: ['password', 'reset password', 'login issue', 'access problem'],
+      response: `For password reset or login issues, please contact IT Support at it-support@zenxconnect.com or use the "Forgot Password" option on the login page. For immediate assistance, call the IT helpdesk.`
+    }
+  ];
+  
   const [timesheetDialogOpen, setTimesheetDialogOpen] = useState(false);
   const [timesheetMode, setTimesheetMode] = useState('choice');
   const [weekTimesheet, setWeekTimesheet] = useState(() => {
@@ -188,13 +492,31 @@ export default function Dashboard() {
 
   const handleChatBotSend = () => {
     if (!chatBotInput.trim()) return;
-    setChatBotMessages((prev) => [...prev, { role: 'user', text: chatBotInput }]);
+    
+    const userMessage = chatBotInput.trim();
+    setChatBotMessages((prev) => [...prev, { role: 'user', text: userMessage }]);
     setChatBotInput('');
+    
     setTimeout(() => {
-      setChatBotMessages((prev) => [
-        ...prev,
-        { role: 'assistant', text: "Thanks for your message. I'm here to help with HR queries. For detailed payroll or leave requests, please use the relevant sections on the dashboard." },
-      ]);
+      // Convert user input to lowercase for matching
+      const userInputLower = userMessage.toLowerCase();
+      
+      // Find matching response from training data
+      let botResponse = null;
+      for (const data of AI_TRAINING_DATA) {
+        if (data.keywords.some(keyword => userInputLower.includes(keyword))) {
+          // Check if response is a function (for random responses) or a string
+          botResponse = typeof data.response === 'function' ? data.response() : data.response;
+          break;
+        }
+      }
+      
+      // Default response if no match found
+      if (!botResponse) {
+        botResponse = "I understand you have a query. I can help you with:\n\n• Leave balance and applications\n• Payroll and salary information\n• Timesheet management\n• Performance reviews\n• Training and courses\n• Meeting schedules\n• Company policies\n• HR contacts and support\n\nPlease feel free to ask about any of these topics!";
+      }
+      
+      setChatBotMessages((prev) => [...prev, { role: 'assistant', text: botResponse }]);
     }, 600);
   };
 
@@ -303,32 +625,14 @@ export default function Dashboard() {
 
         {/* Main Content - matches design: Personal Dashboard header, then 3-row layout */}
         <Container maxWidth="xl" sx={{ pt: '100px', pb: 6 }}>
-          {/* Personal Dashboard header: title + welcome + Customize Layout */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2, mb: 4 }}>
-            <Box>
-              <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: { xs: '1.5rem', md: '1.75rem' }, mb: 0.5 }}>
-                Personal Dashboard
-              </Typography>
-              <Typography sx={{ color: '#888', fontSize: '1rem' }}>
-                Welcome back, {firstName}. Here&apos;s what&apos;s happening today.
-              </Typography>
-            </Box>
-            <Button
-              startIcon={<Settings sx={{ fontSize: 18 }} />}
-              sx={{
-                bgcolor: '#1A1A1A',
-                color: '#fff',
-                textTransform: 'none',
-                fontWeight: 500,
-                border: '1px solid #2A2A2A',
-                borderRadius: '10px',
-                px: 2,
-                py: 1.2,
-                '&:hover': { bgcolor: '#222' },
-              }}
-            >
-              Customize Layout
-            </Button>
+          {/* Personal Dashboard header: title + welcome */}
+          <Box sx={{ mb: 4 }}>
+            <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: { xs: '1.5rem', md: '1.75rem' }, mb: 0.5 }}>
+              {getGreeting()}, {firstName}
+            </Typography>
+            <Typography sx={{ color: '#888', fontSize: '1rem' }}>
+              Welcome back. Here&apos;s what&apos;s happening today.
+            </Typography>
           </Box>
 
           {/* Two-column layout: Left (ZenX AI, Payroll|Leave, Active Learning) | Right (Quick Actions, ZenX Chat) */}
@@ -351,7 +655,7 @@ export default function Dashboard() {
                   </Typography>
                 </Box>
                 <Typography sx={{ color: '#fff', fontWeight: 600, mb: 1 }}>
-                  {getGreeting()}, {firstName}!
+                  Hi, {firstName}!
                 </Typography>
                 <Typography sx={{ color: '#ccc', fontSize: '0.95rem', lineHeight: 1.6 }}>
                   You&apos;ve worked 38 hours this week. Based on your project load, I recommend wrapping up your
@@ -447,7 +751,7 @@ export default function Dashboard() {
               {/* Active Learning - spans full width of left column (below Payroll + Leave) */}
           <Box sx={{ mb: 3 }}>
             <StatCard>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2, mb: 3 }}>
                 <Box sx={{ display: 'flex', gap: 2, flex: 1, minWidth: 0 }}>
                   <Box
                     sx={{
@@ -540,6 +844,92 @@ export default function Dashboard() {
                   </Button>
                 </Box>
               </Box>
+              
+              {/* Second Course - AI Integration Basics (100% Completed) */}
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2, pt: 5, mt: 4, borderTop: '1px solid #1A1A1A' }}>
+                <Box sx={{ display: 'flex', gap: 2, flex: 1, minWidth: 0 }}>
+                  <Box
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      minWidth: 80,
+                      borderRadius: '12px',
+                      bgcolor: '#1A1A1A',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: 32,
+                        height: 40,
+                        border: '2px solid #4CAF50',
+                        borderRadius: '4px',
+                        position: 'relative',
+                        bgcolor: 'rgba(76, 175, 80, 0.1)',
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: -6,
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          width: 14,
+                          height: 14,
+                          borderRadius: '50%',
+                          border: '2px solid #4CAF50',
+                          bgcolor: '#4CAF50',
+                        },
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ flex: 1, minWidth: 0 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                      <School sx={{ color: '#FF4500', fontSize: 20 }} />
+                      <Typography sx={{ color: '#999', fontSize: '0.75rem', fontWeight: 600 }}>
+                        LinkedIn Learning
+                      </Typography>
+                    </Box>
+                    <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.95rem', mb: 0.5 }}>
+                      AI Integration Basics
+                    </Typography>
+                    <Typography sx={{ color: '#888', fontSize: '0.8rem', mb: 1 }}>
+                      All modules completed
+                    </Typography>
+                    <LinearProgress
+                      variant="determinate"
+                      value={100}
+                      sx={{
+                        height: 6,
+                        borderRadius: 3,
+                        bgcolor: '#1A1A1A',
+                        '& .MuiLinearProgress-bar': { bgcolor: '#4CAF50', borderRadius: 3 },
+                      }}
+                    />
+                    <Typography sx={{ color: '#4CAF50', fontSize: '0.75rem', mt: 0.5 }}>100% Completed</Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+                  <Button
+                    component="a"
+                    href="https://www.linkedin.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    sx={{
+                      color: '#FF4500',
+                      textTransform: 'none',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      p: 0,
+                      minWidth: 'auto',
+                      textDecoration: 'none',
+                      '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
+                    }}
+                  >
+                    BROWSE COURSES
+                  </Button>
+                </Box>
+              </Box>
             </StatCard>
           </Box>
             </Box>
@@ -576,64 +966,6 @@ export default function Dashboard() {
                     </QuickActionBtn>
                   </Grid>
                 </Grid>
-              </StatCard>
-              <StatCard sx={{ display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#4CAF50', boxShadow: '0 0 6px #4CAF50' }} />
-                    <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.95rem' }}>ZenX Assistant</Typography>
-                  </Box>
-                  <IconButton size="small" sx={{ color: '#666' }}>
-                    <MoreVert fontSize="small" />
-                  </IconButton>
-                </Box>
-                <Box sx={{ flex: 1, overflowY: 'auto', minHeight: 180 }}>
-                  <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
-                    <SmartToy sx={{ color: '#FF4500', fontSize: 24, flexShrink: 0 }} />
-                    <ChatBubble isUser={false}>
-                      <Typography sx={{ fontSize: '0.85rem', lineHeight: 1.5 }}>
-                        Hello {firstName}! How can I help you today? I can help you with payroll, benefits, or leave requests.
-                      </Typography>
-                    </ChatBubble>
-                  </Box>
-                  <ChatBubble isUser>
-                    <Typography sx={{ fontSize: '0.85rem' }}>When is my next performance review?</Typography>
-                  </ChatBubble>
-                  <Box sx={{ display: 'flex', gap: 1, mb: 1.5 }}>
-                    <SmartToy sx={{ color: '#FF4500', fontSize: 24, flexShrink: 0 }} />
-                    <ChatBubble isUser={false}>
-                      <Typography sx={{ fontSize: '0.85rem', lineHeight: 1.5 }}>
-                        Your next review is scheduled for November 15th with Michael Chen. Would you like me to add it to your calendar?
-                      </Typography>
-                    </ChatBubble>
-                  </Box>
-                </Box>
-                <TextField
-                  fullWidth
-                  placeholder="Ask anything..."
-                  onFocus={() => setChatBotOpen(true)}
-                  variant="outlined"
-                  size="small"
-                  sx={{
-                    mt: 1.5,
-                    '& .MuiOutlinedInput-root': {
-                      bgcolor: '#1A1A1A',
-                      borderRadius: '12px',
-                      color: '#fff',
-                      '& fieldset': { borderColor: '#2A2A2A' },
-                      '&:hover fieldset': { borderColor: '#333' },
-                    },
-                  }}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton sx={{ color: '#FF4500' }} size="small" onClick={() => setChatBotOpen(true)}>
-                          <Send fontSize="small" />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
               </StatCard>
             </Box>
           </Box>
