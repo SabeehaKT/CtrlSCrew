@@ -17,6 +17,12 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Avatar,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -153,6 +159,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [chatInput, setChatInput] = useState('');
   const [payslipOpen, setPayslipOpen] = useState(false);
   const [payslipMonth, setPayslipMonth] = useState(null);
@@ -523,6 +530,31 @@ export default function Dashboard() {
     }, 600);
   };
 
+  const handleQuickTopicClick = (topic) => {
+    // Simulate user clicking on a topic bubble
+    setChatBotMessages((prev) => [...prev, { role: 'user', text: topic }]);
+    
+    setTimeout(() => {
+      const userInputLower = topic.toLowerCase();
+      
+      // Find matching response from training data
+      let botResponse = null;
+      for (const data of AI_TRAINING_DATA) {
+        if (data.keywords.some(keyword => userInputLower.includes(keyword))) {
+          botResponse = typeof data.response === 'function' ? data.response() : data.response;
+          break;
+        }
+      }
+      
+      // Default response if no match found
+      if (!botResponse) {
+        botResponse = "I understand you have a query about " + topic + ". Please provide more details or try rephrasing your question.";
+      }
+      
+      setChatBotMessages((prev) => [...prev, { role: 'assistant', text: botResponse }]);
+    }, 600);
+  };
+
   const handleTimesheetDayChange = (index, field, value) => {
     setWeekTimesheet((prev) => {
       const next = [...prev];
@@ -625,27 +657,73 @@ export default function Dashboard() {
                 <span>ZenX</span> Connect
               </Logo>
 
-              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
                 <NavButton>Home</NavButton>
                 <NavButton>Features</NavButton>
                 <NavButton>About</NavButton>
-                <Button
-                  variant="contained"
-                  sx={{
-                    ml: 2,
-                    bgcolor: '#FF4500',
-                    color: '#fff',
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    px: 2.5,
-                    py: 1,
-                    borderRadius: '8px',
-                    '&:hover': { bgcolor: '#E03E00' },
-                  }}
-                  onClick={handleLogout}
+                <IconButton
+                  onClick={handleMenuOpen}
+                  sx={{ p: 0, ml: 2 }}
                 >
-                  Logout
-                </Button>
+                  <Avatar 
+                    sx={{ 
+                      bgcolor: '#FF4500', 
+                      width: 40, 
+                      height: 40,
+                      fontWeight: 700,
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        opacity: 0.8,
+                      }
+                    }}
+                  >
+                    {firstName.charAt(0)}
+                  </Avatar>
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  PaperProps={{
+                    sx: {
+                      backgroundColor: '#0D0D0D',
+                      border: '1px solid #1A1A1A',
+                      borderRadius: '12px',
+                      mt: 1,
+                      minWidth: 200,
+                    },
+                  }}
+                >
+                  <MenuItem onClick={handleProfile}>
+                    <ListItemIcon>
+                      <PersonIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="My Profile" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <MenuItem onClick={handleChangePassword}>
+                    <ListItemIcon>
+                      <LockIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Change Password" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <Divider sx={{ borderColor: '#1A1A1A', my: 1 }} />
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <LogoutIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Logout" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                </Menu>
               </Box>
             </Toolbar>
           </Container>
@@ -1277,10 +1355,61 @@ export default function Dashboard() {
             <Box sx={{ flex: 1, overflowY: 'auto', p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
               {chatBotMessages.map((msg, i) => (
                 <ChatBubble key={i} isUser={msg.role === 'user'}>
-                  <Typography sx={{ fontSize: '0.9rem' }}>{msg.text}</Typography>
+                  <Typography 
+                    sx={{ 
+                      fontSize: '0.9rem',
+                      whiteSpace: 'pre-line',
+                      lineHeight: 1.6,
+                      '& strong': { fontWeight: 600 }
+                    }}
+                  >
+                    {msg.text}
+                  </Typography>
                 </ChatBubble>
               ))}
             </Box>
+            
+            {/* Quick Topic Bubbles */}
+            <Box sx={{ px: 2, pb: 1, borderTop: '1px solid #1A1A1A', pt: 2 }}>
+              <Typography sx={{ color: '#888', fontSize: '0.75rem', mb: 1.5, fontWeight: 600 }}>
+                QUICK TOPICS
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {[
+                  'Leave balance',
+                  'Payroll information',
+                  'Timesheet',
+                  'Performance review',
+                  'Training courses',
+                  'Next meeting',
+                  'Company policies',
+                  'HR contact'
+                ].map((topic) => (
+                  <Button
+                    key={topic}
+                    onClick={() => handleQuickTopicClick(topic)}
+                    sx={{
+                      bgcolor: '#1A1A1A',
+                      color: '#fff',
+                      textTransform: 'none',
+                      fontSize: '0.75rem',
+                      py: 0.75,
+                      px: 1.5,
+                      borderRadius: '16px',
+                      border: '1px solid #2A2A2A',
+                      '&:hover': {
+                        bgcolor: '#FF4500',
+                        borderColor: '#FF4500',
+                      },
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {topic}
+                  </Button>
+                ))}
+              </Box>
+            </Box>
+            
             <Box sx={{ p: 2, borderTop: '1px solid #1A1A1A' }}>
               <TextField
                 fullWidth
