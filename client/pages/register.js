@@ -1,19 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Container,
   Typography,
-  TextField,
   Button,
-  Alert,
   Paper,
-  Link as MuiLink,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Head from 'next/head';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { apiClient } from '../utils/apiClient';
+import LockIcon from '@mui/icons-material/Lock';
 
 const RegisterContainer = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
@@ -31,6 +27,7 @@ const RegisterPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
   maxWidth: '450px',
   width: '100%',
+  textAlign: 'center',
   [theme.breakpoints.down('sm')]: {
     padding: theme.spacing(3),
   },
@@ -47,30 +44,7 @@ const Logo = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    backgroundColor: '#1A1A1A',
-    color: '#fff',
-    borderRadius: '8px',
-    '& fieldset': {
-      borderColor: '#2A2A2A',
-    },
-    '&:hover fieldset': {
-      borderColor: '#3A3A3A',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#FF4500',
-    },
-  },
-  '& .MuiInputLabel-root': {
-    color: '#999',
-  },
-  '& .MuiInputLabel-root.Mui-focused': {
-    color: '#FF4500',
-  },
-}));
-
-const RegisterButton = styled(Button)(({ theme }) => ({
+const LoginButton = styled(Button)(({ theme }) => ({
   background: 'linear-gradient(135deg, #FF4500 0%, #FF6B35 100%)',
   color: '#fff',
   padding: '12px',
@@ -83,76 +57,35 @@ const RegisterButton = styled(Button)(({ theme }) => ({
     background: 'linear-gradient(135deg, #FF6B35 0%, #FF4500 100%)',
     boxShadow: '0 6px 20px rgba(255, 69, 0, 0.6)',
   },
-  '&:disabled': {
-    background: '#333',
-    color: '#666',
-  },
 }));
 
 export default function Register() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError('');
-  };
+  useEffect(() => {
+    // Auto redirect to login after 5 seconds
+    const timer = setTimeout(() => {
+      router.push('/login');
+    }, 5000);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess('');
-
-    // Validate passwords match
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
-
-    // Validate password length
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters long');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      await apiClient.register(formData.name, formData.email, formData.password);
-      setSuccess('Registration successful! Redirecting to login...');
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => clearTimeout(timer);
+  }, [router]);
 
   return (
     <>
       <Head>
-        <title>Register - ZenX Connect</title>
-        <meta name="description" content="Create a new account" />
+        <title>Registration Disabled - ZenX Connect</title>
+        <meta name="description" content="Public registration is disabled" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
       <RegisterContainer>
         <Container maxWidth="sm">
           <RegisterPaper elevation={0}>
+            <Box sx={{ mb: 3 }}>
+              <LockIcon sx={{ fontSize: 60, color: '#FF4500', mb: 2 }} />
+            </Box>
+
             <Logo>
               <span>ZenX</span> Connect
             </Logo>
@@ -160,125 +93,55 @@ export default function Register() {
             <Typography
               sx={{
                 textAlign: 'center',
-                color: '#999',
-                mb: 4,
-                fontSize: '0.95rem',
+                color: '#FF4500',
+                mb: 2,
+                fontSize: '1.2rem',
+                fontWeight: 600,
               }}
             >
-              Create your account to get started
+              Public Registration Disabled
             </Typography>
 
-            {error && (
-              <Alert severity="error" sx={{ mb: 3 }}>
-                {error}
-              </Alert>
-            )}
+            <Typography
+              sx={{
+                textAlign: 'center',
+                color: '#999',
+                mb: 3,
+                fontSize: '0.95rem',
+                lineHeight: 1.6,
+              }}
+            >
+              User accounts are managed by administrators only.
+              <br />
+              Please contact your administrator to create an account for you.
+            </Typography>
 
-            {success && (
-              <Alert severity="success" sx={{ mb: 3 }}>
-                {success}
-              </Alert>
-            )}
+            <Box sx={{ 
+              backgroundColor: '#1A1A1A', 
+              borderRadius: '8px', 
+              padding: 2, 
+              mb: 3,
+              border: '1px solid #2A2A2A'
+            }}>
+              <Typography sx={{ color: '#666', fontSize: '0.85rem', mb: 1 }}>
+                Administrator Contact:
+              </Typography>
+              <Typography sx={{ color: '#FF4500', fontSize: '0.9rem', fontWeight: 600 }}>
+                admin@zenx.com
+              </Typography>
+            </Box>
 
-            <form onSubmit={handleSubmit}>
-              <StyledTextField
-                fullWidth
-                label="Full Name"
-                name="name"
-                type="text"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                margin="normal"
-                autoComplete="name"
-              />
+            <LoginButton
+              fullWidth
+              onClick={() => router.push('/login')}
+              sx={{ mb: 2 }}
+            >
+              Go to Login
+            </LoginButton>
 
-              <StyledTextField
-                fullWidth
-                label="Email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                margin="normal"
-                autoComplete="email"
-              />
-
-              <StyledTextField
-                fullWidth
-                label="Password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                margin="normal"
-                autoComplete="new-password"
-                helperText="Minimum 6 characters"
-                FormHelperTextProps={{
-                  sx: { color: '#666' }
-                }}
-              />
-
-              <StyledTextField
-                fullWidth
-                label="Confirm Password"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                margin="normal"
-                autoComplete="new-password"
-              />
-
-              <RegisterButton
-                type="submit"
-                fullWidth
-                disabled={loading}
-                sx={{ mt: 3, mb: 2 }}
-              >
-                {loading ? 'Creating Account...' : 'Register'}
-              </RegisterButton>
-
-              <Box sx={{ textAlign: 'center', mt: 2 }}>
-                <Typography sx={{ color: '#999', fontSize: '0.9rem' }}>
-                  Already have an account?{' '}
-                  <Link href="/login" passHref legacyBehavior>
-                    <MuiLink
-                      sx={{
-                        color: '#FF4500',
-                        textDecoration: 'none',
-                        fontWeight: 600,
-                        '&:hover': {
-                          textDecoration: 'underline',
-                        },
-                      }}
-                    >
-                      Login here
-                    </MuiLink>
-                  </Link>
-                </Typography>
-              </Box>
-
-              <Box sx={{ textAlign: 'center', mt: 3 }}>
-                <Link href="/" passHref legacyBehavior>
-                  <MuiLink
-                    sx={{
-                      color: '#666',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      '&:hover': {
-                        color: '#FF4500',
-                      },
-                    }}
-                  >
-                    ← Back to Home
-                  </MuiLink>
-                </Link>
-              </Box>
-            </form>
+            <Typography sx={{ color: '#666', fontSize: '0.85rem', mt: 2 }}>
+              Redirecting to login in 5 seconds...
+            </Typography>
           </RegisterPaper>
         </Container>
       </RegisterContainer>

@@ -13,7 +13,15 @@ import {
   Avatar,
   IconButton,
   Chip,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LockIcon from '@mui/icons-material/Lock';
 import { styled } from '@mui/material/styles';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -138,6 +146,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedMood, setSelectedMood] = useState(3);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -147,6 +156,13 @@ export default function Dashboard() {
           return;
         }
         const userData = await apiClient.getCurrentUser();
+        
+        // Redirect admins to admin panel
+        if (userData.is_admin) {
+          router.push('/admin');
+          return;
+        }
+        
         setUser(userData);
       } catch (error) {
         console.error('Authentication error:', error);
@@ -160,7 +176,25 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     apiClient.logout();
-    router.push('/');
+    router.push('/login');
+  };
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    handleMenuClose();
+    router.push('/profile');
+  };
+
+  const handleChangePassword = () => {
+    handleMenuClose();
+    router.push('/change-password');
   };
 
   if (loading) {
@@ -205,20 +239,72 @@ export default function Dashboard() {
                     {user?.name || 'Alex Thompson'}
                   </Typography>
                   <Typography sx={{ fontSize: '0.75rem', color: '#666', lineHeight: 1.3 }}>
-                    Senior UX Designer
+                    {user?.role || 'Employee'}
                   </Typography>
                 </Box>
-                <Avatar 
-                  sx={{ 
-                    bgcolor: '#FF4500', 
-                    width: 44, 
-                    height: 44,
-                    fontWeight: 700,
-                    fontSize: '1.1rem'
+                <IconButton
+                  onClick={handleMenuOpen}
+                  sx={{ p: 0 }}
+                >
+                  <Avatar 
+                    sx={{ 
+                      bgcolor: '#FF4500', 
+                      width: 44, 
+                      height: 44,
+                      fontWeight: 700,
+                      fontSize: '1.1rem',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        opacity: 0.8,
+                      }
+                    }}
+                  >
+                    {firstName.charAt(0)}
+                  </Avatar>
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  PaperProps={{
+                    sx: {
+                      backgroundColor: '#0D0D0D',
+                      border: '1px solid #1A1A1A',
+                      borderRadius: '12px',
+                      mt: 1,
+                      minWidth: 200,
+                    },
                   }}
                 >
-                  {firstName.charAt(0)}
-                </Avatar>
+                  <MenuItem onClick={handleProfile}>
+                    <ListItemIcon>
+                      <PersonIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="My Profile" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <MenuItem onClick={handleChangePassword}>
+                    <ListItemIcon>
+                      <LockIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Change Password" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <Divider sx={{ borderColor: '#1A1A1A', my: 1 }} />
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <LogoutIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Logout" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                </Menu>
               </Box>
             </Toolbar>
           </Container>
