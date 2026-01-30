@@ -15,8 +15,9 @@ export const apiClient = {
     });
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ detail: 'Request failed' }));
-      throw new Error(error.detail || 'Request failed');
+      const error = await response.json().catch(() => ({}));
+      const message = error?.detail ?? error?.error ?? error?.message ?? `Request failed (${response.status})`;
+      throw new Error(typeof message === 'string' ? message : 'Request failed');
     }
 
     return response.json();
@@ -120,18 +121,30 @@ export const apiClient = {
     });
   },
 
-  // Course recommendations
+  // Course recommendations (returns fallback when endpoint is missing so Learning page still loads)
   async getCourseRecommendations() {
     const token = this.getToken();
     if (!token) {
       throw new Error('Not authenticated');
     }
-    return this.request('/api/users/course-recommendations', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    try {
+      return await this.request('/api/users/course-recommendations', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+    } catch (err) {
+      if (err.message === 'Not Found' || (err.message && err.message.includes('404'))) {
+        return {
+          success: false,
+          error: 'Recommendations unavailable. Restart the backend server (python main.py) to enable course recommendations.',
+          recommendations: [],
+          total_courses_analyzed: 0,
+        };
+      }
+      throw err;
+    }
   },
 
   // Admin endpoints
