@@ -11,6 +11,7 @@ import {
   CardContent,
   useTheme,
   useMediaQuery,
+  IconButton,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Head from 'next/head';
@@ -360,7 +361,17 @@ export default function Home() {
                 </Box>
               )}
               
-              <LoginButton onClick={() => router.push('/login')}>Login</LoginButton>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <IconButton 
+                  sx={{ 
+                    display: { xs: 'flex', md: 'none' }, 
+                    color: '#fff'
+                  }}
+                >
+                  ☰
+                </IconButton>
+                <LoginButton onClick={() => router.push('/login')}>Login</LoginButton>
+              </Box>
             </Toolbar>
           </Container>
         </StyledAppBar>

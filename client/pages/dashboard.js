@@ -13,6 +13,11 @@ import {
   Avatar,
   IconButton,
   Chip,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Head from 'next/head';
@@ -52,6 +57,10 @@ const StatCard = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   height: '100%',
   position: 'relative',
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2.5),
+    borderRadius: '16px',
+  },
 }));
 
 const OrangeGradientCard = styled(Paper)(({ theme }) => ({
@@ -60,6 +69,10 @@ const OrangeGradientCard = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
   height: '100%',
   color: '#fff',
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2.5),
+    borderRadius: '16px',
+  },
 }));
 
 const EventCard = styled(Paper)(({ theme }) => ({
@@ -67,6 +80,10 @@ const EventCard = styled(Paper)(({ theme }) => ({
   border: '1px solid #1A1A1A',
   borderRadius: '16px',
   padding: theme.spacing(2.5),
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2),
+    borderRadius: '14px',
+  },
 }));
 
 const SideCard = styled(Paper)(({ theme }) => ({
@@ -75,6 +92,10 @@ const SideCard = styled(Paper)(({ theme }) => ({
   borderRadius: '16px',
   padding: theme.spacing(2.5),
   marginBottom: theme.spacing(2),
+  [theme.breakpoints.down('sm')]: {
+    padding: theme.spacing(2),
+    borderRadius: '14px',
+  },
 }));
 
 const QuickActionBtn = styled(Button)(({ theme }) => ({
@@ -91,6 +112,11 @@ const QuickActionBtn = styled(Button)(({ theme }) => ({
   '&:hover': {
     backgroundColor: '#222',
     borderColor: '#2A2A2A',
+  },
+  [theme.breakpoints.down('sm')]: {
+    padding: '12px 16px',
+    fontSize: '0.85rem',
+    borderRadius: '10px',
   },
 }));
 
@@ -121,6 +147,11 @@ const EmojiButton = styled(Box)(({ theme }) => ({
   '&:hover': {
     backgroundColor: '#222',
   },
+  [theme.breakpoints.down('sm')]: {
+    width: 44,
+    height: 44,
+    fontSize: '1.2rem',
+  },
 }));
 
 const IconBox = styled(Box)(({ theme }) => ({
@@ -138,6 +169,7 @@ export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedMood, setSelectedMood] = useState(3);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -147,6 +179,13 @@ export default function Dashboard() {
           return;
         }
         const userData = await apiClient.getCurrentUser();
+        
+        // Redirect admins to admin panel
+        if (userData.is_admin) {
+          router.push('/admin');
+          return;
+        }
+        
         setUser(userData);
       } catch (error) {
         console.error('Authentication error:', error);
@@ -184,10 +223,22 @@ export default function Dashboard() {
         {/* Top Navigation */}
         <StyledAppBar position="fixed">
           <Container maxWidth="xl">
-            <Toolbar sx={{ justifyContent: 'space-between', minHeight: '70px' }}>
-              <Logo>
-                <span>ZenX</span> Connect
-              </Logo>
+            <Toolbar sx={{ justifyContent: 'space-between', minHeight: { xs: '64px', md: '70px' } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <IconButton 
+                  sx={{ 
+                    display: { xs: 'flex', md: 'none' }, 
+                    color: '#fff',
+                    mr: 1
+                  }}
+                  onClick={() => setMobileMenuOpen(true)}
+                >
+                  ☰
+                </IconButton>
+                <Logo>
+                  <span>ZenX</span> Connect
+                </Logo>
+              </Box>
               
               <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 0.5 }}>
                 <NavButton>Home</NavButton>
@@ -196,8 +247,8 @@ export default function Dashboard() {
                 <NavButton>Payroll</NavButton>
               </Box>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <IconButton sx={{ color: '#999', '&:hover': { color: '#fff' } }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 2 } }}>
+                <IconButton sx={{ color: '#999', '&:hover': { color: '#fff' }, display: { xs: 'none', sm: 'flex' } }}>
                   🌙
                 </IconButton>
                 <Box sx={{ textAlign: 'right', mr: 1.5, display: { xs: 'none', sm: 'block' } }}>
@@ -211,10 +262,10 @@ export default function Dashboard() {
                 <Avatar 
                   sx={{ 
                     bgcolor: '#FF4500', 
-                    width: 44, 
-                    height: 44,
+                    width: { xs: 38, sm: 44 }, 
+                    height: { xs: 38, sm: 44 },
                     fontWeight: 700,
-                    fontSize: '1.1rem'
+                    fontSize: { xs: '1rem', sm: '1.1rem' }
                   }}
                 >
                   {firstName.charAt(0)}
@@ -224,33 +275,104 @@ export default function Dashboard() {
           </Container>
         </StyledAppBar>
 
+        {/* Mobile Menu Drawer */}
+        <Drawer
+          anchor="left"
+          open={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+          sx={{
+            display: { xs: 'block', md: 'none' },
+            '& .MuiDrawer-paper': {
+              backgroundColor: '#0A0A0A',
+              color: '#fff',
+              width: 280,
+              borderRight: '1px solid #1A1A1A',
+            },
+          }}
+        >
+          <Box sx={{ p: 3 }}>
+            <Logo sx={{ mb: 3 }}>
+              <span>ZenX</span> Connect
+            </Logo>
+            <Divider sx={{ borderColor: '#1A1A1A', mb: 2 }} />
+            <List>
+              <ListItem button onClick={() => setMobileMenuOpen(false)}>
+                <ListItemText 
+                  primary="Home" 
+                  primaryTypographyProps={{ 
+                    sx: { color: '#fff', fontWeight: 500, fontSize: '0.95rem' } 
+                  }} 
+                />
+              </ListItem>
+              <ListItem button onClick={() => setMobileMenuOpen(false)}>
+                <ListItemText 
+                  primary="Learning" 
+                  primaryTypographyProps={{ 
+                    sx: { color: '#fff', fontWeight: 500, fontSize: '0.95rem' } 
+                  }} 
+                />
+              </ListItem>
+              <ListItem button onClick={() => setMobileMenuOpen(false)}>
+                <ListItemText 
+                  primary="Well-being" 
+                  primaryTypographyProps={{ 
+                    sx: { color: '#fff', fontWeight: 500, fontSize: '0.95rem' } 
+                  }} 
+                />
+              </ListItem>
+              <ListItem button onClick={() => setMobileMenuOpen(false)}>
+                <ListItemText 
+                  primary="Payroll" 
+                  primaryTypographyProps={{ 
+                    sx: { color: '#fff', fontWeight: 500, fontSize: '0.95rem' } 
+                  }} 
+                />
+              </ListItem>
+              <Divider sx={{ borderColor: '#1A1A1A', my: 2 }} />
+              <ListItem button onClick={handleLogout}>
+                <ListItemText 
+                  primary="Logout" 
+                  primaryTypographyProps={{ 
+                    sx: { color: '#FF4500', fontWeight: 600, fontSize: '0.95rem' } 
+                  }} 
+                />
+              </ListItem>
+            </List>
+          </Box>
+        </Drawer>
+
         {/* Main Content */}
-        <Container maxWidth="xl" sx={{ pt: '100px', pb: 6 }}>
+        <Container maxWidth="xl" sx={{ pt: { xs: '90px', md: '100px' }, pb: { xs: 4, md: 6 }, px: { xs: 0, sm: 2, md: 3 } }}>
           {/* Welcome Header */}
-          <Box sx={{ mb: 5 }}>
+          <Box sx={{ mb: 5, px: { xs: 2, sm: 0 } }}>
             <Typography 
               variant="h3" 
               sx={{ 
                 color: '#fff', 
                 fontWeight: 700, 
-                fontSize: { xs: '2rem', md: '2.5rem' },
+                fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem' },
                 mb: 1.5,
                 lineHeight: 1.2
               }}
             >
               Welcome back, <span style={{ color: '#FF4500' }}>{firstName}</span>
             </Typography>
-            <Typography sx={{ color: '#888', fontSize: '1rem', lineHeight: 1.6 }}>
-              Ready for a productive day? You have 3 tasks due today and an AI-recommended<br />
-              learning path waiting for you.
+            <Typography sx={{ 
+              color: '#888', 
+              fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1rem' }, 
+              lineHeight: 1.6,
+              display: { xs: 'block', sm: 'block' }
+            }}>
+              Ready for a productive day? You have 3 tasks due today and an AI-recommended
+              <Box component="span" sx={{ display: { xs: 'inline', sm: 'inline' } }}> learning path waiting for you.</Box>
             </Typography>
           </Box>
 
-          <Grid container spacing={3}>
+          <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }}>
             {/* Left Column - Main Content */}
             <Grid item xs={12} lg={8}>
               {/* Top 3 Cards */}
-              <Grid container spacing={3} sx={{ mb: 3 }}>
+              <Grid container spacing={{ xs: 2, sm: 2.5, md: 3 }} sx={{ mb: { xs: 2, md: 3 } }}>
                 {/* Active Tasks Card */}
                 <Grid item xs={12} sm={4}>
                   <StatCard>
@@ -376,50 +498,50 @@ export default function Dashboard() {
               </Grid>
 
               {/* What's Happening Section */}
-              <Box sx={{ mb: 3 }}>
+              <Box sx={{ mb: { xs: 2, md: 3 }, px: { xs: 2, sm: 0 } }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography sx={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>
+                  <Typography sx={{ color: '#fff', fontSize: { xs: '1.1rem', md: '1.25rem' }, fontWeight: 700 }}>
                     What's Happening
                   </Typography>
-                  <Button sx={{ color: '#FF4500', textTransform: 'none', fontSize: '0.85rem' }}>
+                  <Button sx={{ color: '#FF4500', textTransform: 'none', fontSize: { xs: '0.8rem', md: '0.85rem' } }}>
                     View All
                   </Button>
                 </Box>
 
                 <EventCard>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <Box sx={{ display: 'flex', gap: 2.5 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexDirection: { xs: 'column', sm: 'row' }, gap: { xs: 2, sm: 0 } }}>
+                    <Box sx={{ display: 'flex', gap: { xs: 1.5, sm: 2.5 }, width: { xs: '100%', sm: 'auto' } }}>
                       <Box 
                         sx={{ 
                           bgcolor: '#1A1A1A', 
                           borderRadius: '12px', 
-                          px: 2,
+                          px: { xs: 1.5, sm: 2 },
                           py: 1.5,
                           textAlign: 'center',
-                          minWidth: '60px'
+                          minWidth: { xs: '50px', sm: '60px' }
                         }}
                       >
-                        <Typography sx={{ color: '#FF4500', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 0.5 }}>
+                        <Typography sx={{ color: '#FF4500', fontSize: { xs: '0.65rem', sm: '0.7rem' }, fontWeight: 700, letterSpacing: 0.5 }}>
                           OCT
                         </Typography>
-                        <Typography sx={{ color: '#fff', fontSize: '1.75rem', fontWeight: 700, lineHeight: 1 }}>
+                        <Typography sx={{ color: '#fff', fontSize: { xs: '1.5rem', sm: '1.75rem' }, fontWeight: 700, lineHeight: 1 }}>
                           24
                         </Typography>
                       </Box>
-                      <Box>
-                        <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '1rem', mb: 0.5 }}>
+                      <Box sx={{ flex: 1 }}>
+                        <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: { xs: '0.9rem', sm: '1rem' }, mb: 0.5 }}>
                           Product Roadmap sync-up
                         </Typography>
-                        <Typography sx={{ color: '#666', fontSize: '0.85rem', mb: 1.5 }}>
+                        <Typography sx={{ color: '#666', fontSize: { xs: '0.8rem', sm: '0.85rem' }, mb: 1.5 }}>
                           🕐 14:00 - 15:30 • Virtual
                         </Typography>
                         <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
-                          <Avatar sx={{ width: 28, height: 28, fontSize: '0.75rem' }}>A</Avatar>
-                          <Avatar sx={{ width: 28, height: 28, fontSize: '0.75rem' }}>B</Avatar>
+                          <Avatar sx={{ width: { xs: 26, sm: 28 }, height: { xs: 26, sm: 28 }, fontSize: '0.75rem' }}>A</Avatar>
+                          <Avatar sx={{ width: { xs: 26, sm: 28 }, height: { xs: 26, sm: 28 }, fontSize: '0.75rem' }}>B</Avatar>
                           <Avatar 
                             sx={{ 
-                              width: 28, 
-                              height: 28, 
+                              width: { xs: 26, sm: 28 }, 
+                              height: { xs: 26, sm: 28 }, 
                               bgcolor: '#1A1A1A',
                               fontSize: '0.7rem',
                               fontWeight: 600,
@@ -438,9 +560,10 @@ export default function Dashboard() {
                         bgcolor: 'rgba(76, 175, 80, 0.15)', 
                         color: '#4CAF50',
                         fontWeight: 700,
-                        fontSize: '0.65rem',
-                        height: '26px',
-                        letterSpacing: 0.5
+                        fontSize: { xs: '0.6rem', sm: '0.65rem' },
+                        height: { xs: '24px', sm: '26px' },
+                        letterSpacing: 0.5,
+                        alignSelf: { xs: 'flex-start', sm: 'auto' }
                       }} 
                     />
                   </Box>
@@ -448,15 +571,15 @@ export default function Dashboard() {
               </Box>
 
               {/* Recommended Learning */}
-              <Box>
+              <Box sx={{ px: { xs: 2, sm: 0 } }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                  <Box sx={{ fontSize: '1.2rem' }}>🎓</Box>
-                  <Typography sx={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>
+                  <Box sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }}>🎓</Box>
+                  <Typography sx={{ color: '#fff', fontSize: { xs: '1.1rem', md: '1.25rem' }, fontWeight: 700 }}>
                     Recommended Learning
                   </Typography>
                 </Box>
 
-                <Grid container spacing={2.5}>
+                <Grid container spacing={{ xs: 2, sm: 2.5 }}>
                   <Grid item xs={12} md={6}>
                     <CourseCard>
                       <Box 
@@ -545,19 +668,19 @@ export default function Dashboard() {
             </Grid>
 
             {/* Right Sidebar */}
-            <Grid item xs={12} lg={4}>
+            <Grid item xs={12} lg={4} sx={{ px: { xs: 2, sm: 0 } }}>
               {/* Daily Pulse */}
               <SideCard>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                  <Box sx={{ fontSize: '1.2rem' }}>❤️</Box>
-                  <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.95rem' }}>
+                  <Box sx={{ fontSize: { xs: '1rem', sm: '1.2rem' } }}>❤️</Box>
+                  <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: { xs: '0.9rem', sm: '0.95rem' } }}>
                     Daily Pulse
                   </Typography>
                 </Box>
-                <Typography sx={{ color: '#777', fontSize: '0.85rem', mb: 2.5 }}>
+                <Typography sx={{ color: '#777', fontSize: { xs: '0.8rem', sm: '0.85rem' }, mb: 2.5 }}>
                   How are you feeling today?
                 </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2.5, px: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2.5, px: { xs: 0, sm: 1 } }}>
                   {['😊', '😐', '😕', '😞'].map((emoji, idx) => (
                     <EmojiButton
                       key={idx}
@@ -596,7 +719,7 @@ export default function Dashboard() {
                 <Typography 
                   sx={{ 
                     color: '#666', 
-                    fontSize: '0.7rem', 
+                    fontSize: { xs: '0.65rem', sm: '0.7rem' }, 
                     fontWeight: 700, 
                     mb: 2, 
                     letterSpacing: 1.5,
@@ -664,8 +787,8 @@ export default function Dashboard() {
           </Grid>
 
           {/* Footer */}
-          <Box sx={{ textAlign: 'center', mt: 8, pt: 4, borderTop: '1px solid #1A1A1A' }}>
-            <Typography sx={{ color: '#666', fontSize: '0.8rem' }}>
+          <Box sx={{ textAlign: 'center', mt: { xs: 6, md: 8 }, pt: { xs: 3, md: 4 }, borderTop: '1px solid #1A1A1A', px: { xs: 2, sm: 0 } }}>
+            <Typography sx={{ color: '#666', fontSize: { xs: '0.75rem', sm: '0.8rem' } }}>
               © 2024 ZenX Connect. All rights reserved. Secure employee environment.
             </Typography>
           </Box>
