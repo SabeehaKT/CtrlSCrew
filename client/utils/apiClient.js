@@ -74,6 +74,101 @@ export const apiClient = {
     });
   },
 
+  async updateUserProfile(profileData) {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    return this.request('/api/users/profile', {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async changePassword(oldPassword, newPassword) {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    return this.request('/api/users/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  // Admin endpoints
+  async getAllUsers() {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    return this.request('/api/admin/users', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async createUser(userData) {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    return this.request('/api/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async updateUser(userId, userData) {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    return this.request(`/api/admin/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async deleteUser(userId) {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    return this.request(`/api/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
   /** Get AI-generated roadmap summary for Edit Roadmap flow (Career tab) */
   async getRoadmapSummary(milestoneData) {
     const token = this.getToken();

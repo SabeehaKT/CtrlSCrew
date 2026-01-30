@@ -17,6 +17,12 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Avatar,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -153,6 +159,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [chatInput, setChatInput] = useState('');
   const [payslipOpen, setPayslipOpen] = useState(false);
   const [payslipMonth, setPayslipMonth] = useState(null);
@@ -625,27 +632,73 @@ export default function Dashboard() {
                 <span>ZenX</span> Connect
               </Logo>
 
-              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
                 <NavButton>Home</NavButton>
                 <NavButton>Features</NavButton>
                 <NavButton>About</NavButton>
-                <Button
-                  variant="contained"
-                  sx={{
-                    ml: 2,
-                    bgcolor: '#FF4500',
-                    color: '#fff',
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    px: 2.5,
-                    py: 1,
-                    borderRadius: '8px',
-                    '&:hover': { bgcolor: '#E03E00' },
-                  }}
-                  onClick={handleLogout}
+                <IconButton
+                  onClick={handleMenuOpen}
+                  sx={{ p: 0, ml: 2 }}
                 >
-                  Logout
-                </Button>
+                  <Avatar 
+                    sx={{ 
+                      bgcolor: '#FF4500', 
+                      width: 40, 
+                      height: 40,
+                      fontWeight: 700,
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        opacity: 0.8,
+                      }
+                    }}
+                  >
+                    {firstName.charAt(0)}
+                  </Avatar>
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  PaperProps={{
+                    sx: {
+                      backgroundColor: '#0D0D0D',
+                      border: '1px solid #1A1A1A',
+                      borderRadius: '12px',
+                      mt: 1,
+                      minWidth: 200,
+                    },
+                  }}
+                >
+                  <MenuItem onClick={handleProfile}>
+                    <ListItemIcon>
+                      <PersonIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="My Profile" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <MenuItem onClick={handleChangePassword}>
+                    <ListItemIcon>
+                      <LockIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Change Password" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <Divider sx={{ borderColor: '#1A1A1A', my: 1 }} />
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <LogoutIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Logout" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                </Menu>
               </Box>
             </Toolbar>
           </Container>

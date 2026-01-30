@@ -28,6 +28,10 @@ import { styled } from '@mui/material/styles';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { apiClient } from '../utils/apiClient';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const Logo = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
@@ -346,8 +350,8 @@ export default function AdminDashboard() {
                 Create and manage employee accounts
               </Typography>
             </Box>
-            <ActionButton onClick={() => handleOpenDialog()}>
-              + Add New User
+            <ActionButton startIcon={<AddIcon />} onClick={() => handleOpenDialog()}>
+              Add New User
             </ActionButton>
           </Box>
 
@@ -378,11 +382,25 @@ export default function AdminDashboard() {
                 {users.map((user) => (
                   <TableRow key={user.id} hover sx={{ '&:hover': { backgroundColor: '#111' } }}>
                     <StyledTableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                      <Box 
+                        sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 1.5,
+                          cursor: 'pointer',
+                          '&:hover .user-name': {
+                            color: '#FF4500',
+                            textDecoration: 'underline',
+                          }
+                        }}
+                        onClick={() => router.push(`/admin/users/${user.id}`)}
+                      >
                         <Avatar sx={{ bgcolor: '#FF4500', width: 32, height: 32, fontSize: '0.9rem' }}>
                           {user.name.charAt(0)}
                         </Avatar>
-                        {user.name}
+                        <Typography className="user-name" sx={{ transition: 'all 0.2s' }}>
+                          {user.name}
+                        </Typography>
                       </Box>
                     </StyledTableCell>
                     <StyledTableCell>{user.email}</StyledTableCell>
@@ -407,16 +425,25 @@ export default function AdminDashboard() {
                     </StyledTableCell>
                     <StyledTableCell align="right">
                       <IconButton
+                        onClick={() => router.push(`/admin/users/${user.id}`)}
+                        sx={{ color: '#999', '&:hover': { color: '#4CAF50' } }}
+                        title="View Details"
+                      >
+                        <VisibilityIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton
                         onClick={() => handleOpenDialog(user)}
                         sx={{ color: '#999', '&:hover': { color: '#FF4500' } }}
+                        title="Edit User"
                       >
-                        ✏️
+                        <EditIcon fontSize="small" />
                       </IconButton>
                       <IconButton
                         onClick={() => handleDeleteUser(user.id)}
                         sx={{ color: '#999', '&:hover': { color: '#f44336' } }}
+                        title="Delete User"
                       >
-                        🗑️
+                        <DeleteIcon fontSize="small" />
                       </IconButton>
                     </StyledTableCell>
                   </TableRow>
