@@ -6,10 +6,11 @@ Follow these steps exactly:
 
 1. Open a terminal/command prompt
 
-2. Navigate to the server folder:
+2. Navigate to the server folder (use your project path; example for ZenXConnect):
    ```bash
-   cd "c:\Users\TinuCMathew(G10XIND)\OneDrive - G10X Technology Private Limited\Desktop\employee-portal\server"
+   cd CtrlSCrew\server
    ```
+   Or from anywhere: `cd "path\to\ZenXConnect\CtrlSCrew\server"`
 
 3. Create a virtual environment:
    ```bash
@@ -127,11 +128,20 @@ Make sure to check "Add Python to PATH" during installation
 Install Node.js from: https://nodejs.org/
 This will install npm automatically
 
-### Port 8000 already in use
-Change the port in `server/main.py` line 49:
-```python
-uvicorn.run(app, host="0.0.0.0", port=8001)
+### "SECRET_KEY / DATABASE_URL - Field required"
+Create `server/.env` with (or copy from `server/.env.example`):
 ```
+SECRET_KEY=your-secret-key-here-change-in-production
+DATABASE_URL=sqlite:///./employee_portal.db
+```
+Run the server from the **server folder**: `cd CtrlSCrew\server` then `python main.py`.
+
+### Port 8000 / WinError 10013 (socket access forbidden)
+The server now uses `127.0.0.1` and will try port **8001** if 8000 fails. If you see "using 8001", use:
+- Backend: http://127.0.0.1:8001  
+- In the client, set `NEXT_PUBLIC_BACKEND_URL=http://127.0.0.1:8001` if needed.
+
+Or set port manually: `set PORT=8001` (Windows) then `python main.py`.
 
 ### Port 3000 already in use
 Run frontend on different port:

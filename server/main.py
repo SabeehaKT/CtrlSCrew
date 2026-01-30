@@ -52,5 +52,19 @@ async def health_check():
     return {"status": "healthy"}
 
 if __name__ == "__main__":
+    import os
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+
+    host = os.environ.get("HOST", "127.0.0.1")
+    port = int(os.environ.get("PORT", "8000"))
+
+    # On Windows, port 8000 can hit WinError 10013; try 8001 as fallback
+    try:
+        uvicorn.run("main:app", host=host, port=port, reload=True)
+    except OSError as e:
+        if e.winerror == 10013 and port == 8000:
+            port = 8001
+            print(f"Port 8000 unavailable, using {port}. Backend: http://127.0.0.1:{port}")
+            uvicorn.run("main:app", host=host, port=port, reload=True)
+        else:
+            raise
