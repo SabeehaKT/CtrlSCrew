@@ -120,6 +120,20 @@ export const apiClient = {
     });
   },
 
+  // Course recommendations
+  async getCourseRecommendations() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/users/course-recommendations', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
   // Admin endpoints
   async getAllUsers() {
     const token = this.getToken();

@@ -14,6 +14,7 @@ from auth import (
     get_user_by_email
 )
 from config import settings
+from course_recommendation import get_ai_course_recommendations
 
 # Auth router
 auth_router = APIRouter()
@@ -96,6 +97,32 @@ async def change_password(
     
     db.commit()
     return {"message": "Password changed successfully"}
+
+@user_router.get("/course-recommendations")
+async def get_course_recommendations(
+    current_user: User = Depends(get_current_user)
+):
+    """Get AI-powered course recommendations for the current user"""
+    # Convert user to dict for the recommendation engine
+    employee_profile = {
+        'name': current_user.name,
+        'email': current_user.email,
+        'role': current_user.role or 'Not specified',
+        'experience': current_user.experience or 0,
+        'skills': current_user.skills or '',
+        'area_of_interest': current_user.area_of_interest or ''
+    }
+    
+    # Get AI recommendations
+    result = get_ai_course_recommendations(employee_profile)
+    
+    if not result.get('success'):
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get recommendations: {result.get('error', 'Unknown error')}"
+        )
+    
+    return result
 
 # Admin router
 admin_router = APIRouter()

@@ -1,0 +1,128 @@
+[
+    {
+      "title": "Excel Essential Training (Microsoft 365)",
+      "skills": ["Excel", "Data Analysis"],
+      "category": "Business",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/excel-essential-training-microsoft-365-25302368"
+    },
+    {
+      "title": "Introduction to Prompt Engineering for Generative AI",
+      "skills": ["Prompt Engineering", "AI"],
+      "category": "Technology",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/introduction-to-prompt-engineering-for-generative-ai-24636124"
+    },
+    {
+      "title": "What Is Generative AI?",
+      "skills": ["Generative AI", "AI Fundamentals"],
+      "category": "Technology",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/what-is-generative-ai"
+    },
+    {
+      "title": "Introduction to Artificial Intelligence",
+      "skills": ["AI Fundamentals"],
+      "category": "Technology",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/introduction-to-artificial-intelligence"
+    },
+    {
+      "title": "Power BI: Dashboards for Beginners",
+      "skills": ["Power BI", "Data Visualization"],
+      "category": "Technology",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/power-bi-dashboards-for-beginners"
+    },
+    {
+      "title": "Learning Git and GitHub",
+      "skills": ["Version Control", "Git"],
+      "category": "Technology",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/learning-git-and-github"
+    },
+    {
+      "title": "Time Management Fundamentals",
+      "skills": ["Productivity", "Time Management"],
+      "category": "Professional Development",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/time-management-fundamentals"
+    },
+    {
+      "title": "Communication Foundations",
+      "skills": ["Communication Skills"],
+      "category": "Professional Development",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/communication-foundations"
+    },
+    {
+      "title": "Unconscious Bias",
+      "skills": ["Diversity", "Inclusion"],
+      "category": "Professional Development",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/unconscious-bias"
+    },
+    {
+      "title": "Strategic Thinking",
+      "skills": ["Strategy", "Leadership"],
+      "category": "Professional Development",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/strategic-thinking"
+    },
+    {
+      "title": "Speaking Confidently and Effectively",
+      "skills": ["Public Speaking"],
+      "category": "Professional Development",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/speaking-confidently-and-effectively"
+    },
+    {
+      "title": "Excel: Advanced Formulas and Functions (2023)",
+      "skills": ["Excel Advanced"],
+      "category": "Business",
+      "level": "Intermediate",
+      "course_url": "https://www.linkedin.com/learning/excel-advanced-formulas-and-functions-2023"
+    },
+    {
+      "title": "Learning Data Analytics: Foundations",
+      "skills": ["Data Analytics"],
+      "category": "Technology",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/learning-data-analytics-foundations"
+    },
+    {
+      "title": "AI in Business Essential Training",
+      "skills": ["AI in Business"],
+      "category": "Technology",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/ai-in-business-essential-training"
+    },
+    {
+      "title": "Excel 2024 Essential Training (Office 2024)",
+      "skills": ["Excel"],
+      "category": "Business",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/excel-2024-essential-training-office-2024-ltsc"
+    },
+    {
+      "title": "AI and Generative AI for Video Content Creation",
+      "skills": ["AI", "Content Creation"],
+      "category": "Technology",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/ai-and-generative-ai-for-video-content-creation"
+    },
+    {
+      "title": "Excel for Mac Essential Training (Microsoft 365)",
+      "skills": ["Excel"],
+      "category": "Business",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/excel-for-mac-essential-training-microsoft-365-24730340"
+    },
+    {
+      "title": "Excel 2019 Essential Training",
+      "skills": ["Excel"],
+      "category": "Business",
+      "level": "Beginner",
+      "course_url": "https://www.linkedin.com/learning/excel-2019-essential-training"
+    }
+  ]
