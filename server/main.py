@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import settings
 from database import init_db
 from routes import auth_router, user_router
+from career import career_router
 
 # Lifespan context manager for startup/shutdown events
 @asynccontextmanager
@@ -36,6 +37,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(user_router, prefix="/api/users", tags=["Users"])
+app.include_router(career_router, prefix="/api/career", tags=["Career"])
 
 # Root endpoint
 @app.get("/")

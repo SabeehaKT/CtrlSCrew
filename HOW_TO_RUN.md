@@ -144,6 +144,9 @@ Make sure both servers are running and check:
 - Backend: http://localhost:8000/health
 - Frontend: http://localhost:3000
 
+### "Not Found" when using Edit Roadmap (Career tab)
+If you see "Not Found" or an error in the Edit Roadmap modal, restart the backend server (stop it with Ctrl+C, then run `python main.py` again from the server folder). The app will still show an offline summary so you can use the form.
+
 ---
 
 ## Need Help?
