@@ -75,12 +75,10 @@ export const apiClient = {
   },
 
   async updateUserProfile(profileData) {
-    const token = localStorage.getItem('token');
-    
+    const token = this.getToken();
     if (!token) {
-      throw new Error('No token found');
+      throw new Error('Not authenticated');
     }
-
     return this.request('/api/users/profile', {
       method: 'PUT',
       body: JSON.stringify(profileData),
@@ -91,78 +89,16 @@ export const apiClient = {
   },
 
   async changePassword(oldPassword, newPassword) {
-    const token = localStorage.getItem('token');
-    
+    const token = this.getToken();
     if (!token) {
-      throw new Error('No token found');
+      throw new Error('Not authenticated');
     }
-
     return this.request('/api/users/change-password', {
       method: 'POST',
-      body: JSON.stringify({ old_password: oldPassword, new_password: newPassword }),
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-  },
-
-  // Admin endpoints
-  async getAllUsers() {
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      throw new Error('No token found');
-    }
-
-    return this.request('/api/admin/users', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-  },
-
-  async createUser(userData) {
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      throw new Error('No token found');
-    }
-
-    return this.request('/api/admin/users', {
-      method: 'POST',
-      body: JSON.stringify(userData),
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-  },
-
-  async updateUser(userId, userData) {
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      throw new Error('No token found');
-    }
-
-    return this.request(`/api/admin/users/${userId}`, {
-      method: 'PUT',
-      body: JSON.stringify(userData),
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-  },
-
-  async deleteUser(userId) {
-    const token = localStorage.getItem('token');
-    
-    if (!token) {
-      throw new Error('No token found');
-    }
-
-    return this.request(`/api/admin/users/${userId}`, {
-      method: 'DELETE',
+      body: JSON.stringify({
+        old_password: oldPassword,
+        new_password: newPassword,
+      }),
       headers: {
         'Authorization': `Bearer ${token}`,
       },
@@ -178,6 +114,74 @@ export const apiClient = {
     return this.request('/api/career/roadmap-summary', {
       method: 'POST',
       body: JSON.stringify(milestoneData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  // Admin endpoints
+  async getAllUsers() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/admin/users', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async createUser(userData) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/admin/users', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async updateUser(userId, userData) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/admin/users/${userId}`, {
+      method: 'PUT',
+      body: JSON.stringify(userData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async deleteUser(userId) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/admin/users/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getUser(userId) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/admin/users/${userId}`, {
+      method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
       },
