@@ -74,6 +74,21 @@ export const apiClient = {
     });
   },
 
+  /** Get AI-generated roadmap summary for Edit Roadmap flow (Career tab) */
+  async getRoadmapSummary(milestoneData) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/career/roadmap-summary', {
+      method: 'POST',
+      body: JSON.stringify(milestoneData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
   // Auth helpers
   logout() {
     localStorage.removeItem('token');

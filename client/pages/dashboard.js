@@ -18,6 +18,9 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LockIcon from '@mui/icons-material/Lock';
 import { styled } from '@mui/material/styles';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -548,6 +551,13 @@ export default function Dashboard() {
           return;
         }
         const userData = await apiClient.getCurrentUser();
+        
+        // Redirect admins to admin panel
+        if (userData.is_admin) {
+          router.push('/admin');
+          return;
+        }
+        
         setUser(userData);
       } catch (error) {
         console.error('Authentication error:', error);
@@ -561,7 +571,25 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     apiClient.logout();
-    router.push('/');
+    router.push('/login');
+  };
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    handleMenuClose();
+    router.push('/profile');
+  };
+
+  const handleChangePassword = () => {
+    handleMenuClose();
+    router.push('/change-password');
   };
 
   if (loading) {

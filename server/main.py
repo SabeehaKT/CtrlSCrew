@@ -2,8 +2,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
-from database import init_db
-from routes import auth_router, user_router
+from routes import auth_router, user_router, admin_router
+from career import career_router
+from database import init_db, SessionLocal, User
+from auth import get_password_hash
 
 # Lifespan context manager for startup/shutdown events
 @asynccontextmanager
@@ -11,6 +13,25 @@ async def lifespan(app: FastAPI):
     # Startup
     init_db()
     print("Database initialized successfully")
+    
+    # Create default admin if not exists
+    db = SessionLocal()
+    try:
+        admin = db.query(User).filter(User.email == "admin@zenx.com").first()
+        if not admin:
+            admin_user = User(
+                name="Admin",
+                email="admin@zenx.com",
+                hashed_password=get_password_hash("admin123"),
+                is_admin=True,
+                must_change_password=False  # Admin doesn't need to change password
+            )
+            db.add(admin_user)
+            db.commit()
+            print("Default admin created: admin@zenx.com / admin123")
+    finally:
+        db.close()
+    
     yield
     # Shutdown (if needed)
     print("Shutting down...")
@@ -36,6 +57,8 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(user_router, prefix="/api/users", tags=["Users"])
+app.include_router(career_router, prefix="/api/career", tags=["Career"])
+app.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
 
 # Root endpoint
 @app.get("/")
