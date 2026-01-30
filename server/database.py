@@ -1,6 +1,6 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Float, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 from config import settings
 
@@ -39,6 +39,40 @@ class User(Base):
     
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+# Payroll model
+class Payroll(Base):
+    __tablename__ = "payroll"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    
+    # Salary components
+    basic_salary = Column(Float, nullable=False)
+    hra = Column(Float, default=0.0)  # House Rent Allowance
+    transport_allowance = Column(Float, default=0.0)
+    other_allowances = Column(Float, default=0.0)
+    
+    # Deductions
+    tax = Column(Float, default=0.0)
+    provident_fund = Column(Float, default=0.0)
+    insurance = Column(Float, default=0.0)
+    other_deductions = Column(Float, default=0.0)
+    
+    # Bonus/Incentives
+    bonus = Column(Float, default=0.0)
+    
+    # Period
+    month = Column(String, nullable=False)  # e.g., "January 2026"
+    year = Column(Integer, nullable=False)
+    
+    # Status
+    status = Column(String, default="pending")  # pending, processed, paid
+    
+    # Metadata
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)  # Admin who created it
 
 # Create all tables
 def init_db():
