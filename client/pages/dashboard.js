@@ -523,6 +523,31 @@ export default function Dashboard() {
     }, 600);
   };
 
+  const handleQuickTopicClick = (topic) => {
+    // Simulate user clicking on a topic bubble
+    setChatBotMessages((prev) => [...prev, { role: 'user', text: topic }]);
+    
+    setTimeout(() => {
+      const userInputLower = topic.toLowerCase();
+      
+      // Find matching response from training data
+      let botResponse = null;
+      for (const data of AI_TRAINING_DATA) {
+        if (data.keywords.some(keyword => userInputLower.includes(keyword))) {
+          botResponse = typeof data.response === 'function' ? data.response() : data.response;
+          break;
+        }
+      }
+      
+      // Default response if no match found
+      if (!botResponse) {
+        botResponse = "I understand you have a query about " + topic + ". Please provide more details or try rephrasing your question.";
+      }
+      
+      setChatBotMessages((prev) => [...prev, { role: 'assistant', text: botResponse }]);
+    }, 600);
+  };
+
   const handleTimesheetDayChange = (index, field, value) => {
     setWeekTimesheet((prev) => {
       const next = [...prev];
@@ -1277,10 +1302,61 @@ export default function Dashboard() {
             <Box sx={{ flex: 1, overflowY: 'auto', p: 2, display: 'flex', flexDirection: 'column', gap: 1 }}>
               {chatBotMessages.map((msg, i) => (
                 <ChatBubble key={i} isUser={msg.role === 'user'}>
-                  <Typography sx={{ fontSize: '0.9rem' }}>{msg.text}</Typography>
+                  <Typography 
+                    sx={{ 
+                      fontSize: '0.9rem',
+                      whiteSpace: 'pre-line',
+                      lineHeight: 1.6,
+                      '& strong': { fontWeight: 600 }
+                    }}
+                  >
+                    {msg.text}
+                  </Typography>
                 </ChatBubble>
               ))}
             </Box>
+            
+            {/* Quick Topic Bubbles */}
+            <Box sx={{ px: 2, pb: 1, borderTop: '1px solid #1A1A1A', pt: 2 }}>
+              <Typography sx={{ color: '#888', fontSize: '0.75rem', mb: 1.5, fontWeight: 600 }}>
+                QUICK TOPICS
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {[
+                  'Leave balance',
+                  'Payroll information',
+                  'Timesheet',
+                  'Performance review',
+                  'Training courses',
+                  'Next meeting',
+                  'Company policies',
+                  'HR contact'
+                ].map((topic) => (
+                  <Button
+                    key={topic}
+                    onClick={() => handleQuickTopicClick(topic)}
+                    sx={{
+                      bgcolor: '#1A1A1A',
+                      color: '#fff',
+                      textTransform: 'none',
+                      fontSize: '0.75rem',
+                      py: 0.75,
+                      px: 1.5,
+                      borderRadius: '16px',
+                      border: '1px solid #2A2A2A',
+                      '&:hover': {
+                        bgcolor: '#FF4500',
+                        borderColor: '#FF4500',
+                      },
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {topic}
+                  </Button>
+                ))}
+              </Box>
+            </Box>
+            
             <Box sx={{ p: 2, borderTop: '1px solid #1A1A1A' }}>
               <TextField
                 fullWidth
