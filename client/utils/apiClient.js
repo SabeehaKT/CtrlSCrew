@@ -1,0 +1,89 @@
+// API configuration
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+
+export const apiClient = {
+  // Helper function to make API calls
+  async request(endpoint, options = {}) {
+    const url = `/api/proxy?endpoint=${encodeURIComponent(endpoint)}`;
+    
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({ detail: 'Request failed' }));
+      throw new Error(error.detail || 'Request failed');
+    }
+
+    return response.json();
+  },
+
+  // Auth endpoints
+  async register(name, email, password) {
+    return this.request('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ name, email, password }),
+    });
+  },
+
+  async login(email, password) {
+    const data = await this.request('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    
+    // Store token
+    if (data.access_token) {
+      localStorage.setItem('token', data.access_token);
+    }
+    
+    return data;
+  },
+
+  async getCurrentUser() {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    return this.request('/api/auth/me', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getUserProfile() {
+    const token = localStorage.getItem('token');
+    
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    return this.request('/api/users/profile', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  // Auth helpers
+  logout() {
+    localStorage.removeItem('token');
+  },
+
+  isAuthenticated() {
+    return !!localStorage.getItem('token');
+  },
+
+  getToken() {
+    return localStorage.getItem('token');
+  },
+};
