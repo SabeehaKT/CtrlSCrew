@@ -80,7 +80,15 @@ Follow these steps exactly:
 
 3. Click the **"Login"** button in the top-right corner
 
-4. Click **"Register here"** link (since you don't have an account yet)
+### Option A: Login as Admin
+
+Use the default admin account:
+- **Email:** admin@zenx.com
+- **Password:** admin123
+
+### Option B: Register a New User
+
+4. Click **"Register here"** link
 
 5. Fill in the registration form:
    - Full Name: Your name
