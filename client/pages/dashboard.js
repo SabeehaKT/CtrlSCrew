@@ -641,9 +641,9 @@ export default function Dashboard() {
               </Logo>
 
               <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-                <NavButton>Home</NavButton>
+                <NavButton onClick={() => router.push('/dashboard')}>Home</NavButton>
                 <NavButton>Career Path</NavButton>
-                <NavButton>Learning</NavButton>
+                <NavButton onClick={() => router.push('/learning')}>Learning</NavButton>
                 <NavButton>Well-being</NavButton>
               </Box>
 
