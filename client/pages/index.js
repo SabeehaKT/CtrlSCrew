@@ -355,8 +355,10 @@ export default function Home() {
               {!isMobile && (
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                   <NavButton>Home</NavButton>
-                  <NavButton>Features</NavButton>
-                  <NavButton>About</NavButton>
+                  <NavButton>Career Path</NavButton>
+                  <NavButton>Learning</NavButton>
+                  <NavButton>Well-Being</NavButton>
+
                 </Box>
               )}
               
