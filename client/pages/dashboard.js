@@ -169,6 +169,8 @@ export default function Dashboard() {
     { role: 'assistant', text: "Hello! I'm ZenX AI. How can I help you with payroll, leave, or HR queries today?" },
   ]);
   const [chatBotInput, setChatBotInput] = useState('');
+  const [payrollData, setPayrollData] = useState(null);
+  const [payrollLoading, setPayrollLoading] = useState(true);
   
   // ZenX AI Training Data - Predefined Queries and Responses
   const AI_TRAINING_DATA = [
@@ -591,6 +593,17 @@ export default function Dashboard() {
         }
         
         setUser(userData);
+        
+        // Fetch latest payroll data
+        try {
+          const latestPayroll = await apiClient.getLatestPayroll(userData.id);
+          setPayrollData(latestPayroll);
+        } catch (error) {
+          console.error('Error fetching payroll:', error);
+          // No payroll data available - will show placeholder
+        } finally {
+          setPayrollLoading(false);
+        }
       } catch (error) {
         console.error('Authentication error:', error);
         router.push('/login');
@@ -773,39 +786,55 @@ export default function Dashboard() {
               <Grid container spacing={3} sx={{ mb: 3 }}>
                 <Grid item xs={12} sm={6}>
                   <StatCard sx={{ height: '100%' }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
-                          <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1.5 }}>
-                            PAYROLL SUMMARY
+                    {payrollLoading ? (
+                      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', minHeight: 150 }}>
+                        <CircularProgress sx={{ color: '#FF4500' }} size={30} />
+                      </Box>
+                    ) : payrollData ? (
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                            <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1.5 }}>
+                              PAYROLL SUMMARY
+                            </Typography>
+                            <RequestQuote sx={{ color: '#666', fontSize: 16 }} />
+                          </Box>
+                          <Typography sx={{ color: '#4CAF50', fontSize: '2rem', fontWeight: 700 }}>
+                            ₹{(payrollData.basic_salary + payrollData.hra + payrollData.transport_allowance + payrollData.other_allowances + payrollData.bonus - payrollData.tax - payrollData.provident_fund - payrollData.insurance - payrollData.other_deductions).toLocaleString('en-IN')}
                           </Typography>
-                          <RequestQuote sx={{ color: '#666', fontSize: 16 }} />
+                          <Typography sx={{ color: '#4CAF50', fontSize: '0.8rem', mb: 1 }}>
+                            Net Pay — {payrollData.month} {payrollData.year}
+                          </Typography>
+                          <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>
+                            Status: {payrollData.status.charAt(0).toUpperCase() + payrollData.status.slice(1)}
+                          </Typography>
                         </Box>
-                        <Typography sx={{ color: '#4CAF50', fontSize: '2rem', fontWeight: 700 }}>
-                          ₹4,30,000
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
+                          <Button
+                            onClick={() => { setPayslipMonth(PAYSLIP_MONTHS[0]); setPayslipOpen(true); }}
+                            sx={{
+                              color: '#fff',
+                              textTransform: 'none',
+                              fontSize: '0.85rem',
+                              fontWeight: 600,
+                              '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' },
+                            }}
+                          >
+                            VIEW DETAILS
+                          </Button>
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', minHeight: 150 }}>
+                        <RequestQuote sx={{ color: '#666', fontSize: 40, mb: 1 }} />
+                        <Typography sx={{ color: '#888', fontSize: '0.9rem', textAlign: 'center' }}>
+                          No payroll data available
                         </Typography>
-                        <Typography sx={{ color: '#4CAF50', fontSize: '0.8rem', mb: 1 }}>
-                          ↑ Net Pay (Est.) — includes ₹5,000 increment
-                        </Typography>
-                        <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>
-                          Next Pay Date: Jan 31, 2026
+                        <Typography sx={{ color: '#666', fontSize: '0.8rem', textAlign: 'center', mt: 0.5 }}>
+                          Contact admin to set up your payroll
                         </Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
-                        <Button
-                          onClick={() => { setPayslipMonth(PAYSLIP_MONTHS[0]); setPayslipOpen(true); }}
-                          sx={{
-                            color: '#fff',
-                            textTransform: 'none',
-                            fontSize: '0.85rem',
-                            fontWeight: 600,
-                            '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' },
-                          }}
-                        >
-                          VIEW PAYSLIP
-                        </Button>
-                      </Box>
-                    </Box>
+                    )}
                   </StatCard>
                 </Grid>
                 <Grid item xs={12} sm={6}>

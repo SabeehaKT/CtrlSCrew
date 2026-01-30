@@ -72,3 +72,67 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     email: Optional[str] = None
+
+# Payroll schemas
+class PayrollCreate(BaseModel):
+    user_id: int
+    basic_salary: float
+    hra: Optional[float] = 0.0
+    transport_allowance: Optional[float] = 0.0
+    other_allowances: Optional[float] = 0.0
+    tax: Optional[float] = 0.0
+    provident_fund: Optional[float] = 0.0
+    insurance: Optional[float] = 0.0
+    other_deductions: Optional[float] = 0.0
+    bonus: Optional[float] = 0.0
+    month: str
+    year: int
+    status: Optional[str] = "pending"
+
+class PayrollUpdate(BaseModel):
+    basic_salary: Optional[float] = None
+    hra: Optional[float] = None
+    transport_allowance: Optional[float] = None
+    other_allowances: Optional[float] = None
+    tax: Optional[float] = None
+    provident_fund: Optional[float] = None
+    insurance: Optional[float] = None
+    other_deductions: Optional[float] = None
+    bonus: Optional[float] = None
+    month: Optional[str] = None
+    year: Optional[int] = None
+    status: Optional[str] = None
+
+class PayrollResponse(BaseModel):
+    id: int
+    user_id: int
+    basic_salary: float
+    hra: float
+    transport_allowance: float
+    other_allowances: float
+    tax: float
+    provident_fund: float
+    insurance: float
+    other_deductions: float
+    bonus: float
+    month: str
+    year: int
+    status: str
+    created_at: datetime
+    updated_at: datetime
+    
+    # Calculated fields
+    @property
+    def gross_salary(self) -> float:
+        return self.basic_salary + self.hra + self.transport_allowance + self.other_allowances + self.bonus
+    
+    @property
+    def total_deductions(self) -> float:
+        return self.tax + self.provident_fund + self.insurance + self.other_deductions
+    
+    @property
+    def net_salary(self) -> float:
+        return self.gross_salary - self.total_deductions
+    
+    class Config:
+        from_attributes = True

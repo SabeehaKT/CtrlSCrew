@@ -2,8 +2,8 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from database import get_db, User
-from schemas import AdminUserCreate, UserLogin, Token, UserResponse, UserUpdate, AdminUserUpdate, UserProfileUpdate, PasswordChange
+from database import get_db, User, Payroll
+from schemas import AdminUserCreate, UserLogin, Token, UserResponse, UserUpdate, AdminUserUpdate, UserProfileUpdate, PasswordChange, PayrollCreate, PayrollUpdate, PayrollResponse
 from auth import (
     get_password_hash,
     verify_password,
@@ -250,5 +250,140 @@ async def delete_user(
         )
     
     db.delete(user)
+    db.commit()
+    return None
+
+# Payroll router
+payroll_router = APIRouter()
+
+@payroll_router.post("/", response_model=PayrollResponse, status_code=status.HTTP_201_CREATED)
+async def create_payroll(
+    payroll: PayrollCreate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Create payroll record for a user"""
+    # Check if user exists
+    user = db.query(User).filter(User.id == payroll.user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Check if payroll already exists for this user/month/year
+    existing = db.query(Payroll).filter(
+        Payroll.user_id == payroll.user_id,
+        Payroll.month == payroll.month,
+        Payroll.year == payroll.year
+    ).first()
+    
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Payroll already exists for {payroll.month} {payroll.year}"
+        )
+    
+    new_payroll = Payroll(
+        **payroll.dict(),
+        created_by=current_admin.id
+    )
+    
+    db.add(new_payroll)
+    db.commit()
+    db.refresh(new_payroll)
+    
+    return new_payroll
+
+@payroll_router.get("/user/{user_id}", response_model=List[PayrollResponse])
+async def get_user_payrolls(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Get all payroll records for a user (user can only see their own, admin can see anyone's)"""
+    # Users can only see their own payroll
+    if not current_user.is_admin and current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this payroll"
+        )
+    
+    payrolls = db.query(Payroll).filter(Payroll.user_id == user_id).order_by(Payroll.year.desc(), Payroll.month.desc()).all()
+    return payrolls
+
+@payroll_router.get("/user/{user_id}/latest", response_model=PayrollResponse)
+async def get_latest_payroll(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    """Get latest payroll record for a user"""
+    # Users can only see their own payroll
+    if not current_user.is_admin and current_user.id != user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not authorized to view this payroll"
+        )
+    
+    payroll = db.query(Payroll).filter(Payroll.user_id == user_id).order_by(Payroll.year.desc(), Payroll.created_at.desc()).first()
+    
+    if not payroll:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No payroll records found"
+        )
+    
+    return payroll
+
+@payroll_router.get("/", response_model=List[PayrollResponse])
+async def get_all_payrolls(
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Get all payroll records"""
+    payrolls = db.query(Payroll).order_by(Payroll.created_at.desc()).all()
+    return payrolls
+
+@payroll_router.put("/{payroll_id}", response_model=PayrollResponse)
+async def update_payroll(
+    payroll_id: int,
+    payroll_update: PayrollUpdate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Update payroll record"""
+    payroll = db.query(Payroll).filter(Payroll.id == payroll_id).first()
+    
+    if not payroll:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Payroll record not found"
+        )
+    
+    # Update fields
+    for field, value in payroll_update.dict(exclude_unset=True).items():
+        setattr(payroll, field, value)
+    
+    db.commit()
+    db.refresh(payroll)
+    return payroll
+
+@payroll_router.delete("/{payroll_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_payroll(
+    payroll_id: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Delete payroll record"""
+    payroll = db.query(Payroll).filter(Payroll.id == payroll_id).first()
+    
+    if not payroll:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Payroll record not found"
+        )
+    
+    db.delete(payroll)
     db.commit()
     return None

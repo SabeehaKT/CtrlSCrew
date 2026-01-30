@@ -350,9 +350,27 @@ export default function AdminDashboard() {
                 Create and manage employee accounts
               </Typography>
             </Box>
-            <ActionButton startIcon={<AddIcon />} onClick={() => handleOpenDialog()}>
-              Add New User
-            </ActionButton>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button
+                variant="outlined"
+                onClick={() => router.push('/admin/payroll')}
+                sx={{
+                  color: '#FF4500',
+                  borderColor: '#FF4500',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  '&:hover': {
+                    borderColor: '#FF6B35',
+                    bgcolor: 'rgba(255, 69, 0, 0.1)',
+                  },
+                }}
+              >
+                Manage Payroll
+              </Button>
+              <ActionButton startIcon={<AddIcon />} onClick={() => handleOpenDialog()}>
+                Add New User
+              </ActionButton>
+            </Box>
           </Box>
 
           {error && (

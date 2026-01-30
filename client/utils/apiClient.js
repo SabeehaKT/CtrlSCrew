@@ -202,6 +202,87 @@ export const apiClient = {
     });
   },
 
+  // Payroll endpoints
+  async createPayroll(payrollData) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/payroll/', {
+      method: 'POST',
+      body: JSON.stringify(payrollData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getUserPayrolls(userId) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/payroll/user/${userId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getLatestPayroll(userId) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/payroll/user/${userId}/latest`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getAllPayrolls() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/payroll/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async updatePayroll(payrollId, payrollData) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/payroll/${payrollId}`, {
+      method: 'PUT',
+      body: JSON.stringify(payrollData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async deletePayroll(payrollId) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/payroll/${payrollId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
   // Auth helpers
   logout() {
     localStorage.removeItem('token');
