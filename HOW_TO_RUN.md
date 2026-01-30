@@ -155,6 +155,9 @@ Make sure both servers are running and check:
 ### "Not Found" when using Edit Roadmap (Career tab)
 If you see "Not Found" or an error in the Edit Roadmap modal, restart the backend server (stop it with Ctrl+C, then run `python main.py` again from the server folder). The app will still show an offline summary so you can use the form.
 
+### "Not Found" on Learning page
+If the Learning page shows "Not Found" or a runtime error when loading course recommendations, restart the backend server (stop with Ctrl+C, then from the `server` folder run `python main.py` or `venv\Scripts\python.exe main.py`). The Learning page will still load and show a message; after restarting the backend, refresh the page to get recommendations.
+
 ---
 
 ## Need Help?

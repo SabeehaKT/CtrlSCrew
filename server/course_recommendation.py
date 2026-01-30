@@ -5,7 +5,10 @@ from openai import OpenAI
 from config import settings
 
 # Initialize OpenAI client
-client = OpenAI(api_key=settings.OPENAI_API_KEY)
+try:
+    client = OpenAI(api_key=settings.OPENAI_API_KEY) if settings.OPENAI_API_KEY else None
+except Exception:
+    client = None
 
 def load_linkedin_courses() -> List[Dict]:
     """Load courses from linkedin_courses.json"""
@@ -83,6 +86,12 @@ def get_ai_course_recommendations(employee_profile: Dict) -> Dict:
     Get AI-powered course recommendations using OpenAI
     """
     try:
+        if not client:
+            return {
+                'success': False,
+                'error': 'Course recommendations are not configured. Add OPENAI_API_KEY to .env to enable AI recommendations.',
+                'recommendations': []
+            }
         # Load all courses
         all_courses = load_linkedin_courses()
         
