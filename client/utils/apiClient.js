@@ -147,6 +147,61 @@ export const apiClient = {
     }
   },
 
+  // Story-based wellbeing endpoints
+  async getWellbeingStory() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/wellness/story', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async submitWellbeingResponse(answers) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/wellness/submit', {
+      method: 'POST',
+      body: JSON.stringify({ answers }),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  // Wellness AI endpoints
+  async getWellnessInsights() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/wellness/wellness-insights', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async logActivity(activityType) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/wellness/log-activity?activity_type=${activityType}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
   // Admin endpoints
   async getAllUsers() {
     const token = this.getToken();
