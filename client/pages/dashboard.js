@@ -147,6 +147,13 @@ export default function Dashboard() {
           return;
         }
         const userData = await apiClient.getCurrentUser();
+        
+        // Redirect admins to admin panel
+        if (userData.is_admin) {
+          router.push('/admin');
+          return;
+        }
+        
         setUser(userData);
       } catch (error) {
         console.error('Authentication error:', error);
