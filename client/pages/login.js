@@ -116,8 +116,16 @@ export default function Login() {
     try {
       await apiClient.login(formData.email, formData.password);
       
-      // Check if user is admin
+      // Check user status
       const userData = await apiClient.getCurrentUser();
+      
+      // Check if password change is required
+      if (userData.must_change_password) {
+        router.push('/change-password');
+        return;
+      }
+      
+      // Check if user is admin
       if (userData.is_admin) {
         router.push('/admin');
       } else {

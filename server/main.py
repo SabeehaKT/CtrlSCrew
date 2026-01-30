@@ -22,7 +22,8 @@ async def lifespan(app: FastAPI):
                 name="Admin",
                 email="admin@zenx.com",
                 hashed_password=get_password_hash("admin123"),
-                is_admin=True
+                is_admin=True,
+                must_change_password=False  # Admin doesn't need to change password
             )
             db.add(admin_user)
             db.commit()

@@ -108,6 +108,9 @@ export default function AdminDashboard() {
     email: '',
     password: '',
     is_admin: false,
+    role: '',
+    experience: '',
+    skills: '',
   });
 
   useEffect(() => {
@@ -162,6 +165,9 @@ export default function AdminDashboard() {
         email: user.email,
         password: '',
         is_admin: user.is_admin,
+        role: user.role || '',
+        experience: user.experience || '',
+        skills: user.skills || '',
       });
     } else {
       setEditUser(null);
@@ -170,6 +176,9 @@ export default function AdminDashboard() {
         email: '',
         password: '',
         is_admin: false,
+        role: '',
+        experience: '',
+        skills: '',
       });
     }
     setOpenDialog(true);
@@ -196,6 +205,9 @@ export default function AdminDashboard() {
         const updateData = {
           name: formData.name,
           email: formData.email,
+          role: formData.role || null,
+          experience: formData.experience ? parseInt(formData.experience) : null,
+          skills: formData.skills || null,
         };
         if (formData.password) {
           updateData.password = formData.password;
@@ -213,13 +225,18 @@ export default function AdminDashboard() {
         if (!response.ok) throw new Error('Failed to update user');
         setSuccess('User updated successfully');
       } else {
+        const createData = {
+          ...formData,
+          experience: formData.experience ? parseInt(formData.experience) : null,
+        };
+        
         const response = await fetch('http://localhost:8000/api/admin/users', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(createData),
         });
 
         if (!response.ok) {
@@ -370,11 +387,20 @@ export default function AdminDashboard() {
                     </StyledTableCell>
                     <StyledTableCell>{user.email}</StyledTableCell>
                     <StyledTableCell>
-                      {user.is_admin ? (
-                        <Chip label="Admin" size="small" sx={{ bgcolor: '#FF4500', color: '#fff', fontWeight: 600 }} />
-                      ) : (
-                        <Chip label="User" size="small" sx={{ bgcolor: '#1A1A1A', color: '#999' }} />
-                      )}
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Box>
+                          {user.is_admin ? (
+                            <Chip label="Admin" size="small" sx={{ bgcolor: '#FF4500', color: '#fff', fontWeight: 600 }} />
+                          ) : (
+                            <Chip label="User" size="small" sx={{ bgcolor: '#1A1A1A', color: '#999' }} />
+                          )}
+                        </Box>
+                        {user.role && (
+                          <Typography sx={{ fontSize: '0.85rem', color: '#999' }}>
+                            {user.role}
+                          </Typography>
+                        )}
+                      </Box>
                     </StyledTableCell>
                     <StyledTableCell>
                       {new Date(user.created_at).toLocaleDateString()}
@@ -441,7 +467,40 @@ export default function AdminDashboard() {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               margin="normal"
               required={!editUser}
-              helperText={editUser ? "Leave blank to keep current password" : "Minimum 6 characters"}
+              helperText={editUser ? "Leave blank to keep current password" : "User must change on first login"}
+              FormHelperTextProps={{ sx: { color: '#666' } }}
+            />
+            <StyledTextField
+              fullWidth
+              label="Role"
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              margin="normal"
+              placeholder="e.g., Backend Developer, HR, Analyst"
+              helperText="Job role/designation"
+              FormHelperTextProps={{ sx: { color: '#666' } }}
+            />
+            <StyledTextField
+              fullWidth
+              label="Experience (years)"
+              type="number"
+              value={formData.experience}
+              onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+              margin="normal"
+              placeholder="e.g., 3"
+              helperText="Years of experience"
+              FormHelperTextProps={{ sx: { color: '#666' } }}
+            />
+            <StyledTextField
+              fullWidth
+              label="Skills"
+              value={formData.skills}
+              onChange={(e) => setFormData({ ...formData, skills: e.target.value })}
+              margin="normal"
+              multiline
+              rows={2}
+              placeholder="e.g., React, Node.js, Python"
+              helperText="Comma-separated skills"
               FormHelperTextProps={{ sx: { color: '#666' } }}
             />
             {!editUser && (
