@@ -287,10 +287,10 @@ export default function CareerPath() {
               
               <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
                 <NavButton onClick={() => router.push('/dashboard')}>Home</NavButton>
-                <NavButton onClick={() => router.push('/leave')}>Leaves</NavButton>
-                <NavButton className="active">Career</NavButton>
                 <NavButton onClick={() => router.push('/learning')}>Learning</NavButton>
                 <NavButton onClick={() => router.push('/wellbeing')}>Wellbeing</NavButton>
+                <NavButton className="active">Career</NavButton>
+                <NavButton onClick={() => router.push('/leave')}>Leaves</NavButton>
                 <NavButton onClick={() => router.push('/compliance')}>Compliance</NavButton>
               </Box>
 

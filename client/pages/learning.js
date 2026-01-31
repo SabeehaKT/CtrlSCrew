@@ -199,11 +199,12 @@ export default function Learning() {
               
               <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
                 <NavButton onClick={() => router.push('/dashboard')}>Home</NavButton>
-                <NavButton onClick={() => router.push('/leave')}>Leaves</NavButton>
-                <NavButton onClick={() => router.push('/career')}>Career</NavButton>
                 <NavButton className="active">Learning</NavButton>
                 <NavButton onClick={() => router.push('/wellbeing')}>Wellbeing</NavButton>
+                <NavButton onClick={() => router.push('/career')}>Career</NavButton>
+                <NavButton onClick={() => router.push('/leave')}>Leaves</NavButton>
                 <NavButton onClick={() => router.push('/compliance')}>Compliance</NavButton>
+
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

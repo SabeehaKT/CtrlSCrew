@@ -340,11 +340,11 @@ export default function Compliance() {
 
               <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
                 <NavButton onClick={() => router.push('/dashboard')}>Home</NavButton>
-                <NavButton onClick={() => router.push('/leave')}>Leaves</NavButton>
-                <NavButton onClick={() => router.push('/career')}>Career</NavButton>
                 <NavButton onClick={() => router.push('/learning')}>Learning</NavButton>
                 <NavButton onClick={() => router.push('/wellbeing')}>Wellbeing</NavButton>
-                <NavButton sx={{ color: '#FF4500' }}>Compliance</NavButton>
+                <NavButton onClick={() => router.push('/career')}>Career</NavButton>
+                <NavButton onClick={() => router.push('/leave')}>Leaves</NavButton>
+                <NavButton className="active">Compliance</NavButton>
               </Box>
 
               <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
