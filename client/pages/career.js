@@ -138,13 +138,6 @@ const textFieldSx = {
   '& .MuiInputLabel-root.Mui-focused': { color: '#FF4500' },
 };
 
-const DEFAULT_MILESTONES = {
-  currentRole: 'Senior UX Engineer',
-  nextRole: 'Staff Engineer Candidate',
-  nextDate: 'Q3 2024',
-  futureRole: 'Engineering Director',
-};
-
 /** Shown when the roadmap-summary API is unavailable (e.g. backend not restarted). */
 function getFallbackSummary(form) {
   return `Here's how you can get from ${form?.currentRole || 'your current role'} to ${form?.nextRole || 'your next role'}. By ${form?.nextDate || 'your target date'}, aim to take on more ownership, cross-team initiatives, and visible projects. Focus on Technical Leadership, Cloud Architecture, and Strategic Design to bridge the gap. From there, your path to ${form?.futureRole || 'your long-term goal'} will build on these steps—consider mentorship and curated learning to accelerate your growth.`;
@@ -154,26 +147,48 @@ export default function CareerPath() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [careerData, setCareerData] = useState(null);
   const [editRoadmapOpen, setEditRoadmapOpen] = useState(false);
   const [roadmapSummary, setRoadmapSummary] = useState(null);
   const [roadmapSummaryLoading, setRoadmapSummaryLoading] = useState(false);
   const [roadmapError, setRoadmapError] = useState(null);
-  const [roadmapForm, setRoadmapForm] = useState({ ...DEFAULT_MILESTONES });
+  const [roadmapForm, setRoadmapForm] = useState({
+    currentRole: '',
+    nextRole: '',
+    nextDate: '',
+    futureRole: '',
+  });
 
   const openEditRoadmap = () => {
     setEditRoadmapOpen(true);
-    const form = { ...DEFAULT_MILESTONES };
+    
+    // Use career data from backend if available
+    const form = careerData ? {
+      currentRole: careerData.current_role,
+      nextRole: careerData.next_milestone?.role || '',
+      nextDate: careerData.next_milestone?.date || 'Q3 2025',
+      futureRole: careerData.next_milestone?.future || '',
+    } : {
+      currentRole: user?.role || 'Employee',
+      nextRole: 'Senior Position',
+      nextDate: 'Q3 2025',
+      futureRole: 'Leadership Role',
+    };
+    
     setRoadmapForm(form);
     setRoadmapSummary(null);
     setRoadmapError(null);
     setRoadmapSummaryLoading(true);
+    
+    const priorities = careerData?.growth_priorities?.map(p => p.skill) || ['Technical Leadership', 'Cloud Architecture', 'Strategic Design'];
+    
     apiClient
       .getRoadmapSummary({
         current_role: form.currentRole,
         next_role: form.nextRole,
         next_date: form.nextDate,
         future_role: form.futureRole,
-        growth_priorities: ['Technical Leadership', 'Cloud Architecture', 'Strategic Design'],
+        growth_priorities: priorities,
       })
       .then((data) => setRoadmapSummary(data.summary))
       .catch((err) => {
@@ -192,13 +207,16 @@ export default function CareerPath() {
   const refreshRoadmapSummary = () => {
     setRoadmapError(null);
     setRoadmapSummaryLoading(true);
+    
+    const priorities = careerData?.growth_priorities?.map(p => p.skill) || ['Technical Leadership', 'Cloud Architecture', 'Strategic Design'];
+    
     apiClient
       .getRoadmapSummary({
         current_role: roadmapForm.currentRole,
         next_role: roadmapForm.nextRole,
         next_date: roadmapForm.nextDate,
         future_role: roadmapForm.futureRole,
-        growth_priorities: ['Technical Leadership', 'Cloud Architecture', 'Strategic Design'],
+        growth_priorities: priorities,
       })
       .then((data) => setRoadmapSummary(data.summary))
       .catch((err) => {
@@ -217,6 +235,15 @@ export default function CareerPath() {
         }
         const userData = await apiClient.getCurrentUser();
         setUser(userData);
+        
+        // Fetch career path data from backend
+        try {
+          const careerPathData = await apiClient.getCareerPath();
+          setCareerData(careerPathData);
+        } catch (error) {
+          console.error('Error fetching career data:', error);
+          // Continue without career data - will use defaults
+        }
       } catch (error) {
         console.error('Authentication error:', error);
         router.push('/login');
@@ -338,7 +365,7 @@ export default function CareerPath() {
                 </Box>
 
                 <Typography sx={{ color: '#888', fontSize: '0.9rem', mb: 2.5 }}>
-                  Based on your current role: Senior UX Engineer
+                  Based on your current role: {careerData?.current_role || user?.role || 'Employee'}
                 </Typography>
 
                 <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' }, alignItems: 'center' }}>
@@ -402,50 +429,55 @@ export default function CareerPath() {
                       GROWTH PRIORITIES
                     </Typography>
 
-                    <Box sx={{ mb: 3 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                        <Typography sx={{ color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}>
-                          Technical Leadership
-                        </Typography>
-                        <Typography sx={{ color: '#FF4500', fontSize: '0.9rem', fontWeight: 700 }}>
-                          85%
-                        </Typography>
-                      </Box>
-                      <ProgressBar>
-                        <ProgressFill value={85} color="#FF4500" />
-                      </ProgressBar>
-                    </Box>
-
-                    <Box sx={{ mb: 3 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                        <Typography sx={{ color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}>
-                          Cloud Architecture
-                        </Typography>
-                        <Typography sx={{ color: '#4A90E2', fontSize: '0.9rem', fontWeight: 700 }}>
-                          62%
-                        </Typography>
-                      </Box>
-                      <ProgressBar>
-                        <ProgressFill value={62} color="#4A90E2" />
-                      </ProgressBar>
-                    </Box>
-
-                    <Box sx={{ mb: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                        <Typography sx={{ color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}>
-                          Strategic Design
-                        </Typography>
-                        <Typography sx={{ color: '#999', fontSize: '0.9rem', fontWeight: 700 }}>
-                          45%
-                        </Typography>
-                      </Box>
-                      <ProgressBar>
-                        <ProgressFill value={45} color="#666" />
-                      </ProgressBar>
-                    </Box>
+                    {careerData?.growth_priorities && careerData.growth_priorities.length > 0 ? (
+                      careerData.growth_priorities.map((priority, index) => (
+                        <Box key={index} sx={{ mb: index === careerData.growth_priorities.length - 1 ? 2 : 3 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}>
+                              {priority.skill}
+                            </Typography>
+                            <Typography sx={{ color: priority.color || '#FF4500', fontSize: '0.9rem', fontWeight: 700 }}>
+                              {priority.current}%
+                            </Typography>
+                          </Box>
+                          <ProgressBar>
+                            <ProgressFill value={priority.current} color={priority.color || '#FF4500'} />
+                          </ProgressBar>
+                        </Box>
+                      ))
+                    ) : (
+                      <>
+                        <Box sx={{ mb: 3 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}>
+                              Technical Leadership
+                            </Typography>
+                            <Typography sx={{ color: '#FF4500', fontSize: '0.9rem', fontWeight: 700 }}>
+                              85%
+                            </Typography>
+                          </Box>
+                          <ProgressBar>
+                            <ProgressFill value={85} color="#FF4500" />
+                          </ProgressBar>
+                        </Box>
+                        <Box sx={{ mb: 2 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.9rem', fontWeight: 500 }}>
+                              Domain Expertise
+                            </Typography>
+                            <Typography sx={{ color: '#4A90E2', fontSize: '0.9rem', fontWeight: 700 }}>
+                              70%
+                            </Typography>
+                          </Box>
+                          <ProgressBar>
+                            <ProgressFill value={70} color="#4A90E2" />
+                          </ProgressBar>
+                        </Box>
+                      </>
+                    )}
 
                     <Typography sx={{ color: '#888', fontSize: '0.8rem', fontStyle: 'italic', lineHeight: 1.5, mb: 0 }}>
-                      "Focus on Strategic Design to unlock Principal Engineer opportunities." — AI Advisor
+                      "Focus on these areas to accelerate your career growth." — AI Advisor
                     </Typography>
                   </Box>
                 </Box>
@@ -463,123 +495,139 @@ export default function CareerPath() {
                 </Box>
 
                 <Box sx={{ display: 'flex', gap: 2.5, flexDirection: { xs: 'column', md: 'row' } }}>
-                  {/* Job Card 1 */}
-                  <Box sx={{ flex: 1 }}>
-                    <JobCard>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                        <Box 
-                          sx={{ 
-                            width: 48,
-                            height: 48,
-                            borderRadius: '12px',
-                            background: 'linear-gradient(135deg, #FF4500 0%, #FF6835 100%)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '1.5rem'
-                          }}
-                        >
-                          🎯
-                        </Box>
-                        <Chip 
-                          label="94% MATCH" 
-                          size="small" 
-                          sx={{ 
-                            bgcolor: 'rgba(76, 175, 80, 0.15)', 
-                            color: '#4CAF50',
-                            fontWeight: 700,
-                            fontSize: '0.65rem',
-                            height: '24px',
-                            letterSpacing: 0.5
-                          }} 
-                        />
-                      </Box>
-
-                      <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem', mb: 1 }}>
-                        Principal UI Architect
-                      </Typography>
-                      <Typography sx={{ color: '#888', fontSize: '0.85rem', mb: 2, lineHeight: 1.5, flex: 1 }}>
-                        Lead the evolution of our global design system across all product lines...
-                      </Typography>
+                  {careerData?.recommended_roles && careerData.recommended_roles.length > 0 ? (
+                    careerData.recommended_roles.slice(0, 2).map((role, index) => {
+                      const matchColor = role.match >= 85 ? '#4CAF50' : role.match >= 70 ? '#FF9800' : '#999';
+                      const matchBg = role.match >= 85 ? 'rgba(76, 175, 80, 0.15)' : role.match >= 70 ? 'rgba(255, 152, 0, 0.15)' : 'rgba(153, 153, 153, 0.15)';
+                      const gradients = [
+                        'linear-gradient(135deg, #FF4500 0%, #FF6835 100%)',
+                        'linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%)',
+                        'linear-gradient(135deg, #34A853 0%, #4CAF50 100%)',
+                      ];
+                      const emojis = ['🎯', '🚀', '⭐'];
                       
-                      <Box sx={{ display: 'flex', gap: 1, mb: 2.5 }}>
-                        <Chip label="Remote" size="small" sx={{ bgcolor: '#1A1A1A', color: '#999', fontSize: '0.75rem', height: '26px' }} />
-                        <Chip label="Design Engineering" size="small" sx={{ bgcolor: '#1A1A1A', color: '#999', fontSize: '0.75rem', height: '26px' }} />
-                      </Box>
+                      return (
+                        <Box key={index} sx={{ flex: 1 }}>
+                          <JobCard>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                              <Box 
+                                sx={{ 
+                                  width: 48,
+                                  height: 48,
+                                  borderRadius: '12px',
+                                  background: gradients[index % gradients.length],
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  fontSize: '1.5rem'
+                                }}
+                              >
+                                {emojis[index % emojis.length]}
+                              </Box>
+                              <Chip 
+                                label={`${role.match}% MATCH`}
+                                size="small" 
+                                sx={{ 
+                                  bgcolor: matchBg,
+                                  color: matchColor,
+                                  fontWeight: 700,
+                                  fontSize: '0.65rem',
+                                  height: '24px',
+                                  letterSpacing: 0.5
+                                }} 
+                              />
+                            </Box>
 
-                      <Button
-                        fullWidth
-                        sx={{
-                          color: '#FF4500',
-                          textTransform: 'none',
-                          fontWeight: 600,
-                          fontSize: '0.9rem',
-                          '&:hover': { backgroundColor: 'rgba(255, 69, 0, 0.05)' }
-                        }}
-                      >
-                        Details
-                      </Button>
-                    </JobCard>
-                  </Box>
+                            <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem', mb: 1 }}>
+                              {role.title}
+                            </Typography>
+                            <Typography sx={{ color: '#888', fontSize: '0.85rem', mb: 2, lineHeight: 1.5, flex: 1 }}>
+                              {role.description}
+                            </Typography>
+                            
+                            <Box sx={{ display: 'flex', gap: 1, mb: 2.5 }}>
+                              <Chip label="Remote" size="small" sx={{ bgcolor: '#1A1A1A', color: '#999', fontSize: '0.75rem', height: '26px' }} />
+                              <Chip label={role.department} size="small" sx={{ bgcolor: '#1A1A1A', color: '#999', fontSize: '0.75rem', height: '26px' }} />
+                            </Box>
 
-                  {/* Job Card 2 */}
-                  <Box sx={{ flex: 1 }}>
-                    <JobCard>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                        <Box 
-                          sx={{ 
-                            width: 48,
-                            height: 48,
-                            borderRadius: '12px',
-                            background: 'linear-gradient(135deg, #4A90E2 0%, #5BA3F5 100%)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '1.5rem'
-                          }}
-                        >
-                          🚀
+                            <Button
+                              fullWidth
+                              sx={{
+                                color: '#FF4500',
+                                textTransform: 'none',
+                                fontWeight: 600,
+                                fontSize: '0.9rem',
+                                '&:hover': { backgroundColor: 'rgba(255, 69, 0, 0.05)' }
+                              }}
+                            >
+                              Details
+                            </Button>
+                          </JobCard>
                         </Box>
-                        <Chip 
-                          label="82% MATCH" 
-                          size="small" 
-                          sx={{ 
-                            bgcolor: 'rgba(255, 152, 0, 0.15)', 
-                            color: '#FF9800',
-                            fontWeight: 700,
-                            fontSize: '0.65rem',
-                            height: '24px',
-                            letterSpacing: 0.5
-                          }} 
-                        />
-                      </Box>
+                      );
+                    })
+                  ) : (
+                    <>
+                      {/* Default fallback cards */}
+                      <Box sx={{ flex: 1 }}>
+                        <JobCard>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                            <Box 
+                              sx={{ 
+                                width: 48,
+                                height: 48,
+                                borderRadius: '12px',
+                                background: 'linear-gradient(135deg, #FF4500 0%, #FF6835 100%)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.5rem'
+                              }}
+                            >
+                              🎯
+                            </Box>
+                            <Chip 
+                              label="85% MATCH" 
+                              size="small" 
+                              sx={{ 
+                                bgcolor: 'rgba(76, 175, 80, 0.15)', 
+                                color: '#4CAF50',
+                                fontWeight: 700,
+                                fontSize: '0.65rem',
+                                height: '24px',
+                                letterSpacing: 0.5
+                              }} 
+                            />
+                          </Box>
 
-                      <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem', mb: 1 }}>
-                        Staff Product Designer
-                      </Typography>
-                      <Typography sx={{ color: '#888', fontSize: '0.85rem', mb: 2, lineHeight: 1.5, flex: 1 }}>
-                        Strategic design leadership for our next-generation AI products...
-                      </Typography>
-                      
-                      <Box sx={{ display: 'flex', gap: 1, mb: 2.5 }}>
-                        <Chip label="London/NYC" size="small" sx={{ bgcolor: '#1A1A1A', color: '#999', fontSize: '0.75rem', height: '26px' }} />
-                        <Chip label="Product" size="small" sx={{ bgcolor: '#1A1A1A', color: '#999', fontSize: '0.75rem', height: '26px' }} />
-                      </Box>
+                          <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem', mb: 1 }}>
+                            Senior Position
+                          </Typography>
+                          <Typography sx={{ color: '#888', fontSize: '0.85rem', mb: 2, lineHeight: 1.5, flex: 1 }}>
+                            Progress to senior level in your current track
+                          </Typography>
+                          
+                          <Box sx={{ display: 'flex', gap: 1, mb: 2.5 }}>
+                            <Chip label="Remote" size="small" sx={{ bgcolor: '#1A1A1A', color: '#999', fontSize: '0.75rem', height: '26px' }} />
+                            <Chip label="Your Department" size="small" sx={{ bgcolor: '#1A1A1A', color: '#999', fontSize: '0.75rem', height: '26px' }} />
+                          </Box>
 
-                      <Button
-                        fullWidth
-                        sx={{
-                          color: '#FF4500',
-                          textTransform: 'none',
-                          fontWeight: 600,
-                          fontSize: '0.9rem',
-                          '&:hover': { backgroundColor: 'rgba(255, 69, 0, 0.05)' }
-                        }}
-                      >
-                        Details
-                      </Button>
-                    </JobCard>
-                  </Box>
+                          <Button
+                            fullWidth
+                            sx={{
+                              color: '#FF4500',
+                              textTransform: 'none',
+                              fontWeight: 600,
+                              fontSize: '0.9rem',
+                              '&:hover': { backgroundColor: 'rgba(255, 69, 0, 0.05)' }
+                            }}
+                          >
+                            Details
+                          </Button>
+                        </JobCard>
+                      </Box>
+                    </>
+                  )}
                 </Box>
               </Box>
             </Box>
@@ -608,7 +656,7 @@ export default function CareerPath() {
                         CURRENT
                       </Typography>
                       <Typography sx={{ fontSize: '1rem', fontWeight: 700 }}>
-                        Senior UX Engineer
+                        {careerData?.current_role || user?.role || 'Employee'}
                       </Typography>
                     </Box>
                   </Box>
@@ -635,10 +683,10 @@ export default function CareerPath() {
                     />
                     <Box>
                       <Typography sx={{ fontSize: '0.7rem', fontWeight: 600, opacity: 0.8, letterSpacing: 0.5 }}>
-                        EST. Q3 2024
+                        EST. {careerData?.next_milestone?.date || 'Q3 2025'}
                       </Typography>
                       <Typography sx={{ fontSize: '1rem', fontWeight: 700 }}>
-                        Staff Engineer Candidate
+                        {careerData?.next_milestone?.role || 'Senior Position'}
                       </Typography>
                     </Box>
                   </Box>
@@ -668,7 +716,7 @@ export default function CareerPath() {
                         FUTURE
                       </Typography>
                       <Typography sx={{ fontSize: '1rem', fontWeight: 700 }}>
-                        Engineering Director
+                        {careerData?.next_milestone?.future || 'Leadership Role'}
                       </Typography>
                     </Box>
                   </Box>
