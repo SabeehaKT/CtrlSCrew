@@ -17,20 +17,36 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  backgroundColor: '#000',
+const StyledAppBar = styled(AppBar)(() => ({
+  backgroundColor: '#0A0A0A',
   boxShadow: 'none',
-  borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+  borderBottom: '1px solid #1A1A1A',
 }));
 
 const Logo = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
-  fontSize: '1.5rem',
+  fontSize: '1.25rem',
+  cursor: 'pointer',
   '& span': {
     color: '#FF4500',
   },
-  [theme.breakpoints.down('sm')]: {
-    fontSize: '1.2rem',
+}));
+
+const NavButton = styled(Button)(({ theme }) => ({
+  color: '#888',
+  textTransform: 'none',
+  fontSize: '0.85rem',
+  fontWeight: 500,
+  margin: theme.spacing(0, 0.8),
+  padding: theme.spacing(0.5, 1),
+  whiteSpace: 'nowrap',
+  minWidth: 'auto',
+  '&:hover': {
+    color: '#FF4500',
+    backgroundColor: 'transparent',
+  },
+  '&.active': {
+    color: '#FF4500',
   },
 }));
 
@@ -148,22 +164,6 @@ const LearnMoreButton = styled(Button)(({ theme }) => ({
     fontSize: '0.9rem',
     width: '100%',
     maxWidth: '300px',
-  },
-}));
-
-const NavButton = styled(Button)(({ theme }) => ({
-  color: '#fff',
-  textTransform: 'none',
-  fontSize: '1rem',
-  fontWeight: 500,
-  margin: theme.spacing(0, 2),
-  '&:hover': {
-    color: '#FF4500',
-    backgroundColor: 'transparent',
-  },
-  [theme.breakpoints.down('md')]: {
-    margin: theme.spacing(0, 1),
-    fontSize: '0.9rem',
   },
 }));
 
@@ -347,22 +347,22 @@ export default function Home() {
         {/* Navigation Bar */}
         <StyledAppBar position="fixed">
           <Container maxWidth="xl">
-            <Toolbar sx={{ justifyContent: 'space-between', py: 1 }}>
-              <Logo variant="h6">
+            <Toolbar sx={{ justifyContent: 'space-between', minHeight: '70px' }}>
+              <Logo onClick={() => router.push('/')}>
                 <span>ZenX</span> Connect
               </Logo>
-              
-              {!isMobile && (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <NavButton>Home</NavButton>
-                  <NavButton>Career Path</NavButton>
-                  <NavButton>Learning</NavButton>
-                  <NavButton>Well-Being</NavButton>
 
-                </Box>
-              )}
-              
-              <LoginButton onClick={() => router.push('/login')}>Login</LoginButton>
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+                <NavButton className="active">Home</NavButton>
+                <NavButton>Career Path</NavButton>
+                <NavButton>Learning</NavButton>
+                <NavButton>Wellbeing</NavButton>
+                <NavButton>Compliance</NavButton>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <LoginButton onClick={() => router.push('/login')}>Login</LoginButton>
+              </Box>
             </Toolbar>
           </Container>
         </StyledAppBar>
