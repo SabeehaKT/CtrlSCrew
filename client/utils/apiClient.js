@@ -296,6 +296,145 @@ export const apiClient = {
     });
   },
 
+  // Leave endpoints
+  async getMyLeaveBalance() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/leave/balance', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async initializeLeaveBalances() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/leave/balance/initialize', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getAllLeaveBalances() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/leave/balance/all', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  // Leave Request endpoints
+  async applyLeave(leaveData) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/leave-requests/', {
+      method: 'POST',
+      body: JSON.stringify(leaveData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getMyLeaveRequests() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/leave-requests/', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getAllLeaveRequests() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/leave-requests/all', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async updateLeaveRequest(requestId, updateData) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/leave-requests/${requestId}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData),
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  // Attendance endpoints
+  async markBulkAttendance(date, status) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/attendance/bulk?date=${date}&status=${status}`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async updateAttendance(attendanceId, status, leaveType = null) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    const params = new URLSearchParams({ status });
+    if (leaveType) {
+      params.append('leave_type', leaveType);
+    }
+    return this.request(`/api/attendance/${attendanceId}?${params.toString()}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getAttendanceByDate(date) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/attendance/date/${date}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
   // Auth helpers
   logout() {
     localStorage.removeItem('token');
