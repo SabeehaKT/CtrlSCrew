@@ -31,6 +31,7 @@ import { styled } from '@mui/material/styles';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { apiClient } from '../utils/apiClient';
+import coursesData from '../data/courses.json';
 import {
   SmartToy,
   CalendarMonth,
@@ -573,6 +574,15 @@ export default function Dashboard() {
         
         setUser(userData);
         
+        // Select 2 user-specific courses based on user ID
+        const userId = userData.id || 1;
+        const startIndex = (userId * 2) % coursesData.length;
+        const selectedCourses = [
+          coursesData[startIndex],
+          coursesData[(startIndex + 1) % coursesData.length]
+        ];
+        setUserCourses(selectedCourses);
+        
         // Fetch latest payroll data
         try {
           const latestPayroll = await apiClient.getLatestPayroll(userData.id);
@@ -661,10 +671,10 @@ export default function Dashboard() {
               </Logo>
 
               <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
-                <NavButton>Home</NavButton>
-                <NavButton>Career Path</NavButton>
-                <NavButton>Learning</NavButton>
-                <NavButton>Well-being</NavButton>
+                <NavButton onClick={() => router.push('/dashboard')}>Home</NavButton>
+                <NavButton onClick={() => router.push('/career')}>Career Path</NavButton>
+                <NavButton onClick={() => router.push('/learning')}>Learning</NavButton>
+                <NavButton onClick={() => router.push('/dashboard')}>Well-being</NavButton>
               </Box>
 
               <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
@@ -916,188 +926,131 @@ export default function Dashboard() {
                 </Grid>
               </Grid>
 
-              {/* Active Learning - spans full width of left column (below Payroll + Leave) */}
+              {/* LinkedIn Learning - spans full width of left column (below Payroll + Leave) */}
           <Box sx={{ mb: 3 }}>
             <StatCard>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2, mb: 3 }}>
-                <Box sx={{ display: 'flex', gap: 2, flex: 1, minWidth: 0 }}>
-                  <Box
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      minWidth: 80,
-                      borderRadius: '12px',
-                      bgcolor: '#1A1A1A',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
+              {userCourses.map((course, index) => (
+                <Box 
+                  key={course.id}
+                  sx={{ 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'flex-start', 
+                    flexWrap: 'wrap', 
+                    gap: 2, 
+                    mb: index === 0 ? 3 : 0,
+                    pt: index === 1 ? 5 : 0,
+                    mt: index === 1 ? 4 : 0,
+                    borderTop: index === 1 ? '1px solid #1A1A1A' : 'none'
+                  }}
+                >
+                  <Box sx={{ display: 'flex', gap: 2, flex: 1, minWidth: 0 }}>
                     <Box
                       sx={{
-                        width: 32,
-                        height: 40,
-                        border: '2px solid #444',
-                        borderRadius: '4px',
-                        position: 'relative',
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: -6,
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          width: 14,
-                          height: 14,
-                          borderRadius: '50%',
-                          border: '2px solid #444',
-                        },
+                        width: 80,
+                        height: 80,
+                        minWidth: 80,
+                        borderRadius: '12px',
+                        bgcolor: '#1A1A1A',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                       }}
-                    />
-                  </Box>
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                      <School sx={{ color: '#FF4500', fontSize: 20 }} />
-                      <Typography sx={{ color: '#999', fontSize: '0.75rem', fontWeight: 600 }}>
-                        LinkedIn Learning
+                    >
+                      <Box
+                        sx={{
+                          width: 32,
+                          height: 40,
+                          border: course.progress === 100 ? '2px solid #4CAF50' : '2px solid #444',
+                          borderRadius: '4px',
+                          position: 'relative',
+                          bgcolor: course.progress === 100 ? 'rgba(76, 175, 80, 0.1)' : 'transparent',
+                          '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: -6,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            width: 14,
+                            height: 14,
+                            borderRadius: '50%',
+                            border: course.progress === 100 ? '2px solid #4CAF50' : '2px solid #444',
+                            bgcolor: course.progress === 100 ? '#4CAF50' : 'transparent',
+                          },
+                        }}
+                      />
+                    </Box>
+                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <School sx={{ color: '#FF4500', fontSize: 20 }} />
+                        <Typography sx={{ color: '#999', fontSize: '0.75rem', fontWeight: 600 }}>
+                          LinkedIn Learning
+                        </Typography>
+                      </Box>
+                      <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.95rem', mb: 0.5 }}>
+                        {course.title}
+                      </Typography>
+                      <Typography sx={{ color: '#888', fontSize: '0.8rem', mb: 1 }}>
+                        {course.module}
+                      </Typography>
+                      <LinearProgress
+                        variant="determinate"
+                        value={course.progress}
+                        sx={{
+                          height: 6,
+                          borderRadius: 3,
+                          bgcolor: '#1A1A1A',
+                          '& .MuiLinearProgress-bar': { 
+                            bgcolor: course.progress === 100 ? '#4CAF50' : '#FF4500', 
+                            borderRadius: 3 
+                          },
+                        }}
+                      />
+                      <Typography sx={{ color: course.progress === 100 ? '#4CAF50' : '#FF4500', fontSize: '0.75rem', mt: 0.5 }}>
+                        {course.progress}% Completed
                       </Typography>
                     </Box>
-                    <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.95rem', mb: 0.5 }}>
-                      AI Integration in HR Workflows
-                    </Typography>
-                    <Typography sx={{ color: '#888', fontSize: '0.8rem', mb: 1 }}>
-                      Module 3: Automated Screening Systems
-                    </Typography>
-                    <LinearProgress
-                      variant="determinate"
-                      value={72}
+                  </Box>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
+                    <Button
+                      component="a"
+                      href="https://www.linkedin.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       sx={{
-                        height: 6,
-                        borderRadius: 3,
-                        bgcolor: '#1A1A1A',
-                        '& .MuiLinearProgress-bar': { bgcolor: '#FF4500', borderRadius: 3 },
+                        color: '#FF4500',
+                        textTransform: 'none',
+                        fontSize: '0.8rem',
+                        fontWeight: 600,
+                        p: 0,
+                        minWidth: 'auto',
+                        textDecoration: 'none',
+                        '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
                       }}
-                    />
-                    <Typography sx={{ color: '#FF4500', fontSize: '0.75rem', mt: 0.5 }}>72% Completed</Typography>
+                    >
+                      BROWSE COURSES
+                    </Button>
+                    {course.progress < 100 && (
+                      <Button
+                        variant="contained"
+                        onClick={() => window.open(course.url, '_blank')}
+                        sx={{
+                          bgcolor: '#FF4500',
+                          color: '#fff',
+                          textTransform: 'none',
+                          fontWeight: 600,
+                          px: 2.5,
+                          py: 1,
+                          borderRadius: '8px',
+                          '&:hover': { bgcolor: '#E03E00' },
+                        }}
+                      >
+                        RESUME
+                      </Button>
+                    )}
                   </Box>
                 </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                  <Button
-                    sx={{
-                      color: '#FF4500',
-                      textTransform: 'none',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      p: 0,
-                      minWidth: 'auto',
-                      '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
-                    }}
-                  >
-                    BROWSE COURSES
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={() => window.open('https://www.linkedin.com/feed/', '_blank')}
-                    sx={{
-                      bgcolor: '#FF4500',
-                      color: '#fff',
-                      textTransform: 'none',
-                      fontWeight: 600,
-                      px: 2.5,
-                      py: 1,
-                      borderRadius: '8px',
-                      '&:hover': { bgcolor: '#E03E00' },
-                    }}
-                  >
-                    RESUME
-                  </Button>
-                </Box>
-              </Box>
-              
-              {/* Second Course - AI Integration Basics (100% Completed) */}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2, pt: 5, mt: 4, borderTop: '1px solid #1A1A1A' }}>
-                <Box sx={{ display: 'flex', gap: 2, flex: 1, minWidth: 0 }}>
-                  <Box
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      minWidth: 80,
-                      borderRadius: '12px',
-                      bgcolor: '#1A1A1A',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        width: 32,
-                        height: 40,
-                        border: '2px solid #4CAF50',
-                        borderRadius: '4px',
-                        position: 'relative',
-                        bgcolor: 'rgba(76, 175, 80, 0.1)',
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: -6,
-                          left: '50%',
-                          transform: 'translateX(-50%)',
-                          width: 14,
-                          height: 14,
-                          borderRadius: '50%',
-                          border: '2px solid #4CAF50',
-                          bgcolor: '#4CAF50',
-                        },
-                      }}
-                    />
-                  </Box>
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                      <School sx={{ color: '#FF4500', fontSize: 20 }} />
-                      <Typography sx={{ color: '#999', fontSize: '0.75rem', fontWeight: 600 }}>
-                        LinkedIn Learning
-                      </Typography>
-                    </Box>
-                    <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.95rem', mb: 0.5 }}>
-                      AI Integration Basics
-                    </Typography>
-                    <Typography sx={{ color: '#888', fontSize: '0.8rem', mb: 1 }}>
-                      All modules completed
-                    </Typography>
-                    <LinearProgress
-                      variant="determinate"
-                      value={100}
-                      sx={{
-                        height: 6,
-                        borderRadius: 3,
-                        bgcolor: '#1A1A1A',
-                        '& .MuiLinearProgress-bar': { bgcolor: '#4CAF50', borderRadius: 3 },
-                      }}
-                    />
-                    <Typography sx={{ color: '#4CAF50', fontSize: '0.75rem', mt: 0.5 }}>100% Completed</Typography>
-                  </Box>
-                </Box>
-                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                  <Button
-                    component="a"
-                    href="https://www.linkedin.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      color: '#FF4500',
-                      textTransform: 'none',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      p: 0,
-                      minWidth: 'auto',
-                      textDecoration: 'none',
-                      '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
-                    }}
-                  >
-                    BROWSE COURSES
-                  </Button>
-                </Box>
-              </Box>
+              ))}
             </StatCard>
           </Box>
             </Box>

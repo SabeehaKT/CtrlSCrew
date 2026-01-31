@@ -1,0 +1,300 @@
+[
+  {
+    "id": "fy25-benefits-enrollment",
+    "title": "FY25 Benefits Enrollment",
+    "status": "AWAITING SIGNATURE",
+    "addedDate": "Added yesterday",
+    "dueDate": "February 5, 2026",
+    "category": "Benefits",
+    "requiresSignature": true,
+    "urgent": true,
+    "description": "Annual benefits enrollment for Fiscal Year 2025. Please review and confirm your benefit selections.",
+    "sections": [
+      {
+        "heading": "Benefits Enrollment for FY25",
+        "content": "Welcome to your Annual Benefits Enrollment for Fiscal Year 2025 (April 2025 - March 2026).\n\nThis enrollment period allows you to review and update your benefit elections for the upcoming year. Please carefully review all options and make your selections before the deadline."
+      },
+      {
+        "heading": "Health Insurance Options",
+        "content": "**Medical Coverage Plans:**\n\n**Option 1: Platinum Plan**\n- Premium: ₹3,500/month (employee portion)\n- Deductible: ₹10,000 annually\n- Coverage: 100% after deductible\n- Family coverage included\n\n**Option 2: Gold Plan (Currently Selected)**\n- Premium: ₹2,500/month (employee portion)\n- Deductible: ₹25,000 annually\n- Coverage: 80% after deductible\n\n**Option 3: Silver Plan**\n- Premium: ₹1,500/month (employee portion)\n- Deductible: ₹50,000 annually\n- Coverage: 70% after deductible"
+      },
+      {
+        "heading": "How to Complete Enrollment",
+        "content": "**Steps to Complete:**\n\n1. Review all benefit options carefully\n2. Make your selections or confirm existing elections\n3. Update beneficiary information if needed\n4. Review cost summary and impact on take-home pay\n5. Sign this document electronically to confirm enrollment"
+      }
+    ],
+    "signatureRequired": {
+      "acknowledgment": "I acknowledge that I have reviewed all benefit options and confirm my elections for FY25.",
+      "fields": [
+        {"label": "Full Name", "type": "text", "required": true},
+        {"label": "Employee ID", "type": "text", "required": true},
+        {"label": "Date", "type": "date", "required": true},
+        {"label": "Electronic Signature", "type": "signature", "required": true}
+      ]
+    }
+  },
+  {
+    "id": "updated-ip-policy",
+    "title": "Updated IP Policy",
+    "status": "AWAITING REVIEW",
+    "addedDate": "Added 3 days ago",
+    "dueDate": "February 10, 2026",
+    "category": "Legal",
+    "requiresSignature": true,
+    "urgent": false,
+    "description": "Updated Intellectual Property Policy. Please review changes and acknowledge acceptance.",
+    "sections": [
+      {
+        "heading": "Intellectual Property Rights Policy - 2026 Update",
+        "content": "This updated Intellectual Property (IP) Policy outlines the ownership, use, and protection of intellectual property created by employees during their employment with ZenX Connect.\n\n**Effective Date:** February 10, 2026\n**Policy Version:** 3.0"
+      },
+      {
+        "heading": "Company Ownership of IP",
+        "content": "**Work Product Ownership:**\n\nZenX Connect owns all intellectual property created by employees that:\n- Relates to company business\n- Uses company resources\n- Results from assigned duties\n- Developed during employment"
+      },
+      {
+        "heading": "Employee Rights & Personal Projects",
+        "content": "**Employees Retain Ownership of:**\n- Personal projects unrelated to company business\n- Pre-existing IP brought to employment\n- Academic work that doesn't disclose confidential information"
+      }
+    ],
+    "signatureRequired": {
+      "acknowledgment": "I acknowledge that I have read and understood the Updated Intellectual Property Policy (Version 3.0).",
+      "fields": [
+        {"label": "Full Name", "type": "text", "required": true},
+        {"label": "Employee ID", "type": "text", "required": true},
+        {"label": "Date", "type": "date", "required": true},
+        {"label": "Electronic Signature", "type": "signature", "required": true}
+      ]
+    }
+  },
+  {
+    "id": "code-of-conduct-2026",
+    "title": "Code of Conduct Agreement 2026",
+    "status": "AWAITING SIGNATURE",
+    "addedDate": "Added 2 days ago",
+    "dueDate": "February 8, 2026",
+    "category": "Ethics",
+    "requiresSignature": true,
+    "urgent": true,
+    "description": "Annual Code of Conduct acknowledgment for all employees.",
+    "sections": [
+      {
+        "heading": "Code of Conduct Overview",
+        "content": "As an employee of ZenX Connect, you are expected to maintain the highest standards of professional and ethical conduct. This Code of Conduct outlines the behavioral expectations for all team members."
+      },
+      {
+        "heading": "Professional Behavior",
+        "content": "**Expected Behaviors:**\n- Treat all colleagues with respect and dignity\n- Communicate professionally in all interactions\n- Maintain confidentiality of sensitive information\n- Report any violations or concerns promptly\n- Avoid conflicts of interest\n- Comply with all company policies and applicable laws"
+      },
+      {
+        "heading": "Prohibited Activities",
+        "content": "**The following are strictly prohibited:**\n- Harassment or discrimination of any kind\n- Misuse of company resources or information\n- Acceptance of bribes or kickbacks\n- Insider trading or securities violations\n- Falsification of records or reports\n- Violence or threats in the workplace"
+      },
+      {
+        "heading": "Reporting Violations",
+        "content": "**How to Report:**\n- Contact your manager or HR immediately\n- Use the anonymous ethics hotline: 1800-XXX-XXXX\n- Email: ethics@zenxconnect.com\n- No retaliation for good-faith reports"
+      }
+    ],
+    "signatureRequired": {
+      "acknowledgment": "I acknowledge that I have read, understood, and agree to comply with ZenX Connect's Code of Conduct. I understand that violations may result in disciplinary action.",
+      "fields": [
+        {"label": "Full Name", "type": "text", "required": true},
+        {"label": "Employee ID", "type": "text", "required": true},
+        {"label": "Date", "type": "date", "required": true},
+        {"label": "Electronic Signature", "type": "signature", "required": true}
+      ]
+    }
+  },
+  {
+    "id": "remote-work-agreement",
+    "title": "Remote Work Agreement",
+    "status": "AWAITING SIGNATURE",
+    "addedDate": "Added 5 days ago",
+    "dueDate": "February 15, 2026",
+    "category": "Work Arrangements",
+    "requiresSignature": true,
+    "urgent": false,
+    "description": "Agreement for remote/hybrid work arrangements and responsibilities.",
+    "sections": [
+      {
+        "heading": "Remote Work Arrangement",
+        "content": "This agreement outlines the terms and conditions for your remote work arrangement with ZenX Connect. Remote work is a privilege that requires mutual trust and accountability."
+      },
+      {
+        "heading": "Work Schedule and Availability",
+        "content": "**Your Responsibilities:**\n- Maintain regular work hours as agreed with your manager\n- Be available during core business hours (10 AM - 4 PM)\n- Respond to messages within 2 hours during work hours\n- Attend all required meetings\n- Keep your calendar updated\n- Log work hours accurately in timesheet system"
+      },
+      {
+        "heading": "Home Office Requirements",
+        "content": "**Required Setup:**\n- Dedicated workspace free from distractions\n- Reliable high-speed internet (minimum 25 Mbps)\n- Professional background for video calls\n- Ergonomic setup (desk, chair, lighting)\n- Secure location for company equipment"
+      },
+      {
+        "heading": "Equipment and Security",
+        "content": "**Company-Provided Equipment:**\n- Laptop/desktop computer\n- Monitor (upon request)\n- Headset for calls\n- VPN access credentials\n\n**Your Responsibilities:**\n- Maintain equipment in good condition\n- Use VPN for all company network access\n- Keep devices secure and locked when not in use\n- Return all equipment upon separation"
+      },
+      {
+        "heading": "Performance and Accountability",
+        "content": "**Expectations:**\n- Same productivity and quality standards as office work\n- Meet all deadlines and deliverables\n- Maintain regular communication with team\n- Weekly one-on-one check-ins with manager\n- Quarterly performance reviews"
+      }
+    ],
+    "signatureRequired": {
+      "acknowledgment": "I acknowledge and agree to comply with all terms of this Remote Work Agreement. I understand that failure to meet expectations may result in termination of remote work privileges.",
+      "fields": [
+        {"label": "Full Name", "type": "text", "required": true},
+        {"label": "Employee ID", "type": "text", "required": true},
+        {"label": "Date", "type": "date", "required": true},
+        {"label": "Electronic Signature", "type": "signature", "required": true}
+      ]
+    }
+  },
+  {
+    "id": "data-privacy-gdpr-consent",
+    "title": "Data Privacy & GDPR Consent",
+    "status": "AWAITING SIGNATURE",
+    "addedDate": "Added 1 week ago",
+    "dueDate": "February 12, 2026",
+    "category": "Compliance",
+    "requiresSignature": true,
+    "urgent": false,
+    "description": "Consent for processing of personal data and GDPR compliance acknowledgment.",
+    "sections": [
+      {
+        "heading": "Data Privacy Notice",
+        "content": "ZenX Connect is committed to protecting your personal data and complying with applicable data protection laws, including GDPR (General Data Protection Regulation)."
+      },
+      {
+        "heading": "Data We Collect",
+        "content": "**Personal Information:**\n- Name, employee ID, contact details\n- Employment history and performance records\n- Salary and benefits information\n- Attendance and timesheet data\n- Training and certification records\n- Health information (for benefits administration)\n- Emergency contact information"
+      },
+      {
+        "heading": "How We Use Your Data",
+        "content": "**Purposes:**\n- Employment administration and payroll processing\n- Benefits enrollment and management\n- Performance evaluation and career development\n- Compliance with legal and regulatory requirements\n- Internal communications and collaboration\n- Security and access control"
+      },
+      {
+        "heading": "Your Rights",
+        "content": "**Under GDPR, you have the right to:**\n- Access your personal data\n- Request correction of inaccurate data\n- Request deletion of data (subject to legal requirements)\n- Object to processing of your data\n- Request data portability\n- Withdraw consent (where applicable)\n- Lodge a complaint with supervisory authority"
+      },
+      {
+        "heading": "Data Security",
+        "content": "**We protect your data through:**\n- Encryption of sensitive information\n- Access controls and authentication\n- Regular security audits and assessments\n- Employee training on data protection\n- Secure backup and disaster recovery procedures"
+      },
+      {
+        "heading": "Contact Information",
+        "content": "**Data Protection Officer:**\nEmail: dpo@zenxconnect.com\nPhone: +91-XXXX-DPO-TEAM\n\nFor any questions or concerns about your personal data, please contact our Data Protection Officer."
+      }
+    ],
+    "signatureRequired": {
+      "acknowledgment": "I consent to ZenX Connect processing my personal data as described in this notice. I understand my rights under GDPR and data protection laws.",
+      "fields": [
+        {"label": "Full Name", "type": "text", "required": true},
+        {"label": "Employee ID", "type": "text", "required": true},
+        {"label": "Date", "type": "date", "required": true},
+        {"label": "Electronic Signature", "type": "signature", "required": true}
+      ]
+    }
+  },
+  {
+    "id": "acceptable-use-policy",
+    "title": "IT Acceptable Use Policy",
+    "status": "AWAITING REVIEW",
+    "addedDate": "Added 4 days ago",
+    "dueDate": "February 14, 2026",
+    "category": "IT Security",
+    "requiresSignature": true,
+    "urgent": false,
+    "description": "Policy governing acceptable use of company IT resources and equipment.",
+    "sections": [
+      {
+        "heading": "Acceptable Use Policy",
+        "content": "This policy defines acceptable use of ZenX Connect's information technology resources, including computers, networks, email, internet access, and software."
+      },
+      {
+        "heading": "Permitted Use",
+        "content": "**Company IT resources may be used for:**\n- Business-related activities and communications\n- Professional development and training\n- Reasonable personal use during breaks (email, news, personal banking)\n- Authorized remote access to company systems"
+      },
+      {
+        "heading": "Prohibited Activities",
+        "content": "**The following are strictly prohibited:**\n- Accessing, downloading, or distributing illegal content\n- Harassment, discrimination, or offensive communications\n- Installing unauthorized software or hardware\n- Attempting to bypass security controls\n- Sharing passwords or access credentials\n- Using company resources for personal business ventures\n- Excessive personal use that interferes with work\n- Downloading copyrighted material without authorization"
+      },
+      {
+        "heading": "Email and Communication",
+        "content": "**Email Guidelines:**\n- Use professional language and tone\n- Do not forward chain letters or spam\n- Be cautious of phishing attempts\n- Do not send confidential information via unencrypted email\n- Company reserves the right to monitor email communications"
+      },
+      {
+        "heading": "Internet Usage",
+        "content": "**Acceptable Internet Use:**\n- Browsing should be primarily work-related\n- Avoid visiting inappropriate or risky websites\n- Do not stream video excessively (affects bandwidth)\n- Social media use should be limited and professional\n- Report suspicious websites or downloads to IT"
+      },
+      {
+        "heading": "Mobile Devices",
+        "content": "**Company-Issued Devices:**\n- Protect with strong passwords/biometrics\n- Install company MDM (Mobile Device Management) software\n- Keep software and apps updated\n- Report lost or stolen devices immediately\n- Do not jailbreak or root devices"
+      },
+      {
+        "heading": "Monitoring and Privacy",
+        "content": "**Important Notice:**\nZenX Connect reserves the right to monitor and audit use of company IT resources. Employees should have no expectation of privacy when using company equipment or networks."
+      },
+      {
+        "heading": "Violations and Consequences",
+        "content": "**Policy violations may result in:**\n- Written warning\n- Suspension of IT access privileges\n- Termination of employment\n- Legal action (for illegal activities)\n\nReport violations to: it-security@zenxconnect.com"
+      }
+    ],
+    "signatureRequired": {
+      "acknowledgment": "I acknowledge that I have read and understood the IT Acceptable Use Policy. I agree to comply with all terms and understand that violations may result in disciplinary action.",
+      "fields": [
+        {"label": "Full Name", "type": "text", "required": true},
+        {"label": "Employee ID", "type": "text", "required": true},
+        {"label": "Date", "type": "date", "required": true},
+        {"label": "Electronic Signature", "type": "signature", "required": true}
+      ]
+    }
+  },
+  {
+    "id": "nda-confidentiality-agreement",
+    "title": "Non-Disclosure Agreement (NDA)",
+    "status": "AWAITING SIGNATURE",
+    "addedDate": "Added 6 days ago",
+    "dueDate": "February 7, 2026",
+    "category": "Legal",
+    "requiresSignature": true,
+    "urgent": true,
+    "description": "Confidentiality and non-disclosure agreement protecting company trade secrets.",
+    "sections": [
+      {
+        "heading": "Non-Disclosure Agreement",
+        "content": "This Non-Disclosure Agreement (NDA) is entered into between ZenX Connect and you, the employee, to protect confidential and proprietary information disclosed during your employment."
+      },
+      {
+        "heading": "Definition of Confidential Information",
+        "content": "**Confidential Information includes, but is not limited to:**\n- Trade secrets and proprietary technology\n- Source code, algorithms, and technical specifications\n- Business plans, strategies, and financial information\n- Customer lists, contracts, and pricing information\n- Product roadmaps and development plans\n- Marketing strategies and campaigns\n- Employee information and HR records\n- Any information marked as \"Confidential\" or \"Proprietary\""
+      },
+      {
+        "heading": "Obligations",
+        "content": "**You agree to:**\n- Keep all Confidential Information strictly confidential\n- Not disclose Confidential Information to any third party\n- Not use Confidential Information for personal benefit\n- Protect Confidential Information with reasonable care\n- Return all confidential materials upon termination\n- Not remove confidential materials from company premises without authorization"
+      },
+      {
+        "heading": "Exclusions",
+        "content": "**This NDA does not apply to information that:**\n- Is or becomes publicly available through no fault of yours\n- Was known to you prior to disclosure by the company\n- Is independently developed by you without use of Confidential Information\n- Is required to be disclosed by law or court order (with prior notice to company)"
+      },
+      {
+        "heading": "Duration",
+        "content": "**Confidentiality Period:**\n- This agreement remains in effect during your employment\n- Obligations continue for 5 years after employment termination\n- Trade secret protection continues indefinitely\n- Return of materials required immediately upon separation"
+      },
+      {
+        "heading": "Consequences of Breach",
+        "content": "**Breach of this NDA may result in:**\n- Immediate termination of employment\n- Injunctive relief to prevent further disclosure\n- Monetary damages for losses incurred\n- Attorney fees and court costs\n- Criminal prosecution (for theft of trade secrets)\n\nThe company will pursue all available legal remedies."
+      },
+      {
+        "heading": "Post-Employment Obligations",
+        "content": "**After leaving ZenX Connect:**\n- You must return all confidential materials\n- Delete all company information from personal devices\n- Continue to maintain confidentiality\n- Not solicit company employees or clients\n- Not compete with the company (if non-compete applies)"
+      }
+    ],
+    "signatureRequired": {
+      "acknowledgment": "I acknowledge that I have read, understood, and agree to be bound by this Non-Disclosure Agreement. I understand the serious consequences of breaching this agreement.",
+      "fields": [
+        {"label": "Full Name", "type": "text", "required": true},
+        {"label": "Employee ID", "type": "text", "required": true},
+        {"label": "Date", "type": "date", "required": true},
+        {"label": "Electronic Signature", "type": "signature", "required": true}
+      ]
+    }
+  }
+]
