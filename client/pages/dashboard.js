@@ -66,9 +66,12 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 const NavButton = styled(Button)(({ theme }) => ({
   color: '#888',
   textTransform: 'none',
-  fontSize: '0.9rem',
+  fontSize: '0.85rem',
   fontWeight: 500,
-  margin: theme.spacing(0, 1.5),
+  margin: theme.spacing(0, 0.8),
+  padding: theme.spacing(0.5, 1),
+  whiteSpace: 'nowrap',
+  minWidth: 'auto',
   '&:hover': {
     color: '#FF4500',
     backgroundColor: 'transparent',
@@ -176,6 +179,7 @@ export default function Dashboard() {
   const [payrollLoading, setPayrollLoading] = useState(true);
   const [leaveBalance, setLeaveBalance] = useState(null);
   const [leaveLoading, setLeaveLoading] = useState(true);
+  const [userCourses, setUserCourses] = useState([]);
   
   // ZenX AI Training Data - Predefined Queries and Responses
   const AI_TRAINING_DATA = [
@@ -670,11 +674,13 @@ export default function Dashboard() {
                 <span>ZenX</span> Connect
               </Logo>
 
-              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
                 <NavButton onClick={() => router.push('/dashboard')}>Home</NavButton>
-                <NavButton onClick={() => router.push('/career')}>Career Path</NavButton>
+                <NavButton onClick={() => router.push('/leave')}>Leaves</NavButton>
+                <NavButton onClick={() => router.push('/career')}>Career</NavButton>
                 <NavButton onClick={() => router.push('/learning')}>Learning</NavButton>
-                <NavButton onClick={() => router.push('/dashboard')}>Well-being</NavButton>
+                <NavButton onClick={() => router.push('/wellbeing')}>Wellbeing</NavButton>
+                <NavButton onClick={() => router.push('/compliance')}>Compliance</NavButton>
               </Box>
 
               <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>

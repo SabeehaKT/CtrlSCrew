@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Head from 'next/head';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import {
   CalendarMonth as CalendarIcon,
   AccessTime as ClockIcon,
@@ -36,8 +36,10 @@ import {
 const Logo = styled(Typography)(({ theme }) => ({
   fontWeight: 700,
   fontSize: '1.25rem',
-  color: '#fff',
-  '& span': { color: '#FF6B35', fontWeight: 800 },
+  cursor: 'pointer',
+  '& span': {
+    color: '#FF4500',
+  },
 }));
 
 const StyledAppBar = styled(AppBar)(() => ({
@@ -46,15 +48,22 @@ const StyledAppBar = styled(AppBar)(() => ({
   borderBottom: '1px solid #1A1A1A',
 }));
 
-const NavLink = styled(Link, {
-  shouldForwardProp: (prop) => prop !== 'active',
-})(({ active }) => ({
-  color: active ? '#FF6B35' : '#fff',
-  textDecoration: 'none',
-  fontSize: '0.9rem',
+const NavButton = styled(Button)(({ theme }) => ({
+  color: '#888',
+  textTransform: 'none',
+  fontSize: '0.85rem',
   fontWeight: 500,
-  margin: '0 12px',
-  '&:hover': { color: '#FF6B35' },
+  margin: theme.spacing(0, 0.8),
+  padding: theme.spacing(0.5, 1),
+  whiteSpace: 'nowrap',
+  minWidth: 'auto',
+  '&:hover': {
+    color: '#FF4500',
+    backgroundColor: 'transparent',
+  },
+  '&.active': {
+    color: '#FF4500',
+  },
 }));
 
 const CardDark = styled(Paper)(({ theme }) => ({
@@ -120,6 +129,7 @@ const recentRequests = [
 ];
 
 export default function LeavePage() {
+  const router = useRouter();
   const [leaveType, setLeaveType] = useState('Earned Leave');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -140,15 +150,17 @@ export default function LeavePage() {
         <StyledAppBar position="fixed">
           <Container maxWidth="xl">
             <Toolbar sx={{ justifyContent: 'space-between', minHeight: '70px' }}>
-              <Logo component={Link} href="/dashboard">
+              <Logo onClick={() => router.push('/dashboard')}>
                 <span>ZenX</span> Connect
               </Logo>
 
-              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-                <NavLink href="/dashboard" active={false}>Dashboard</NavLink>
-                <NavLink href="/leave" active={true}>Leave Management</NavLink>
-                <NavLink href="/payroll" active={false}>Payroll</NavLink>
-                <NavLink href="#" active={false}>AI Assistant</NavLink>
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+                <NavButton onClick={() => router.push('/dashboard')}>Home</NavButton>
+                <NavButton className="active">Leaves</NavButton>
+                <NavButton onClick={() => router.push('/career')}>Career</NavButton>
+                <NavButton onClick={() => router.push('/learning')}>Learning</NavButton>
+                <NavButton onClick={() => router.push('/wellbeing')}>Wellbeing</NavButton>
+                <NavButton onClick={() => router.push('/compliance')}>Compliance</NavButton>
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>

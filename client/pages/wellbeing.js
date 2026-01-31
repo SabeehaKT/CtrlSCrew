@@ -44,6 +44,33 @@ const StyledAppBar = styled(AppBar)(() => ({
   borderBottom: '1px solid #1a1a1a',
 }));
 
+const Logo = styled(Typography)(({ theme }) => ({
+  fontWeight: 700,
+  fontSize: '1.25rem',
+  cursor: 'pointer',
+  '& span': {
+    color: '#FF4500',
+  },
+}));
+
+const NavButton = styled(Button)(({ theme }) => ({
+  color: '#888',
+  textTransform: 'none',
+  fontSize: '0.85rem',
+  fontWeight: 500,
+  margin: theme.spacing(0, 0.8),
+  padding: theme.spacing(0.5, 1),
+  whiteSpace: 'nowrap',
+  minWidth: 'auto',
+  '&:hover': {
+    color: '#FF4500',
+    backgroundColor: 'transparent',
+  },
+  '&.active': {
+    color: '#FF4500',
+  },
+}));
+
 const DarkCard = styled(Card)(() => ({
   backgroundColor: '#0f0f0f',
   borderRadius: '16px',
@@ -230,35 +257,18 @@ export default function Wellbeing() {
         {/* Top Navigation */}
         <StyledAppBar position="fixed">
           <Container maxWidth="xl">
-            <Toolbar sx={{ minHeight: '70px !important', px: 3 }}>
-              <Typography 
-                sx={{ 
-                  fontWeight: 700,
-                  fontSize: '18px',
-                  color: '#fff',
-                  cursor: 'pointer'
-                }}
-                onClick={() => router.push('/dashboard')}
-              >
-                <span style={{ color: '#FF6B35' }}>ZenX</span> Connect
-              </Typography>
+            <Toolbar sx={{ justifyContent: 'space-between', minHeight: '70px' }}>
+              <Logo onClick={() => router.push('/dashboard')}>
+                <span>ZenX</span> Connect
+              </Logo>
               
-              <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'center', gap: 4 }}>
-                <Button 
-                  sx={{ color: '#999', textTransform: 'none', fontSize: '14px', fontWeight: 500 }}
-                  onClick={() => router.push('/dashboard')}
-                >
-                  Home
-                </Button>
-                <Button 
-                  sx={{ color: '#999', textTransform: 'none', fontSize: '14px', fontWeight: 500 }}
-                  onClick={() => router.push('/learning')}
-                >
-                  Learning
-                </Button>
-                <Button sx={{ color: '#fff', textTransform: 'none', fontSize: '14px', fontWeight: 600 }}>
-                  Well-being
-                </Button>
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 0.5, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }}>
+                <NavButton onClick={() => router.push('/dashboard')}>Home</NavButton>
+                <NavButton onClick={() => router.push('/leave')}>Leaves</NavButton>
+                <NavButton onClick={() => router.push('/career')}>Career</NavButton>
+                <NavButton onClick={() => router.push('/learning')}>Learning</NavButton>
+                <NavButton className="active">Wellbeing</NavButton>
+                <NavButton onClick={() => router.push('/compliance')}>Compliance</NavButton>
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
