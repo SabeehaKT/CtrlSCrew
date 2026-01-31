@@ -162,6 +162,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userCourses, setUserCourses] = useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [chatInput, setChatInput] = useState('');
   const [payslipOpen, setPayslipOpen] = useState(false);
@@ -216,7 +217,7 @@ export default function Dashboard() {
     },
     {
       keywords: ['annual leave policy', 'leave policy', 'how many leaves', 'leave entitlement', 'vacation policy'],
-      response: `ZenX Connect's Annual Leave Policy:\n\n📅 Annual Leave: 20 days per year\n🏥 Sick Leave: 10 days per year\n🎉 Casual Leave: Included in Annual Leave\n\n• Leaves are credited at the beginning of each calendar year\n• Unused Annual Leave can be carried forward (max 5 days)\n• Sick Leave requires medical certificate for more than 3 consecutive days\n• Leave applications should be submitted at least 3 days in advance\n\nYou currently have 12 Annual Leave and 8 Sick Leave days remaining.`
+      response: (leaveBalance) => `ZenX Connect's Annual Leave Policy:\n\n📅 Earned Leave: ${leaveBalance?.earned_leave_total || 21} days per year\n🎉 Casual Leave: ${leaveBalance?.casual_leave_total || 7} days per year\n🏥 Sick Leave: ${leaveBalance?.sick_leave_total || 14} days per year\n\n• Leaves are credited at the beginning of each calendar year\n• Unused Earned Leave can be carried forward (max 5 days)\n• Sick Leave requires medical certificate for more than 3 consecutive days\n• Leave applications should be submitted at least 3 days in advance\n\nYou currently have ${leaveBalance?.earned_leave_remaining || 0} Earned Leave, ${leaveBalance?.casual_leave_remaining || 0} Casual Leave, and ${leaveBalance?.sick_leave_remaining || 0} Sick Leave days remaining.`
     },
     {
       keywords: ['salary increment', 'increment policy', 'how increment works', 'when increment', 'pay raise'],
@@ -424,7 +425,9 @@ export default function Dashboard() {
     // EXISTING QUERIES
     {
       keywords: ['leave balance', 'remaining leave', 'leaves left', 'vacation days', 'holiday balance'],
-      response: `You have 12 days of Annual Leave remaining out of 20 total days, and 8 days of Sick Leave remaining out of 10 total days. You can apply for leave through the Quick Actions menu.`
+      response: (leaveBalance) => leaveBalance 
+        ? `Your current leave balance:\n\n📅 Earned Leave: ${leaveBalance.earned_leave_remaining} / ${leaveBalance.earned_leave_total} days\n🎉 Casual Leave: ${leaveBalance.casual_leave_remaining} / ${leaveBalance.casual_leave_total} days\n🏥 Sick Leave: ${leaveBalance.sick_leave_remaining} / ${leaveBalance.sick_leave_total} days\n\nYou can apply for leave through the Quick Actions menu.`
+        : `Your leave balance is being loaded. Please check the Leave Balance card on your dashboard or contact admin if you don't see your balance.`
     },
     {
       keywords: ['next payroll', 'salary date', 'payment date', 'when paid', 'payday'],
@@ -436,7 +439,9 @@ export default function Dashboard() {
     },
     {
       keywords: ['apply leave', 'request leave', 'take leave', 'book vacation', 'submit leave'],
-      response: `To apply for leave, click on "Apply Leave" in the Quick Actions section. You can select the leave type (Annual or Sick), choose dates, and submit your request. Currently, you have 12 Annual Leave days and 8 Sick Leave days available.`
+      response: (leaveBalance) => leaveBalance 
+        ? `To apply for leave, click on "Apply Leave" in the Quick Actions section. You can select the leave type (Earned, Casual, or Sick), choose dates, and submit your request. Currently, you have ${leaveBalance.earned_leave_remaining} Earned Leave, ${leaveBalance.casual_leave_remaining} Casual Leave, and ${leaveBalance.sick_leave_remaining} Sick Leave days available.`
+        : `To apply for leave, click on "Apply Leave" in the Quick Actions section. You can select the leave type, choose dates, and submit your request. Check your Leave Balance card for available days.`
     },
     {
       keywords: ['timesheet', 'log hours', 'submit hours', 'working hours', 'time tracking'],
@@ -522,8 +527,8 @@ export default function Dashboard() {
       let botResponse = null;
       for (const data of AI_TRAINING_DATA) {
         if (data.keywords.some(keyword => userInputLower.includes(keyword))) {
-          // Check if response is a function (for random responses) or a string
-          botResponse = typeof data.response === 'function' ? data.response() : data.response;
+          // Check if response is a function (pass leaveBalance for dynamic data) or a string
+          botResponse = typeof data.response === 'function' ? data.response(leaveBalance) : data.response;
           break;
         }
       }
@@ -929,7 +934,7 @@ export default function Dashboard() {
               {/* LinkedIn Learning - spans full width of left column (below Payroll + Leave) */}
           <Box sx={{ mb: 3 }}>
             <StatCard>
-              {userCourses.map((course, index) => (
+              {(Array.isArray(userCourses) ? userCourses : []).map((course, index) => (
                 <Box 
                   key={course.id}
                   sx={{ 

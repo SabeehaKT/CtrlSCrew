@@ -490,6 +490,20 @@ export const apiClient = {
     });
   },
 
+  // Career endpoints
+  async getCareerPath() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/career/path', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
   // Auth helpers
   logout() {
     localStorage.removeItem('token');
