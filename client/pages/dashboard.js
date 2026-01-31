@@ -793,8 +793,8 @@ export default function Dashboard() {
 
               {/* Payroll Summary (left) | Leave Balance (right) - side by side, top-aligned, directly below ZenX AI */}
               <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} sm={6}>
-                  <StatCard sx={{ height: '100%' }}>
+                <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
+                  <StatCard sx={{ height: '100%', width: '100%' }}>
                     {payrollLoading ? (
                       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', minHeight: 150 }}>
                         <CircularProgress sx={{ color: '#FF4500' }} size={30} />
@@ -846,8 +846,8 @@ export default function Dashboard() {
                     )}
                   </StatCard>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                  <StatCard sx={{ height: '100%' }}>
+                <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
+                  <StatCard sx={{ height: '100%', width: '100%' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                       <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1.5 }}>
                         LEAVE BALANCE
@@ -862,57 +862,57 @@ export default function Dashboard() {
                       </Box>
                     ) : leaveBalance ? (
                       <>
-                        <Box sx={{ mb: 2 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
-                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Earned Leave</Typography>
-                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
-                              {leaveBalance.earned_leave_remaining} / {leaveBalance.earned_leave_total} Days
+                        <Box sx={{ mb: 2.5 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 400 }}>Earned Leave</Typography>
+                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600 }}>
+                              {Math.round(leaveBalance.earned_leave_remaining || 0)} / {Math.round(leaveBalance.earned_leave_total || 21)} Days
                             </Typography>
                           </Box>
                           <LinearProgress
                             variant="determinate"
-                            value={(leaveBalance.earned_leave_remaining / leaveBalance.earned_leave_total) * 100}
+                            value={leaveBalance.earned_leave_total > 0 ? ((leaveBalance.earned_leave_used || 0) / leaveBalance.earned_leave_total) * 100 : 0}
                             sx={{
-                              height: 6,
-                              borderRadius: 3,
-                              bgcolor: '#1A1A1A',
-                              '& .MuiLinearProgress-bar': { bgcolor: '#FF4500', borderRadius: 3 },
+                              height: 8,
+                              borderRadius: 4,
+                              bgcolor: '#FF4500',
+                              '& .MuiLinearProgress-bar': { bgcolor: '#666', borderRadius: 4 },
                             }}
                           />
                         </Box>
-                        <Box sx={{ mb: 2 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
-                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Casual Leave</Typography>
-                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
-                              {leaveBalance.casual_leave_remaining} / {leaveBalance.casual_leave_total} Days
+                        <Box sx={{ mb: 2.5 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 400 }}>Casual Leave</Typography>
+                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600 }}>
+                              {Math.round(leaveBalance.casual_leave_remaining || 0)} / {Math.round(leaveBalance.casual_leave_total || 7)} Days
                             </Typography>
                           </Box>
                           <LinearProgress
                             variant="determinate"
-                            value={(leaveBalance.casual_leave_remaining / leaveBalance.casual_leave_total) * 100}
+                            value={leaveBalance.casual_leave_total > 0 ? ((leaveBalance.casual_leave_used || 0) / leaveBalance.casual_leave_total) * 100 : 0}
                             sx={{
-                              height: 6,
-                              borderRadius: 3,
-                              bgcolor: '#1A1A1A',
-                              '& .MuiLinearProgress-bar': { bgcolor: '#4285F4', borderRadius: 3 },
+                              height: 8,
+                              borderRadius: 4,
+                              bgcolor: '#FBBC04',
+                              '& .MuiLinearProgress-bar': { bgcolor: '#666', borderRadius: 4 },
                             }}
                           />
                         </Box>
                         <Box>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
-                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Sick Leave</Typography>
-                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
-                              {leaveBalance.sick_leave_remaining} / {leaveBalance.sick_leave_total} Days
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 400 }}>Sick Leave</Typography>
+                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600 }}>
+                              {Math.round(leaveBalance.sick_leave_remaining || 0)} / {Math.round(leaveBalance.sick_leave_total || 14)} Days
                             </Typography>
                           </Box>
                           <LinearProgress
                             variant="determinate"
-                            value={(leaveBalance.sick_leave_remaining / leaveBalance.sick_leave_total) * 100}
+                            value={leaveBalance.sick_leave_total > 0 ? ((leaveBalance.sick_leave_used || 0) / leaveBalance.sick_leave_total) * 100 : 0}
                             sx={{
-                              height: 6,
-                              borderRadius: 3,
-                              bgcolor: '#1A1A1A',
-                              '& .MuiLinearProgress-bar': { bgcolor: '#34A853', borderRadius: 3 },
+                              height: 8,
+                              borderRadius: 4,
+                              bgcolor: '#34A853',
+                              '& .MuiLinearProgress-bar': { bgcolor: '#666', borderRadius: 4 },
                             }}
                           />
                         </Box>
