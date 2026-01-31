@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { apiClient } from '../utils/apiClient';
 import {
   Box,
   Container,
@@ -120,11 +122,41 @@ const recentRequests = [
 ];
 
 export default function LeavePage() {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+  const [leaveBalance, setLeaveBalance] = useState(null);
+  const [leaveRequests, setLeaveRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [leaveType, setLeaveType] = useState('Earned Leave');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
   const [monthLabel, setMonthLabel] = useState('October 2023');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!apiClient.isAuthenticated()) {
+          router.push('/login');
+          return;
+        }
+        
+        const userData = await apiClient.getCurrentUser();
+        setUser(userData);
+        
+        const balance = await apiClient.getMyLeaveBalance();
+        setLeaveBalance(balance);
+        
+        const requests = await apiClient.getMyLeaveRequests();
+        setLeaveRequests(requests);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [router]);
 
   const handlePrevMonth = () => setMonthLabel('September 2023');
   const handleNextMonth = () => setMonthLabel('November 2023');
@@ -170,50 +202,78 @@ export default function LeavePage() {
             </Typography>
           </Box>
 
-          {/* Leave balance cards: Annual (left), Sick (middle), Casual (right); full-width row, wider boxes */}
+          {/* Leave balance cards */}
           <Box sx={{ display: 'flex', gap: 2, width: '100%', mb: 3, flexWrap: 'wrap' }}>
-            <Box sx={{ flex: '1 1 260px', minWidth: 260, maxWidth: '100%', display: 'flex' }}>
-              <LeaveBalanceCard sx={{ display: 'flex', flexDirection: 'column', minHeight: 200, height: '100%', width: '100%', p: 2.5, borderRadius: '16px' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                  <IconBox bg="rgba(74, 144, 226, 0.25)" sx={{ width: 48, height: 48, borderRadius: '12px' }}>
-                    <AnnualIcon sx={{ color: '#5B9BD5', fontSize: 24 }} />
-                  </IconBox>
-                  <Typography sx={{ color: '#fff', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 0.8 }}>ANNUAL</Typography>
+            {leaveBalance && (
+              <>
+                <Box sx={{ flex: '1 1 260px', minWidth: 260, maxWidth: '100%', display: 'flex' }}>
+                  <LeaveBalanceCard sx={{ display: 'flex', flexDirection: 'column', minHeight: 200, height: '100%', width: '100%', p: 2.5, borderRadius: '16px' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                      <IconBox bg="rgba(74, 144, 226, 0.25)" sx={{ width: 48, height: 48, borderRadius: '12px' }}>
+                        <AnnualIcon sx={{ color: '#5B9BD5', fontSize: 24 }} />
+                      </IconBox>
+                      <Typography sx={{ color: '#fff', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 0.8 }}>EARNED</Typography>
+                    </Box>
+                    <Typography sx={{ color: '#fff', fontSize: '2rem', fontWeight: 700, lineHeight: 1.2 }}>
+                      {Math.round(leaveBalance.earned_leave_remaining || 0)}
+                    </Typography>
+                    <Typography sx={{ color: '#9e9e9e', fontSize: '0.85rem', mb: 1.25 }}>Days remaining</Typography>
+                    <LinearProgress 
+                      variant="determinate" 
+                      value={leaveBalance.earned_leave_total > 0 ? ((leaveBalance.earned_leave_remaining || 0) / leaveBalance.earned_leave_total) * 100 : 0}
+                      sx={{ height: 6, borderRadius: 3, bgcolor: '#1A1A1A', mb: 1, '& .MuiLinearProgress-bar': { bgcolor: '#4A90E2', borderRadius: 3 } }} 
+                    />
+                    <Typography sx={{ color: '#9e9e9e', fontSize: '0.8rem' }}>
+                      Used: {Math.round(leaveBalance.earned_leave_used || 0)} of {Math.round(leaveBalance.earned_leave_total || 0)} days
+                    </Typography>
+                  </LeaveBalanceCard>
                 </Box>
-                <Typography sx={{ color: '#fff', fontSize: '2rem', fontWeight: 700, lineHeight: 1.2 }}>12</Typography>
-                <Typography sx={{ color: '#9e9e9e', fontSize: '0.85rem', mb: 1.25 }}>Days remaining</Typography>
-                <LinearProgress variant="determinate" value={60} sx={{ height: 6, borderRadius: 3, bgcolor: '#1A1A1A', mb: 1, '& .MuiLinearProgress-bar': { bgcolor: '#4A90E2', borderRadius: 3 } }} />
-                <Typography sx={{ color: '#9e9e9e', fontSize: '0.8rem' }}>Used: 8 of 20 days</Typography>
-              </LeaveBalanceCard>
-            </Box>
-            <Box sx={{ flex: '1 1 260px', minWidth: 260, maxWidth: '100%', display: 'flex' }}>
-              <LeaveBalanceCard sx={{ display: 'flex', flexDirection: 'column', minHeight: 200, height: '100%', width: '100%', p: 2.5, borderRadius: '16px' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                  <IconBox bg="rgba(76, 175, 80, 0.25)" sx={{ width: 48, height: 48, borderRadius: '12px' }}>
-                    <SickIcon sx={{ color: '#4CAF50', fontSize: 24 }} />
-                  </IconBox>
-                  <Typography sx={{ color: '#fff', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 0.8 }}>SICK</Typography>
+                <Box sx={{ flex: '1 1 260px', minWidth: 260, maxWidth: '100%', display: 'flex' }}>
+                  <LeaveBalanceCard sx={{ display: 'flex', flexDirection: 'column', minHeight: 200, height: '100%', width: '100%', p: 2.5, borderRadius: '16px' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                      <IconBox bg="rgba(251, 188, 4, 0.25)" sx={{ width: 48, height: 48, borderRadius: '12px' }}>
+                        <CasualIcon sx={{ color: '#FBBC04', fontSize: 24 }} />
+                      </IconBox>
+                      <Typography sx={{ color: '#fff', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 0.8 }}>CASUAL</Typography>
+                    </Box>
+                    <Typography sx={{ color: '#fff', fontSize: '2rem', fontWeight: 700, lineHeight: 1.2 }}>
+                      {Math.round(leaveBalance.casual_leave_remaining || 0)}
+                    </Typography>
+                    <Typography sx={{ color: '#9e9e9e', fontSize: '0.85rem', mb: 1.25 }}>Days remaining</Typography>
+                    <LinearProgress 
+                      variant="determinate" 
+                      value={leaveBalance.casual_leave_total > 0 ? ((leaveBalance.casual_leave_remaining || 0) / leaveBalance.casual_leave_total) * 100 : 0}
+                      sx={{ height: 6, borderRadius: 3, bgcolor: '#1A1A1A', mb: 1, '& .MuiLinearProgress-bar': { bgcolor: '#FBBC04', borderRadius: 3 } }} 
+                    />
+                    <Typography sx={{ color: '#9e9e9e', fontSize: '0.8rem' }}>
+                      Used: {Math.round(leaveBalance.casual_leave_used || 0)} of {Math.round(leaveBalance.casual_leave_total || 0)} days
+                    </Typography>
+                  </LeaveBalanceCard>
                 </Box>
-                <Typography sx={{ color: '#fff', fontSize: '2rem', fontWeight: 700, lineHeight: 1.2 }}>06</Typography>
-                <Typography sx={{ color: '#9e9e9e', fontSize: '0.85rem', mb: 1.25 }}>Days remaining</Typography>
-                <LinearProgress variant="determinate" value={75} sx={{ height: 6, borderRadius: 3, bgcolor: '#1A1A1A', mb: 1, '& .MuiLinearProgress-bar': { bgcolor: '#4CAF50', borderRadius: 3 } }} />
-                <Typography sx={{ color: '#9e9e9e', fontSize: '0.8rem' }}>Used: 2 of 8 days</Typography>
-              </LeaveBalanceCard>
-            </Box>
-            <Box sx={{ flex: '1 1 260px', minWidth: 260, maxWidth: '100%', display: 'flex' }}>
-              <LeaveBalanceCard sx={{ display: 'flex', flexDirection: 'column', minHeight: 200, height: '100%', width: '100%', p: 2.5, borderRadius: '16px' }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                  <IconBox bg="rgba(155, 89, 182, 0.25)" sx={{ width: 48, height: 48, borderRadius: '12px' }}>
-                    <CasualIcon sx={{ color: '#9B59B6', fontSize: 24 }} />
-                  </IconBox>
-                  <Typography sx={{ color: '#fff', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 0.8 }}>CASUAL</Typography>
+                <Box sx={{ flex: '1 1 260px', minWidth: 260, maxWidth: '100%', display: 'flex' }}>
+                  <LeaveBalanceCard sx={{ display: 'flex', flexDirection: 'column', minHeight: 200, height: '100%', width: '100%', p: 2.5, borderRadius: '16px' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
+                      <IconBox bg="rgba(76, 175, 80, 0.25)" sx={{ width: 48, height: 48, borderRadius: '12px' }}>
+                        <SickIcon sx={{ color: '#4CAF50', fontSize: 24 }} />
+                      </IconBox>
+                      <Typography sx={{ color: '#fff', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 0.8 }}>SICK</Typography>
+                    </Box>
+                    <Typography sx={{ color: '#fff', fontSize: '2rem', fontWeight: 700, lineHeight: 1.2 }}>
+                      {Math.round(leaveBalance.sick_leave_remaining || 0)}
+                    </Typography>
+                    <Typography sx={{ color: '#9e9e9e', fontSize: '0.85rem', mb: 1.25 }}>Days remaining</Typography>
+                    <LinearProgress 
+                      variant="determinate" 
+                      value={leaveBalance.sick_leave_total > 0 ? ((leaveBalance.sick_leave_remaining || 0) / leaveBalance.sick_leave_total) * 100 : 0}
+                      sx={{ height: 6, borderRadius: 3, bgcolor: '#1A1A1A', mb: 1, '& .MuiLinearProgress-bar': { bgcolor: '#4CAF50', borderRadius: 3 } }} 
+                    />
+                    <Typography sx={{ color: '#9e9e9e', fontSize: '0.8rem' }}>
+                      Used: {Math.round(leaveBalance.sick_leave_used || 0)} of {Math.round(leaveBalance.sick_leave_total || 0)} days
+                    </Typography>
+                  </LeaveBalanceCard>
                 </Box>
-                <Typography sx={{ color: '#fff', fontSize: '2rem', fontWeight: 700, lineHeight: 1.2 }}>04</Typography>
-                <Typography sx={{ color: '#9e9e9e', fontSize: '0.85rem', mb: 1.25 }}>Days remaining</Typography>
-                <LinearProgress variant="determinate" value={40} sx={{ height: 6, borderRadius: 3, bgcolor: '#1A1A1A', mb: 1, '& .MuiLinearProgress-bar': { bgcolor: '#9B59B6', borderRadius: 3 } }} />
-                <Typography sx={{ color: '#9e9e9e', fontSize: '0.8rem' }}>Used: 6 of 10 days</Typography>
-              </LeaveBalanceCard>
-            </Box>
+              </>
+            )}
           </Box>
 
           {/* Two columns: Left = Quick Apply + Team Availability | Right = Recent Requests + AI Insight */}
