@@ -1,0 +1,250 @@
+[
+  {
+    "id": "employee-handbook",
+    "title": "Employee Handbook",
+    "category": "General",
+    "lastUpdated": "January 15, 2026",
+    "version": "5.2",
+    "effectiveDate": "February 1, 2026",
+    "icon": "MenuBook",
+    "description": "Comprehensive guide to company policies, benefits, and workplace expectations",
+    "sections": [
+      {
+        "heading": "Welcome to ZenX Connect",
+        "content": "Welcome to ZenX Connect! We're thrilled to have you as part of our team. This handbook is designed to provide you with essential information about our company culture, policies, and the resources available to you.\n\nOur mission is to create innovative solutions that empower businesses and individuals to achieve their goals. We believe in fostering a collaborative, inclusive, and dynamic work environment where every team member can thrive."
+      },
+      {
+        "heading": "Our Core Values",
+        "content": "**Innovation:** We constantly push boundaries and embrace new ideas.\n\n**Integrity:** We conduct business with honesty and transparency.\n\n**Collaboration:** We work together to achieve shared goals.\n\n**Excellence:** We strive for the highest quality in everything we do.\n\n**Diversity & Inclusion:** We celebrate differences and create an environment where everyone belongs."
+      },
+      {
+        "heading": "Employment Basics",
+        "content": "**Work Hours:** Standard work hours are 9:00 AM to 6:00 PM, Monday through Friday. Flexible working arrangements are available with manager approval.\n\n**Attendance:** Regular attendance is essential. Please notify your manager as early as possible if you're unable to attend work.\n\n**Dress Code:** Business casual attire is standard. Dress appropriately for client meetings and important presentations.\n\n**Probation Period:** New employees undergo a 90-day probation period during which performance will be evaluated."
+      },
+      {
+        "heading": "Compensation & Benefits",
+        "content": "**Salary:** Salaries are paid on the last Friday of each month via direct deposit.\n\n**Annual Increments:** Performance-based salary reviews occur annually, with typical increments of ₹5,000 or more based on project assignments and performance.\n\n**Health Insurance:** Comprehensive health insurance coverage for employees and their immediate family members.\n\n**Retirement Benefits:** Company contributes to employee provident fund (EPF) as per statutory requirements.\n\n**Bonuses:** Performance bonuses awarded quarterly based on individual and team achievements."
+      },
+      {
+        "heading": "Leave Policy",
+        "content": "**Annual Leave:** 18 days of paid vacation per year.\n\n**Sick Leave:** 12 days of paid sick leave annually. Medical certificate required for absences exceeding 3 consecutive days.\n\n**Casual Leave:** 7 days of casual leave for personal matters.\n\n**Public Holidays:** All national and state public holidays are observed.\n\n**Leave Application:** Submit leave requests through the HR portal at least 2 weeks in advance for planned absences."
+      },
+      {
+        "heading": "Professional Development",
+        "content": "ZenX Connect is committed to your professional growth:\n\n**Training Programs:** Access to LinkedIn Learning, technical workshops, and certification programs.\n\n**Conference Attendance:** Support for attending industry conferences and networking events.\n\n**Mentorship:** Internal mentorship program pairing junior employees with senior leaders.\n\n**Career Advancement:** Regular performance reviews and clear career progression paths."
+      },
+      {
+        "heading": "Workplace Conduct",
+        "content": "**Professional Behavior:** Treat all colleagues, clients, and partners with respect and professionalism.\n\n**Anti-Harassment:** Zero tolerance for harassment, discrimination, or bullying of any kind.\n\n**Confidentiality:** Protect company and client confidential information at all times.\n\n**Conflict of Interest:** Disclose any potential conflicts of interest to your manager or HR.\n\n**Social Media:** Exercise discretion when posting about work-related matters on social media."
+      },
+      {
+        "heading": "Contact Information",
+        "content": "**HR Department:**\nEmail: hr@zenxconnect.com\nPhone: +91-XXXX-XXXXXX\nOffice Hours: Monday-Friday, 9 AM - 6 PM\n\n**IT Support:**\nEmail: it-support@zenxconnect.com\nHelpdesk: Extension 100\n\n**Emergency Contact:**\n24/7 Emergency Hotline: +91-XXXX-YYYYYY"
+      }
+    ]
+  },
+  {
+    "id": "it-security-policy",
+    "title": "IT Security Policy",
+    "category": "Security",
+    "lastUpdated": "January 10, 2026",
+    "version": "3.8",
+    "effectiveDate": "January 15, 2026",
+    "icon": "Security",
+    "description": "Guidelines for maintaining information security and protecting company assets",
+    "sections": [
+      {
+        "heading": "Purpose",
+        "content": "This IT Security Policy establishes standards for protecting ZenX Connect's information assets, systems, and data from unauthorized access, disclosure, modification, or destruction. All employees must comply with these guidelines to maintain a secure working environment."
+      },
+      {
+        "heading": "Access Control",
+        "content": "**User Accounts:** Each employee receives a unique username and password. Account sharing is strictly prohibited.\n\n**Password Requirements:**\n- Minimum 12 characters\n- Combination of uppercase, lowercase, numbers, and special characters\n- Change passwords every 90 days\n- No password reuse for last 5 passwords\n\n**Multi-Factor Authentication (MFA):** Required for all systems containing sensitive data or client information.\n\n**Access Levels:** Access granted based on role and necessity. Request additional access through the IT department with manager approval."
+      },
+      {
+        "heading": "Device Security",
+        "content": "**Company Devices:**\n- Install and maintain company-approved antivirus software\n- Enable automatic security updates\n- Lock screen when away from device (maximum 5-minute timeout)\n- Report lost or stolen devices immediately\n\n**Personal Devices (BYOD):**\n- Must meet minimum security standards\n- Install mobile device management (MDM) software\n- Separate work and personal data\n- Company reserves right to remotely wipe work data"
+      },
+      {
+        "heading": "Data Protection",
+        "content": "**Data Classification:**\n- **Public:** General information, marketing materials\n- **Internal:** Business communications, project documents\n- **Confidential:** Financial records, employee data, client information\n- **Restricted:** Trade secrets, security protocols, legal documents\n\n**Handling Guidelines:**\n- Encrypt confidential and restricted data\n- Use secure file sharing services (approved by IT)\n- Shred physical documents containing sensitive information\n- No storage of company data on personal cloud services"
+      },
+      {
+        "heading": "Network Security",
+        "content": "**Wi-Fi Usage:**\n- Connect only to company-secured networks in office\n- Use VPN when working remotely or on public Wi-Fi\n- Never disable firewall or security software\n\n**Email Security:**\n- Be cautious of phishing attempts and suspicious emails\n- Verify sender identity before opening attachments\n- Report suspicious emails to IT security team\n- No forwarding of company emails to personal accounts\n\n**Web Browsing:**\n- Avoid visiting suspicious or inappropriate websites\n- Download software only from approved sources\n- Report any blocked or suspicious activity"
+      },
+      {
+        "heading": "Incident Reporting",
+        "content": "**Security Incidents:** Report immediately to IT Security:\n- Suspected data breaches or unauthorized access\n- Lost or stolen devices containing company data\n- Phishing attempts or malware infections\n- Unusual system behavior or suspicious activity\n\n**Reporting Channels:**\n- Email: security@zenxconnect.com\n- Phone: IT Helpdesk Extension 100\n- Emergency: +91-XXXX-ZZZZZZ (24/7)\n\n**Response Time:** IT Security will acknowledge incidents within 2 hours and begin investigation immediately."
+      },
+      {
+        "heading": "Remote Work Security",
+        "content": "**Home Office Setup:**\n- Use dedicated workspace with limited access by others\n- Secure home Wi-Fi with strong password (WPA3 encryption)\n- Position screens away from windows and public view\n\n**VPN Requirements:**\n- Always connect via company VPN when accessing internal resources\n- Do not disable VPN during work sessions\n- Report VPN connectivity issues to IT\n\n**Physical Security:**\n- Lock devices when not in use\n- Store company equipment securely\n- No work discussions in public places"
+      },
+      {
+        "heading": "Compliance & Penalties",
+        "content": "**Training:** All employees must complete annual security awareness training.\n\n**Audits:** Regular security audits conducted to ensure compliance.\n\n**Violations:** Non-compliance may result in:\n- Written warning for first minor offense\n- Access suspension for repeated violations\n- Termination for serious breaches\n- Legal action for intentional data theft or sabotage\n\n**Questions:** Contact IT Security team for clarification on any policy aspects."
+      }
+    ]
+  },
+  {
+    "id": "remote-work-guidelines",
+    "title": "Remote Work Guidelines",
+    "category": "Work Arrangements",
+    "lastUpdated": "December 20, 2025",
+    "version": "2.4",
+    "effectiveDate": "January 1, 2026",
+    "icon": "Home",
+    "description": "Policies and best practices for remote and hybrid work arrangements",
+    "sections": [
+      {
+        "heading": "Overview",
+        "content": "ZenX Connect supports flexible work arrangements to promote work-life balance and productivity. This policy outlines eligibility, expectations, and guidelines for remote and hybrid work."
+      },
+      {
+        "heading": "Eligibility",
+        "content": "**Who Can Work Remotely:**\n- Employees who have completed probation period (90 days)\n- Roles that can be performed effectively without physical presence\n- Employees with consistent performance ratings\n- Manager approval required\n\n**Hybrid Model Options:**\n- **Full Remote:** Work from home 5 days/week\n- **Hybrid (3-2):** Office 3 days, remote 2 days\n- **Hybrid (2-3):** Office 2 days, remote 3 days\n- **Occasional Remote:** Case-by-case basis with advance approval"
+      },
+      {
+        "heading": "Application Process",
+        "content": "**How to Apply:**\n1. Discuss with your direct manager\n2. Submit formal request via HR portal\n3. Provide details: proposed schedule, work location, equipment needs\n4. Manager reviews and submits recommendation to HR\n5. HR reviews and provides approval (typically within 5 business days)\n\n**Trial Period:** Initial 30-day trial to assess effectiveness. Arrangement reviewed quarterly thereafter."
+      },
+      {
+        "heading": "Work Hours & Availability",
+        "content": "**Core Hours:** Be available during core business hours (10 AM - 4 PM) for meetings and collaboration.\n\n**Flexibility:** Adjust start/end times with manager approval, maintaining 8-hour workday.\n\n**Communication:** Respond to messages within 2 hours during work hours.\n\n**Calendar:** Keep calendar updated with your availability and time zone.\n\n**Time Tracking:** Log work hours accurately in timesheet system."
+      },
+      {
+        "heading": "Home Office Requirements",
+        "content": "**Workspace:**\n- Dedicated, quiet space free from distractions\n- Ergonomic setup (proper desk, chair, lighting)\n- Reliable high-speed internet (minimum 25 Mbps)\n- Professional background for video calls\n\n**Equipment Provided by Company:**\n- Laptop/desktop computer\n- Monitor (upon request)\n- Keyboard and mouse\n- Headset for calls\n- VPN access credentials\n\n**Employee Responsibilities:**\n- Maintain equipment in good condition\n- Return all equipment upon request or separation\n- Home office insurance and electricity costs"
+      },
+      {
+        "heading": "Communication & Collaboration",
+        "content": "**Daily Check-ins:** Brief team sync at start of day (via video call or chat).\n\n**Video Calls:** Camera on for team meetings and client calls.\n\n**Communication Tools:**\n- Email: Formal communications\n- Slack/Teams: Quick questions and updates\n- Video Conferencing: Meetings and collaboration\n- Project Management: Task tracking and documentation\n\n**Response Times:**\n- Urgent messages: Within 30 minutes\n- Standard messages: Within 2 hours\n- Email: Within 24 hours"
+      },
+      {
+        "heading": "Performance & Accountability",
+        "content": "**Expectations:**\n- Same productivity and quality standards as office work\n- Meet deadlines and deliverables\n- Attend all required meetings\n- Maintain regular communication with team\n\n**Performance Reviews:** Evaluated on output and results, not hours worked.\n\n**Check-ins:** Weekly one-on-one with manager to discuss progress and challenges.\n\n**Documentation:** Keep detailed records of work completed and time spent on projects."
+      },
+      {
+        "heading": "Security & Confidentiality",
+        "content": "**Data Protection:**\n- Follow all IT Security Policy guidelines\n- Use VPN for all company network access\n- No work discussions in public spaces\n- Secure all devices when not in use\n\n**Video Call Privacy:**\n- Ensure no confidential information visible in background\n- Use virtual backgrounds if necessary\n- Mute when not speaking in large meetings\n\n**Document Handling:**\n- No printing of confidential documents at home\n- Secure disposal of any printed materials"
+      },
+      {
+        "heading": "Well-being & Work-Life Balance",
+        "content": "**Boundaries:**\n- Establish clear work hours\n- Take regular breaks (lunch, short breaks)\n- Avoid working excessive hours\n- Disconnect after work hours\n\n**Mental Health:**\n- Access to employee assistance program (EAP)\n- Virtual wellness activities and sessions\n- Regular social connection with team\n\n**Physical Health:**\n- Ergonomic assessments available\n- Encourage regular movement and exercise\n- Standing desk options available"
+      },
+      {
+        "heading": "Termination of Remote Work",
+        "content": "**Company may terminate arrangement if:**\n- Performance declines\n- Communication issues persist\n- Security violations occur\n- Business needs change requiring office presence\n\n**Employee may request to return to office** at any time with 2 weeks notice.\n\n**Notice Period:** Minimum 2 weeks notice required for any changes to arrangement."
+      }
+    ]
+  },
+  {
+    "id": "health-safety",
+    "title": "Health & Safety Policy",
+    "category": "Workplace Safety",
+    "lastUpdated": "January 5, 2026",
+    "version": "4.1",
+    "effectiveDate": "January 10, 2026",
+    "icon": "HealthAndSafety",
+    "description": "Guidelines for maintaining a safe and healthy workplace environment",
+    "sections": [
+      {
+        "heading": "Policy Statement",
+        "content": "ZenX Connect is committed to providing a safe, healthy, and secure work environment for all employees, contractors, and visitors. Health and safety is everyone's responsibility, and we expect all team members to actively participate in maintaining workplace safety."
+      },
+      {
+        "heading": "Workplace Safety Standards",
+        "content": "**General Safety Rules:**\n- Keep work areas clean and organized\n- Report hazards immediately to supervisor or safety officer\n- Use equipment only for intended purposes\n- Follow proper lifting techniques\n- No running in hallways or office areas\n- Emergency exits must remain clear at all times\n\n**Electrical Safety:**\n- Inspect cords and equipment before use\n- Report damaged equipment immediately\n- No overloading electrical outlets\n- Keep electrical equipment away from water\n\n**Fire Safety:**\n- Know location of fire extinguishers and emergency exits\n- Participate in fire drills\n- No blocking fire exits or equipment\n- Report fire hazards immediately"
+      },
+      {
+        "heading": "Emergency Procedures",
+        "content": "**Fire Emergency:**\n1. Activate nearest fire alarm\n2. Evacuate immediately via nearest safe exit\n3. Assemble at designated meeting point\n4. Do not use elevators\n5. Do not re-enter until authorized\n\n**Medical Emergency:**\n1. Call emergency services (102/108)\n2. Notify first aid responders\n3. Do not move injured person unless necessary\n4. Provide accurate location information\n\n**Natural Disaster (Earthquake):**\n1. Drop, Cover, and Hold On\n2. Stay away from windows\n3. Evacuate once shaking stops\n4. Use stairs, not elevators\n\n**Emergency Contacts:**\n- Fire: 101\n- Police: 100\n- Ambulance: 102/108\n- Company Security: Extension 999"
+      },
+      {
+        "heading": "Health & Wellness Programs",
+        "content": "**Medical Facilities:**\n- On-site first aid room staffed during office hours\n- Trained first aid responders on each floor\n- Emergency medical kit locations posted\n- Annual health check-ups provided\n\n**Mental Health Support:**\n- Employee Assistance Program (EAP) 24/7\n- Confidential counseling services\n- Mental health awareness training\n- Stress management workshops\n\n**Wellness Initiatives:**\n- Yoga and meditation sessions\n- Standing desks available\n- Healthy food options in cafeteria\n- Fitness club membership discounts\n- Walking meetings encouraged"
+      },
+      {
+        "heading": "Ergonomics",
+        "content": "**Workstation Setup:**\n- Monitor at eye level, arm's length away\n- Chair adjusted for feet flat on floor\n- Keyboard and mouse at elbow height\n- Regular breaks from sitting (5 minutes every hour)\n\n**Computer Use Guidelines:**\n- Follow 20-20-20 rule (every 20 minutes, look 20 feet away for 20 seconds)\n- Proper posture while typing\n- Adequate lighting to reduce eye strain\n- Report discomfort or pain early\n\n**Ergonomic Assessments:** Available upon request through HR or safety officer."
+      },
+      {
+        "heading": "Illness & Contagious Diseases",
+        "content": "**When to Stay Home:**\n- Fever (100°F or higher)\n- Contagious illness (flu, COVID-19, etc.)\n- Severe symptoms (persistent cough, vomiting, etc.)\n\n**Return to Work:**\n- Fever-free for 24 hours without medication\n- Medical clearance for contagious illnesses\n- Negative COVID-19 test if required\n\n**Workplace Protocols:**\n- Hand sanitizers available throughout office\n- Enhanced cleaning of common areas\n- Ventilation systems regularly maintained\n- Sick employees sent home immediately"
+      },
+      {
+        "heading": "Substance Abuse Policy",
+        "content": "**Zero Tolerance:** ZenX Connect maintains a drug-free and alcohol-free workplace.\n\n**Prohibited:**\n- Use, possession, or distribution of illegal drugs\n- Being under influence of alcohol or drugs during work hours\n- Unauthorized prescription medication use\n\n**Exceptions:**\n- Prescribed medications (inform manager if affecting work performance)\n- Company-sponsored events where alcohol served responsibly\n\n**Assistance:** Employees struggling with substance abuse encouraged to seek help through EAP. Confidential support available."
+      },
+      {
+        "heading": "Violence Prevention",
+        "content": "**Zero Tolerance Policy:** No tolerance for workplace violence, threats, or intimidation.\n\n**Prohibited Behaviors:**\n- Physical violence or assault\n- Verbal threats or intimidation\n- Weapons on company property\n- Aggressive or threatening behavior\n\n**Reporting:**\n- Report all incidents or concerns immediately\n- Confidential reporting channels available\n- No retaliation for good-faith reports\n\n**Response:**\n- Immediate investigation of all reports\n- Appropriate disciplinary action\n- Support services for affected employees\n- Law enforcement involvement when necessary"
+      },
+      {
+        "heading": "Incident Reporting & Investigation",
+        "content": "**Report All Incidents:**\n- Injuries (minor or major)\n- Near misses\n- Unsafe conditions\n- Equipment malfunctions\n- Security concerns\n\n**Reporting Process:**\n1. Immediate verbal notification to supervisor\n2. Complete incident report within 24 hours\n3. Seek medical attention if needed\n4. Cooperate with investigation\n\n**Investigation:**\n- All incidents investigated to determine root cause\n- Corrective actions implemented\n- Lessons learned shared to prevent recurrence\n- Confidentiality maintained where appropriate"
+      },
+      {
+        "heading": "Training & Compliance",
+        "content": "**Mandatory Training:**\n- New employee safety orientation\n- Annual safety refresher courses\n- Emergency procedure drills (quarterly)\n- Job-specific safety training\n\n**Safety Committee:**\n- Employee representatives from each department\n- Monthly meetings to review safety concerns\n- Recommend improvements\n- Champion safety initiatives\n\n**Compliance:**\n- Regular safety audits conducted\n- Compliance with local regulations\n- Continuous improvement approach\n- Employee input valued and acted upon"
+      }
+    ]
+  },
+  {
+    "id": "ethics-whistleblowing",
+    "title": "Ethics & Whistleblowing Policy",
+    "category": "Ethics & Compliance",
+    "lastUpdated": "January 12, 2026",
+    "version": "3.5",
+    "effectiveDate": "January 20, 2026",
+    "icon": "Policy",
+    "description": "Code of conduct and procedures for reporting ethical concerns",
+    "sections": [
+      {
+        "heading": "Purpose",
+        "content": "ZenX Connect is committed to conducting business with integrity, transparency, and in compliance with all applicable laws and regulations. This policy establishes our ethical standards and provides a safe mechanism for reporting concerns without fear of retaliation."
+      },
+      {
+        "heading": "Code of Ethics",
+        "content": "**Fundamental Principles:**\n\n**1. Integrity:** Conduct all business dealings honestly and ethically.\n\n**2. Compliance:** Adhere to all laws, regulations, and company policies.\n\n**3. Respect:** Treat everyone with dignity and professionalism.\n\n**4. Accountability:** Take responsibility for actions and decisions.\n\n**5. Transparency:** Communicate openly and honestly.\n\n**6. Fairness:** Make decisions based on merit, free from bias or favoritism."
+      },
+      {
+        "heading": "Ethical Standards",
+        "content": "**Conflicts of Interest:**\n- Disclose any situation where personal interests may conflict with company interests\n- No personal financial gain from company decisions\n- Avoid business relationships with family/friends without disclosure\n- No accepting gifts or benefits that could influence decisions (limit: ₹5,000 value)\n\n**Confidential Information:**\n- Protect company proprietary information\n- No insider trading based on non-public information\n- Respect confidentiality agreements\n- Proper handling of client and employee data\n\n**Fair Dealing:**\n- Compete fairly and honestly\n- No deceptive or misleading practices\n- Respect intellectual property rights\n- Honor contracts and commitments"
+      },
+      {
+        "heading": "Anti-Corruption & Bribery",
+        "content": "**Zero Tolerance:** Strictly prohibited:\n- Bribes to government officials or private parties\n- Kickbacks or improper payments\n- Facilitation payments\n- Money laundering\n\n**Gifts & Entertainment:**\n- Reasonable business courtesies permitted (meals, moderate gifts)\n- Must not create obligation or expectation\n- Disclosure required for gifts exceeding ₹5,000\n- No cash gifts permitted\n- Prior approval needed for expensive entertainment\n\n**Political Activities:**\n- Personal political activities on own time\n- No company resources for political purposes\n- No representing company positions without authorization\n- Comply with campaign finance laws"
+      },
+      {
+        "heading": "Anti-Discrimination & Harassment",
+        "content": "**Equal Opportunity:** ZenX Connect provides equal employment opportunities based on merit.\n\n**Prohibited Discrimination:** Based on:\n- Race, color, ethnicity, national origin\n- Gender, gender identity, sexual orientation\n- Religion or beliefs\n- Age\n- Disability or medical condition\n- Marital or family status\n- Any other protected characteristic\n\n**Harassment Prevention:**\n- Zero tolerance for sexual harassment\n- No hostile work environment\n- No bullying or intimidation\n- Respectful communication required\n\n**Reporting:** All discrimination or harassment must be reported immediately through appropriate channels."
+      },
+      {
+        "heading": "Whistleblowing Mechanism",
+        "content": "**What to Report:**\n- Violations of law or regulations\n- Fraud, theft, or financial misconduct\n- Conflicts of interest\n- Safety hazards or violations\n- Discrimination or harassment\n- Retaliation against whistleblowers\n- Any unethical behavior\n\n**How to Report:**\n\n**Option 1 - Direct Manager:** Discuss concerns with immediate supervisor.\n\n**Option 2 - HR Department:**\nEmail: ethics@zenxconnect.com\nPhone: +91-XXXX-ETHICS\n\n**Option 3 - Anonymous Hotline:**\n24/7 Ethics Hotline: 1800-XXX-XXXX\nWeb Portal: ethics.zenxconnect.com\n\n**Option 4 - Ethics Committee:**\nDirect email to Chief Ethics Officer"
+      },
+      {
+        "heading": "Confidentiality & Anonymity",
+        "content": "**Protection of Identity:**\n- Reporter identity kept confidential to extent possible\n- Anonymous reporting permitted\n- Information shared only on need-to-know basis\n- Secure reporting channels maintained\n\n**Investigation Process:**\n- All reports taken seriously and investigated promptly\n- Independent investigation by Ethics Committee\n- Objective fact-finding approach\n- Reporter kept informed of progress (if not anonymous)\n- Appropriate action taken based on findings"
+      },
+      {
+        "heading": "Non-Retaliation Policy",
+        "content": "**Absolute Protection:** No retaliation against anyone who:\n- Reports concerns in good faith\n- Participates in investigations\n- Refuses to engage in wrongdoing\n\n**Prohibited Retaliation:**\n- Termination or demotion\n- Reduction in pay or benefits\n- Unfavorable job assignments\n- Threats or intimidation\n- Exclusion or isolation\n\n**Consequences:** Retaliation is grounds for immediate termination.\n\n**False Reports:** Intentionally false reports made with malicious intent may result in disciplinary action."
+      },
+      {
+        "heading": "Investigation Process",
+        "content": "**Timeline:**\n- Acknowledgment within 48 hours of report\n- Investigation commenced within 5 business days\n- Typical completion within 30 days (complex cases may take longer)\n\n**Investigation Steps:**\n1. Preliminary review of allegations\n2. Interviews with relevant parties\n3. Document and evidence review\n4. Fact-finding and analysis\n5. Determination and conclusions\n6. Remedial action if warranted\n7. Case closure and documentation\n\n**Confidentiality:** Investigation conducted discreetly to protect all parties."
+      },
+      {
+        "heading": "Consequences of Violations",
+        "content": "**Disciplinary Actions:** Based on severity of violation:\n- Verbal or written warning\n- Mandatory training or counseling\n- Suspension without pay\n- Demotion or reassignment\n- Termination of employment\n- Legal action and prosecution\n\n**Factors Considered:**\n- Nature and severity of violation\n- Whether intentional or negligent\n- Prior conduct history\n- Impact on company, employees, or clients\n- Cooperation during investigation\n\n**Record Keeping:** All violations documented in employee file."
+      },
+      {
+        "heading": "Training & Awareness",
+        "content": "**Mandatory Training:**\n- Ethics training during onboarding\n- Annual refresher courses\n- Specialized training for managers and leadership\n- Updates when policies change\n\n**Resources:**\n- Ethics policy handbook\n- Online training modules\n- Ethics helpline for questions\n- Regular communications and reminders\n\n**Certification:** Employees must annually certify understanding and compliance with ethics policies.\n\n**Questions:** Contact Ethics Committee for clarification: ethics@zenxconnect.com"
+      }
+    ]
+  }
+]
