@@ -447,21 +447,28 @@ async def get_my_leave_balance(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Get current user's leave balance"""
+    """Get current user's leave balance. Initializes with defaults if none exists."""
     from datetime import datetime
     current_year = datetime.now().year
-    
+
     balance = db.query(LeaveBalance).filter(
         LeaveBalance.user_id == current_user.id,
         LeaveBalance.year == current_year
     ).first()
-    
+
     if not balance:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Leave balance not found. Contact admin to initialize."
+        balance = LeaveBalance(
+            user_id=current_user.id,
+            earned_leave_total=21.0,
+            casual_leave_total=7.0,
+            sick_leave_total=14.0,
+            comp_off_total=0.0,
+            year=current_year
         )
-    
+        db.add(balance)
+        db.commit()
+        db.refresh(balance)
+
     return balance
 
 @leave_router.post("/balance/initialize", status_code=status.HTTP_201_CREATED)

@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Float, ForeignKey, Date
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, Float, ForeignKey, Date, Text, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
@@ -83,6 +83,41 @@ class Payroll(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     created_by = Column(Integer, ForeignKey("users.id"), nullable=True)  # Admin who created it
+
+# User Activity Log model for Wellness AI
+class UserActivityLog(Base):
+    __tablename__ = "user_activity_log"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    login_time = Column(DateTime, nullable=True)
+    logout_time = Column(DateTime, nullable=True)
+    session_duration_minutes = Column(Float, nullable=True)
+    activity_type = Column(String, nullable=False)  # dashboard, learning, login, logout
+    date = Column(Date, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+# Wellbeing Story model
+class WellbeingStory(Base):
+    __tablename__ = "wellbeing_story"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    story_text = Column(Text, nullable=False)
+    active = Column(Boolean, default=True, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+# Wellbeing Response model
+class WellbeingResponse(Base):
+    __tablename__ = "wellbeing_response"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    story_id = Column(Integer, ForeignKey("wellbeing_story.id"), nullable=False)
+    answers_json = Column(JSON, nullable=False)  # Store answers as JSON
+    detected_mood = Column(String, nullable=False)  # CALM, MOTIVATED, STRESSED, OVERWHELMED, DISENGAGED
+    mood_reason = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
 # Leave Balance model - Admin controlled
 class LeaveBalance(Base):
@@ -209,6 +244,7 @@ class WorkingSaturday(Base):
     # Metadata
     created_at = Column(DateTime, default=datetime.utcnow)
     created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+
 
 # Create all tables
 def init_db():

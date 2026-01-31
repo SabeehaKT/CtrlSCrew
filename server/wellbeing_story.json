@@ -1,0 +1,33 @@
+{
+  "story": {
+    "title": "The Project That Never Slept",
+    "story_text": "Maya was a talented software engineer working on a critical product launch. For three weeks straight, she stayed late at the office, skipped lunch breaks, and checked emails before bed. Her team celebrated when the product went live, but Maya felt exhausted rather than excited. The next morning, she struggled to focus on her new tasks and found herself staring blankly at her screen. Her manager noticed and suggested she take the rest of the day off, but Maya worried about falling behind."
+  },
+  "questions": [
+    {
+      "id": 1,
+      "question": "How often do you feel physically or mentally exhausted by the end of your workday?",
+      "type": "text"
+    },
+    {
+      "id": 2,
+      "question": "When you have multiple deadlines, how do you typically handle the pressure?",
+      "type": "text"
+    },
+    {
+      "id": 3,
+      "question": "In the past week, have you taken time for activities that help you relax or recharge? If yes, what did you do?",
+      "type": "text"
+    },
+    {
+      "id": 4,
+      "question": "How would you describe your current motivation level at work?",
+      "type": "text"
+    },
+    {
+      "id": 5,
+      "question": "If you could change one thing about your current work situation to feel better, what would it be?",
+      "type": "text"
+    }
+  ]
+}
