@@ -351,6 +351,19 @@ export const apiClient = {
     });
   },
 
+  async calculateLOP(userId, month, year) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request(`/api/payroll/calculate-lop/${userId}/${month}/${year}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
   // Leave endpoints
   async getMyLeaveBalance() {
     const token = this.getToken();
@@ -490,13 +503,50 @@ export const apiClient = {
     });
   },
 
-  // Career endpoints
-  async getCareerPath() {
+  async getMyAttendance(startDate = null, endDate = null) {
     const token = this.getToken();
     if (!token) {
       throw new Error('Not authenticated');
     }
-    return this.request('/api/career/path', {
+    const params = new URLSearchParams();
+    if (startDate) params.append('start_date', startDate);
+    if (endDate) params.append('end_date', endDate);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return this.request(`/api/attendance/my-attendance${query}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getUserAttendance(userId, startDate = null, endDate = null) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    const params = new URLSearchParams();
+    if (startDate) params.append('start_date', startDate);
+    if (endDate) params.append('end_date', endDate);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return this.request(`/api/attendance/user/${userId}${query}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
+  async getMyAttendanceSummary(month = null, year = null) {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    const params = new URLSearchParams();
+    if (month) params.append('month', month);
+    if (year) params.append('year', year);
+    const query = params.toString() ? `?${params.toString()}` : '';
+    return this.request(`/api/attendance/summary/my${query}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

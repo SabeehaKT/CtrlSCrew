@@ -67,6 +67,11 @@ class Payroll(Base):
     # Bonus/Incentives
     bonus = Column(Float, default=0.0)
     
+    # Attendance-based deductions
+    lop_days = Column(Float, default=0.0)  # Loss of Pay days
+    absent_days = Column(Float, default=0.0)  # Absent days (unpaid)
+    lop_deduction = Column(Float, default=0.0)  # Calculated LOP amount
+    
     # Period
     month = Column(String, nullable=False)  # e.g., "January 2026"
     year = Column(Integer, nullable=False)

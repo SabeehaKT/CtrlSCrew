@@ -46,6 +46,7 @@ import {
   Send,
   Close,
   Settings,
+  BeachAccess as BeachAccessIcon,
 } from '@mui/icons-material';
 
 const Logo = styled(Typography)(({ theme }) => ({
@@ -121,6 +122,11 @@ const QuickActionBtn = styled(Button)(({ theme }) => ({
   gap: 8,
   fontSize: '0.85rem',
   fontWeight: 500,
+  '& .MuiSvgIcon-root': {
+    width: '32px !important',
+    height: '32px !important',
+    fontSize: '32px !important',
+  },
   border: '1px solid #222',
   minHeight: 100,
   '&:hover': {
@@ -180,6 +186,9 @@ export default function Dashboard() {
   const [payrollLoading, setPayrollLoading] = useState(true);
   const [leaveBalance, setLeaveBalance] = useState(null);
   const [leaveLoading, setLeaveLoading] = useState(true);
+  const [userCourses, setUserCourses] = useState([]);
+  const [attendanceSummary, setAttendanceSummary] = useState(null);
+  const [attendanceLoading, setAttendanceLoading] = useState(true);
   
   // ZenX AI Training Data - Predefined Queries and Responses
   const AI_TRAINING_DATA = [
@@ -612,6 +621,17 @@ export default function Dashboard() {
         } finally {
           setLeaveLoading(false);
         }
+        
+        // Fetch attendance summary
+        try {
+          const summary = await apiClient.getMyAttendanceSummary();
+          setAttendanceSummary(summary);
+        } catch (error) {
+          console.error('Error fetching attendance summary:', error);
+          // No attendance data available
+        } finally {
+          setAttendanceLoading(false);
+        }
       } catch (error) {
         console.error('Authentication error:', error);
         router.push('/login');
@@ -796,10 +816,8 @@ export default function Dashboard() {
                 </Typography>
               </ZenXAiCard>
 
-              {/* Payroll Summary (left) | Leave Balance (right) - side by side, top-aligned, directly below ZenX AI */}
-              <Grid container spacing={3} sx={{ mb: 3 }}>
-                <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
-                  <StatCard sx={{ height: '100%', width: '100%' }}>
+              {/* Payroll Summary - full width below ZenX AI */}
+              <StatCard sx={{ mb: 3 }}>
                     {payrollLoading ? (
                       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', minHeight: 150 }}>
                         <CircularProgress sx={{ color: '#FF4500' }} size={30} />
@@ -850,9 +868,9 @@ export default function Dashboard() {
                       </Box>
                     )}
                   </StatCard>
-                </Grid>
-                <Grid item xs={12} md={6} sx={{ display: 'flex' }}>
-                  <StatCard sx={{ height: '100%', width: '100%' }}>
+
+              {/* Leave Balance - full width */}
+              <StatCard sx={{ mb: 3 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                       <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1.5 }}>
                         LEAVE BALANCE
@@ -866,12 +884,12 @@ export default function Dashboard() {
                         <CircularProgress size={30} sx={{ color: '#FF4500' }} />
                       </Box>
                     ) : leaveBalance ? (
-                      <>
-                        <Box sx={{ mb: 2.5 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 400 }}>Earned Leave</Typography>
-                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600 }}>
-                              {Math.round(leaveBalance.earned_leave_remaining || 0)} / {Math.round(leaveBalance.earned_leave_total || 21)} Days
+                      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(3, 1fr)' }, gap: 3 }}>
+                        <Box>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Earned Leave</Typography>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
+                              {leaveBalance.earned_leave_remaining} / {leaveBalance.earned_leave_total}
                             </Typography>
                           </Box>
                           <LinearProgress
@@ -885,11 +903,11 @@ export default function Dashboard() {
                             }}
                           />
                         </Box>
-                        <Box sx={{ mb: 2.5 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 400 }}>Casual Leave</Typography>
-                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600 }}>
-                              {Math.round(leaveBalance.casual_leave_remaining || 0)} / {Math.round(leaveBalance.casual_leave_total || 7)} Days
+                        <Box>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Casual Leave</Typography>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
+                              {leaveBalance.casual_leave_remaining} / {leaveBalance.casual_leave_total}
                             </Typography>
                           </Box>
                           <LinearProgress
@@ -904,10 +922,10 @@ export default function Dashboard() {
                           />
                         </Box>
                         <Box>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 400 }}>Sick Leave</Typography>
-                            <Typography sx={{ color: '#fff', fontSize: '0.85rem', fontWeight: 600 }}>
-                              {Math.round(leaveBalance.sick_leave_remaining || 0)} / {Math.round(leaveBalance.sick_leave_total || 14)} Days
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Sick Leave</Typography>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
+                              {leaveBalance.sick_leave_remaining} / {leaveBalance.sick_leave_total}
                             </Typography>
                           </Box>
                           <LinearProgress
@@ -921,7 +939,7 @@ export default function Dashboard() {
                             }}
                           />
                         </Box>
-                      </>
+                      </Box>
                     ) : (
                       <Box sx={{ textAlign: 'center', py: 3 }}>
                         <Typography sx={{ color: '#666', fontSize: '0.85rem', mb: 1 }}>
@@ -933,170 +951,215 @@ export default function Dashboard() {
                       </Box>
                     )}
                   </StatCard>
-                </Grid>
-              </Grid>
 
-              {/* LinkedIn Learning - spans full width of left column (below Payroll + Leave) */}
-          <Box sx={{ mb: 3 }}>
-            <StatCard>
-              {(Array.isArray(userCourses) ? userCourses : []).map((course, index) => (
-                <Box 
-                  key={course.id}
-                  sx={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between', 
-                    alignItems: 'flex-start', 
-                    flexWrap: 'wrap', 
-                    gap: 2, 
-                    mb: index === 0 ? 3 : 0,
-                    pt: index === 1 ? 5 : 0,
-                    mt: index === 1 ? 4 : 0,
-                    borderTop: index === 1 ? '1px solid #1A1A1A' : 'none'
-                  }}
-                >
-                  <Box sx={{ display: 'flex', gap: 2, flex: 1, minWidth: 0 }}>
-                    <Box
-                      sx={{
-                        width: 80,
-                        height: 80,
-                        minWidth: 80,
-                        borderRadius: '12px',
-                        bgcolor: '#1A1A1A',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: 32,
-                          height: 40,
-                          border: course.progress === 100 ? '2px solid #4CAF50' : '2px solid #444',
-                          borderRadius: '4px',
-                          position: 'relative',
-                          bgcolor: course.progress === 100 ? 'rgba(76, 175, 80, 0.1)' : 'transparent',
-                          '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: -6,
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            width: 14,
-                            height: 14,
-                            borderRadius: '50%',
-                            border: course.progress === 100 ? '2px solid #4CAF50' : '2px solid #444',
-                            bgcolor: course.progress === 100 ? '#4CAF50' : 'transparent',
-                          },
-                        }}
-                      />
-                    </Box>
-                    <Box sx={{ flex: 1, minWidth: 0 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <School sx={{ color: '#FF4500', fontSize: 20 }} />
-                        <Typography sx={{ color: '#999', fontSize: '0.75rem', fontWeight: 600 }}>
-                          LinkedIn Learning
-                        </Typography>
-                      </Box>
-                      <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.95rem', mb: 0.5 }}>
-                        {course.title}
-                      </Typography>
-                      <Typography sx={{ color: '#888', fontSize: '0.8rem', mb: 1 }}>
-                        {course.module}
-                      </Typography>
-                      <LinearProgress
-                        variant="determinate"
-                        value={course.progress}
-                        sx={{
-                          height: 6,
-                          borderRadius: 3,
-                          bgcolor: '#1A1A1A',
-                          '& .MuiLinearProgress-bar': { 
-                            bgcolor: course.progress === 100 ? '#4CAF50' : '#FF4500', 
-                            borderRadius: 3 
-                          },
-                        }}
-                      />
-                      <Typography sx={{ color: course.progress === 100 ? '#4CAF50' : '#FF4500', fontSize: '0.75rem', mt: 0.5 }}>
-                        {course.progress}% Completed
-                      </Typography>
-                    </Box>
-                  </Box>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 1 }}>
-                    <Button
-                      component="a"
-                      href="https://www.linkedin.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      sx={{
-                        color: '#FF4500',
-                        textTransform: 'none',
-                        fontSize: '0.8rem',
-                        fontWeight: 600,
-                        p: 0,
-                        minWidth: 'auto',
-                        textDecoration: 'none',
-                        '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' },
-                      }}
-                    >
-                      BROWSE COURSES
-                    </Button>
-                    {course.progress < 100 && (
-                      <Button
-                        variant="contained"
-                        onClick={() => window.open(course.url, '_blank')}
-                        sx={{
-                          bgcolor: '#FF4500',
-                          color: '#fff',
-                          textTransform: 'none',
-                          fontWeight: 600,
-                          px: 2.5,
-                          py: 1,
-                          borderRadius: '8px',
-                          '&:hover': { bgcolor: '#E03E00' },
-                        }}
-                      >
-                        RESUME
-                      </Button>
-                    )}
-                  </Box>
+              {/* Attendance Summary - full width below Payroll + Leave */}
+              <StatCard sx={{ mb: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                  <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1.5 }}>
+                    ATTENDANCE THIS MONTH
+                  </Typography>
+                  <Button
+                    onClick={() => router.push('/my-attendance')}
+                    sx={{
+                      color: '#FF4500',
+                      textTransform: 'none',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      '&:hover': {
+                        bgcolor: 'rgba(255, 69, 0, 0.1)',
+                      },
+                    }}
+                  >
+                    View Details →
+                  </Button>
                 </Box>
-              ))}
-            </StatCard>
-          </Box>
+                {attendanceLoading ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 80 }}>
+                    <CircularProgress size={24} sx={{ color: '#FF4500' }} />
+                  </Box>
+                ) : attendanceSummary ? (
+                  <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 2 }}>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography sx={{ color: '#34A853', fontSize: '1.5rem', fontWeight: 700 }}>
+                        {attendanceSummary.present_days}
+                      </Typography>
+                      <Typography sx={{ color: '#888', fontSize: '0.75rem' }}>Present</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography sx={{ color: '#FBBC04', fontSize: '1.5rem', fontWeight: 700 }}>
+                        {attendanceSummary.leave_days}
+                      </Typography>
+                      <Typography sx={{ color: '#888', fontSize: '0.75rem' }}>Leave</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography sx={{ color: '#EA4335', fontSize: '1.5rem', fontWeight: 700 }}>
+                        {attendanceSummary.absent_days}
+                      </Typography>
+                      <Typography sx={{ color: '#888', fontSize: '0.75rem' }}>Absent</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography sx={{ color: '#4285F4', fontSize: '1.5rem', fontWeight: 700 }}>
+                        {attendanceSummary.half_days}
+                      </Typography>
+                      <Typography sx={{ color: '#888', fontSize: '0.75rem' }}>Half Days</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography sx={{ color: '#9C27B0', fontSize: '1.5rem', fontWeight: 700 }}>
+                        {attendanceSummary.holiday_days}
+                      </Typography>
+                      <Typography sx={{ color: '#888', fontSize: '0.75rem' }}>Holidays</Typography>
+                    </Box>
+                    <Box sx={{ textAlign: 'center' }}>
+                      <Typography sx={{ color: '#FF4500', fontSize: '1.5rem', fontWeight: 700 }}>
+                        {attendanceSummary.working_days}
+                      </Typography>
+                      <Typography sx={{ color: '#888', fontSize: '0.75rem' }}>Working Days</Typography>
+                    </Box>
+                  </Box>
+                ) : (
+                  <Box sx={{ textAlign: 'center', py: 2 }}>
+                    <Typography sx={{ color: '#666', fontSize: '0.85rem' }}>
+                      No attendance data for this month
+                    </Typography>
+                  </Box>
+                )}
+              </StatCard>
             </Box>
 
-            {/* Right column: Quick Actions (top), ZenX Assistant Chat (below) */}
+            {/* Right column: Quick Actions (top), LinkedIn Learning (middle) */}
             <Box sx={{ flex: { xs: 'none', md: '0 0 auto' }, width: { xs: '100%', md: 360 }, minWidth: 0 }}>
               <StatCard sx={{ mb: 3 }}>
                 <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1.5, mb: 2 }}>
                   QUICK ACTIONS
                 </Typography>
                 <Grid container spacing={1.5}>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <QuickActionBtn onClick={() => router.push('/apply-leave')}>
-                      <CalendarMonth sx={{ color: '#FF4500', fontSize: 28 }} />
+                      <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <CalendarMonth sx={{ color: '#FF4500', fontSize: 32 }} />
+                      </Box>
                       Apply Leave
                     </QuickActionBtn>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <QuickActionBtn onClick={() => setPayslipsListOpen(true)}>
-                      <RequestQuote sx={{ color: '#FF4500', fontSize: 28 }} />
+                      <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <RequestQuote sx={{ color: '#FF4500', fontSize: 32 }} />
+                      </Box>
                       Payslips
                     </QuickActionBtn>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <QuickActionBtn onClick={() => setChatBotOpen(true)}>
-                      <ChatIcon sx={{ color: '#FF4500', fontSize: 28 }} />
+                      <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <ChatIcon sx={{ color: '#FF4500', fontSize: 32 }} />
+                      </Box>
                       AI Chat
                     </QuickActionBtn>
                   </Grid>
-                  <Grid item xs={6}>
+                  <Grid item xs={4}>
                     <QuickActionBtn onClick={() => { setTimesheetMode('choice'); setTimesheetDialogOpen(true); }}>
-                      <Schedule sx={{ color: '#FF4500', fontSize: 28 }} />
+                      <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Schedule sx={{ color: '#FF4500', fontSize: 32 }} />
+                      </Box>
                       Timesheet
                     </QuickActionBtn>
                   </Grid>
+                  <Grid item xs={4}>
+                    <QuickActionBtn onClick={() => router.push('/my-attendance')}>
+                      <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <CalendarMonth sx={{ color: '#FF4500', fontSize: 32 }} />
+                      </Box>
+                      Attendance
+                    </QuickActionBtn>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <QuickActionBtn onClick={() => router.push('/my-leaves')}>
+                      <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <BeachAccessIcon sx={{ color: '#FF4500', fontSize: 32 }} />
+                      </Box>
+                      Leaves
+                    </QuickActionBtn>
+                  </Grid>
+                  <Grid item xs={4}>
+                    <QuickActionBtn onClick={() => router.push('/attendance-calendar')}>
+                      <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <CalendarMonth sx={{ color: '#FF4500', fontSize: 32 }} />
+                      </Box>
+                      Calendar
+                    </QuickActionBtn>
+                  </Grid>
                 </Grid>
+              </StatCard>
+
+              {/* LinkedIn Learning - below Quick Actions */}
+              <StatCard>
+                <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1.5, mb: 2 }}>
+                  ACTIVE LEARNING
+                </Typography>
+                {userCourses.map((course, index) => (
+                  <Box 
+                    key={course.id}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1.5,
+                      py: 2,
+                      borderBottom: index < userCourses.length - 1 ? '1px solid #1A1A1A' : 'none',
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <School sx={{ color: '#FF4500', fontSize: 18 }} />
+                      <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 600 }}>
+                        LinkedIn Learning
+                      </Typography>
+                    </Box>
+                    <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.85rem', lineHeight: 1.3 }}>
+                      {course.title}
+                    </Typography>
+                    <Typography sx={{ color: '#888', fontSize: '0.75rem' }}>
+                      {course.module}
+                    </Typography>
+                    <LinearProgress
+                      variant="determinate"
+                      value={course.progress}
+                      sx={{
+                        height: 5,
+                        borderRadius: 3,
+                        bgcolor: '#1A1A1A',
+                        '& .MuiLinearProgress-bar': { 
+                          bgcolor: course.progress === 100 ? '#4CAF50' : '#FF4500', 
+                          borderRadius: 3 
+                        },
+                      }}
+                    />
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography sx={{ color: course.progress === 100 ? '#4CAF50' : '#FF4500', fontSize: '0.7rem', fontWeight: 600 }}>
+                        {course.progress}% Completed
+                      </Typography>
+                      {course.progress < 100 && (
+                        <Button
+                          variant="contained"
+                          onClick={() => window.open(course.url, '_blank')}
+                          sx={{
+                            bgcolor: '#FF4500',
+                            color: '#fff',
+                            textTransform: 'none',
+                            fontWeight: 600,
+                            fontSize: '0.7rem',
+                            px: 1.5,
+                            py: 0.5,
+                            borderRadius: '6px',
+                            minWidth: 'auto',
+                            '&:hover': { bgcolor: '#E03E00' },
+                          }}
+                        >
+                          RESUME
+                        </Button>
+                      )}
+                    </Box>
+                  </Box>
+                ))}
               </StatCard>
             </Box>
           </Box>
@@ -1330,10 +1393,20 @@ export default function Dashboard() {
                       <Typography sx={{ color: '#f44336', fontSize: '0.9rem' }}>− ₹{payrollData.other_deductions.toLocaleString('en-IN')}</Typography>
                     </Box>
                   )}
+                  {payrollData.lop_deduction > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5, bgcolor: '#2A1A1A', px: 1, borderRadius: '8px' }}>
+                      <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>
+                        LOP / Absent Days ({payrollData.lop_days + payrollData.absent_days} days)
+                      </Typography>
+                      <Typography sx={{ color: '#EA4335', fontSize: '0.9rem', fontWeight: 600 }}>
+                        − ₹{payrollData.lop_deduction.toLocaleString('en-IN')}
+                      </Typography>
+                    </Box>
+                  )}
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1, borderTop: '1px solid #222' }}>
                     <Typography sx={{ color: '#fff', fontWeight: 600 }}>Total Deductions</Typography>
                     <Typography sx={{ color: '#f44336', fontWeight: 600 }}>
-                      − ₹{(payrollData.tax + payrollData.provident_fund + payrollData.insurance + payrollData.other_deductions).toLocaleString('en-IN')}
+                      − ₹{(payrollData.tax + payrollData.provident_fund + payrollData.insurance + payrollData.other_deductions + (payrollData.lop_deduction || 0)).toLocaleString('en-IN')}
                     </Typography>
                   </Box>
                 </Box>

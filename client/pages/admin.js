@@ -401,6 +401,22 @@ export default function AdminDashboard() {
               </Button>
               <Button
                 variant="outlined"
+                onClick={() => router.push('/admin/attendance-reports')}
+                sx={{
+                  color: '#9C27B0',
+                  borderColor: '#9C27B0',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  '&:hover': {
+                    borderColor: '#B039C0',
+                    bgcolor: 'rgba(156, 39, 176, 0.1)',
+                  },
+                }}
+              >
+                Attendance Reports
+              </Button>
+              <Button
+                variant="outlined"
                 onClick={async () => {
                   try {
                     await apiClient.initializeLeaveBalances();
