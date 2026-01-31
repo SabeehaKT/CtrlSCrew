@@ -15,7 +15,16 @@ import {
   InputAdornment,
   Card,
   CardContent,
+  Avatar,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LockIcon from '@mui/icons-material/Lock';
 import { styled } from '@mui/material/styles';
 import {
   School,
@@ -280,6 +289,26 @@ export default function Compliance() {
     };
   }, []);
 
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    handleMenuClose();
+    router.push('/profile');
+  };
+
+  const handleChangePassword = () => {
+    handleMenuClose();
+    router.push('/change-password');
+  };
+
   const handleLogout = () => {
     apiClient.logout();
     router.push('/');
@@ -347,30 +376,70 @@ export default function Compliance() {
                 <NavButton className="active">Compliance</NavButton>
               </Box>
 
-              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
-                <IconButton sx={{ color: '#888' }}>
-                  <Notifications />
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+                <IconButton
+                  onClick={handleMenuOpen}
+                  sx={{ p: 0 }}
+                >
+                  <Avatar 
+                    sx={{ 
+                      bgcolor: '#FF4500', 
+                      width: 40, 
+                      height: 40,
+                      fontWeight: 700,
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        opacity: 0.8,
+                      }
+                    }}
+                  >
+                    {user?.name?.charAt(0) || 'U'}
+                  </Avatar>
                 </IconButton>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    borderColor: '#FF4500',
-                    color: '#FF4500',
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    px: 2.5,
-                    py: 1,
-                    borderRadius: '8px',
-                    '&:hover': { 
-                      bgcolor: '#FF4500',
-                      color: '#fff',
-                      borderColor: '#FF4500'
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  PaperProps={{
+                    sx: {
+                      backgroundColor: '#0D0D0D',
+                      border: '1px solid #1A1A1A',
+                      borderRadius: '12px',
+                      mt: 1,
+                      minWidth: 200,
                     },
                   }}
-                  onClick={handleLogout}
                 >
-                  Logout
-                </Button>
+                  <MenuItem onClick={handleProfile}>
+                    <ListItemIcon>
+                      <PersonIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="My Profile" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <MenuItem onClick={handleChangePassword}>
+                    <ListItemIcon>
+                      <LockIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Change Password" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <Divider sx={{ borderColor: '#1A1A1A', my: 1 }} />
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <LogoutIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Logout" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                </Menu>
               </Box>
             </Toolbar>
           </Container>

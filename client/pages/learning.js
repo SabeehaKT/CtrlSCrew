@@ -18,7 +18,13 @@ import {
   Alert,
   Menu,
   MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LockIcon from '@mui/icons-material/Lock';
 import { styled } from '@mui/material/styles';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -129,6 +135,16 @@ export default function Learning() {
     router.push('/login');
   };
 
+  const handleProfile = () => {
+    handleMenuClose();
+    router.push('/profile');
+  };
+
+  const handleChangePassword = () => {
+    handleMenuClose();
+    router.push('/change-password');
+  };
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -207,85 +223,68 @@ export default function Learning() {
 
               </Box>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <IconButton 
-                  sx={{ 
-                    color: '#fff', 
-                    backgroundColor: '#1a1a1a',
-                    width: 36,
-                    height: 36,
-                  }}
-                >
-                  <Typography sx={{ fontSize: '16px' }}>🌙</Typography>
-                </IconButton>
-                <Box sx={{ textAlign: 'right', display: { xs: 'none', sm: 'block' } }}>
-                  <Typography sx={{ fontSize: '13px', fontWeight: 600, color: '#fff', lineHeight: 1.2 }}>
-                    {user?.name}
-                  </Typography>
-                  <Typography sx={{ fontSize: '11px', color: '#666', lineHeight: 1.2, mt: 0.3 }}>
-                    {user?.role || 'Employee'}
-                  </Typography>
-                </Box>
-                <Avatar 
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+                <IconButton
                   onClick={handleMenuOpen}
-                  sx={{ 
-                    bgcolor: '#FF6B35', 
-                    width: 40, 
-                    height: 40,
-                    fontWeight: 700,
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    '&:hover': {
-                      bgcolor: '#FF7F50',
-                    },
-                  }}
+                  sx={{ p: 0 }}
                 >
-                  {firstName.charAt(0).toUpperCase()}
-                </Avatar>
+                  <Avatar 
+                    sx={{ 
+                      bgcolor: '#FF4500', 
+                      width: 40, 
+                      height: 40,
+                      fontWeight: 700,
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        opacity: 0.8,
+                      }
+                    }}
+                  >
+                    {firstName.charAt(0)}
+                  </Avatar>
+                </IconButton>
                 <Menu
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                   PaperProps={{
                     sx: {
-                      backgroundColor: '#1a1a1a',
-                      border: '1px solid #333',
+                      backgroundColor: '#0D0D0D',
+                      border: '1px solid #1A1A1A',
+                      borderRadius: '12px',
                       mt: 1,
-                      minWidth: 180,
+                      minWidth: 200,
                     },
                   }}
                 >
-                  <MenuItem 
-                    onClick={() => {
-                      handleMenuClose();
-                      router.push('/dashboard');
-                    }}
-                    sx={{ 
-                      color: '#fff',
-                      fontSize: '14px',
-                      '&:hover': {
-                        backgroundColor: '#2a2a2a',
-                      },
-                    }}
-                  >
-                    <Typography sx={{ fontSize: '16px', mr: 1.5 }}>🏠</Typography>
-                    Dashboard
+                  <MenuItem onClick={handleProfile}>
+                    <ListItemIcon>
+                      <PersonIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="My Profile" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
                   </MenuItem>
-                  <MenuItem 
-                    onClick={() => {
-                      handleMenuClose();
-                      handleLogout();
-                    }}
-                    sx={{ 
-                      color: '#FF6B35',
-                      fontSize: '14px',
-                      '&:hover': {
-                        backgroundColor: '#2a2a2a',
-                      },
-                    }}
-                  >
-                    <Typography sx={{ fontSize: '16px', mr: 1.5 }}>🚪</Typography>
-                    Logout
+                  <MenuItem onClick={handleChangePassword}>
+                    <ListItemIcon>
+                      <LockIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Change Password" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <Divider sx={{ borderColor: '#1A1A1A', my: 1 }} />
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <LogoutIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Logout" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
                   </MenuItem>
                 </Menu>
               </Box>

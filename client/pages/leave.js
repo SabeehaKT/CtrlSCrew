@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -12,13 +12,21 @@ import {
   Avatar,
   IconButton,
   TextField,
-  MenuItem,
+  MenuItem as MuiMenuItem,
   Select,
   FormControl,
+  Menu,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
+import LogoutIcon from '@mui/icons-material/Logout';
+import LockIcon from '@mui/icons-material/Lock';
 import { styled } from '@mui/material/styles';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { apiClient } from '../utils/apiClient';
 import {
   CalendarMonth as CalendarIcon,
   AccessTime as ClockIcon,
@@ -130,14 +138,52 @@ const recentRequests = [
 
 export default function LeavePage() {
   const router = useRouter();
+  const [user, setUser] = useState(null);
   const [leaveType, setLeaveType] = useState('Earned Leave');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [reason, setReason] = useState('');
   const [monthLabel, setMonthLabel] = useState('October 2023');
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handlePrevMonth = () => setMonthLabel('September 2023');
   const handleNextMonth = () => setMonthLabel('November 2023');
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await apiClient.getCurrentUser();
+        setUser(userData);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        router.push('/login');
+      }
+    };
+    fetchUser();
+  }, [router]);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfile = () => {
+    handleMenuClose();
+    router.push('/profile');
+  };
+
+  const handleChangePassword = () => {
+    handleMenuClose();
+    router.push('/change-password');
+  };
+
+  const handleLogout = () => {
+    handleMenuClose();
+    router.push('/login');
+  };
 
   return (
     <>
@@ -164,9 +210,70 @@ export default function LeavePage() {
 
               </Box>
 
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <OrangeBtn startIcon={<AddIcon sx={{ fontSize: 20 }} />}>Apply for Leave</OrangeBtn>
-                <Avatar sx={{ bgcolor: '#8B4513', width: 44, height: 44, fontWeight: 700, fontSize: '1rem' }}>JD</Avatar>
+              <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
+                <IconButton
+                  onClick={handleMenuOpen}
+                  sx={{ p: 0 }}
+                >
+                  <Avatar 
+                    sx={{ 
+                      bgcolor: '#FF4500', 
+                      width: 40, 
+                      height: 40,
+                      fontWeight: 700,
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        opacity: 0.8,
+                      }
+                    }}
+                  >
+                    {user?.name?.charAt(0) || 'U'}
+                  </Avatar>
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  PaperProps={{
+                    sx: {
+                      backgroundColor: '#0D0D0D',
+                      border: '1px solid #1A1A1A',
+                      borderRadius: '12px',
+                      mt: 1,
+                      minWidth: 200,
+                    },
+                  }}
+                >
+                  <MuiMenuItem onClick={handleProfile}>
+                    <ListItemIcon>
+                      <PersonIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="My Profile" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MuiMenuItem>
+                  <MuiMenuItem onClick={handleChangePassword}>
+                    <ListItemIcon>
+                      <LockIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Change Password" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MuiMenuItem>
+                  <Divider sx={{ borderColor: '#1A1A1A', my: 1 }} />
+                  <MuiMenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <LogoutIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Logout" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MuiMenuItem>
+                </Menu>
               </Box>
             </Toolbar>
           </Container>
@@ -252,9 +359,9 @@ export default function LeavePage() {
                     <Typography sx={{ color: '#9e9e9e', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>Leave Type</Typography>
                     <FormControl size="small" sx={{ minWidth: 120, '& .MuiOutlinedInput-root': { bgcolor: '#1A1A1A', color: '#fff', borderRadius: '8px', fontSize: '0.8rem', minHeight: 32 }, '& .MuiSelect-icon': { color: '#fff' }, '& fieldset': { borderColor: '#333' } }}>
                       <Select value={leaveType} onChange={(e) => setLeaveType(e.target.value)} displayEmpty>
-                        <MenuItem value="Earned Leave">Earned Leave</MenuItem>
-                        <MenuItem value="Sick Leave">Sick Leave</MenuItem>
-                        <MenuItem value="Casual Leave">Casual Leave</MenuItem>
+                        <MuiMenuItem value="Earned Leave">Earned Leave</MuiMenuItem>
+                        <MuiMenuItem value="Sick Leave">Sick Leave</MuiMenuItem>
+                        <MuiMenuItem value="Casual Leave">Casual Leave</MuiMenuItem>
                       </Select>
                     </FormControl>
                   </Box>
