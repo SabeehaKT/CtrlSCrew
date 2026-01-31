@@ -1,9 +1,14 @@
-from datetime import timedelta
+from datetime import timedelta, datetime as dt
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-from database import get_db, User, Payroll
-from schemas import AdminUserCreate, UserLogin, Token, UserResponse, UserUpdate, AdminUserUpdate, UserProfileUpdate, PasswordChange, PayrollCreate, PayrollUpdate, PayrollResponse
+from database import get_db, User, Payroll, LeaveBalance, LeaveRequest, Attendance
+from schemas import (
+    AdminUserCreate, UserLogin, Token, UserResponse, UserUpdate, AdminUserUpdate, 
+    UserProfileUpdate, PasswordChange, PayrollCreate, PayrollUpdate, PayrollResponse,
+    LeaveBalanceCreate, LeaveBalanceResponse, LeaveRequestCreate, LeaveRequestResponse,
+    LeaveRequestUpdate, AttendanceCreate, AttendanceResponse
+)
 from auth import (
     get_password_hash,
     verify_password,
@@ -390,3 +395,353 @@ async def delete_payroll(
     db.delete(payroll)
     db.commit()
     return None
+
+# Leave Balance router
+leave_router = APIRouter()
+
+@leave_router.get("/balance", response_model=LeaveBalanceResponse)
+async def get_my_leave_balance(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get current user's leave balance"""
+    from datetime import datetime
+    current_year = datetime.now().year
+    
+    balance = db.query(LeaveBalance).filter(
+        LeaveBalance.user_id == current_user.id,
+        LeaveBalance.year == current_year
+    ).first()
+    
+    if not balance:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Leave balance not found. Contact admin to initialize."
+        )
+    
+    return balance
+
+@leave_router.post("/balance/initialize", status_code=status.HTTP_201_CREATED)
+async def initialize_leave_balances(
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Initialize leave balances for all users for current year"""
+    from datetime import datetime
+    current_year = datetime.now().year
+    
+    users = db.query(User).all()
+    created_count = 0
+    
+    for user in users:
+        # Check if balance already exists
+        existing = db.query(LeaveBalance).filter(
+            LeaveBalance.user_id == user.id,
+            LeaveBalance.year == current_year
+        ).first()
+        
+        if not existing:
+            new_balance = LeaveBalance(
+                user_id=user.id,
+                earned_leave_total=21.0,
+                casual_leave_total=7.0,
+                sick_leave_total=14.0,
+                comp_off_total=0.0,
+                year=current_year
+            )
+            db.add(new_balance)
+            created_count += 1
+    
+    db.commit()
+    return {"message": f"Initialized leave balances for {created_count} users"}
+
+@leave_router.get("/balance/all", response_model=List[LeaveBalanceResponse])
+async def get_all_leave_balances(
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Get all leave balances"""
+    from datetime import datetime
+    current_year = datetime.now().year
+    
+    balances = db.query(LeaveBalance).filter(LeaveBalance.year == current_year).all()
+    return balances
+
+# Leave Request router
+leave_request_router = APIRouter()
+
+@leave_request_router.post("/", response_model=LeaveRequestResponse, status_code=status.HTTP_201_CREATED)
+async def apply_leave(
+    leave_request: LeaveRequestCreate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Apply for leave"""
+    from datetime import datetime
+    current_year = datetime.now().year
+    
+    # Check leave balance if not LOP
+    if leave_request.leave_type != "lop":
+        balance = db.query(LeaveBalance).filter(
+            LeaveBalance.user_id == current_user.id,
+            LeaveBalance.year == current_year
+        ).first()
+        
+        if not balance:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Leave balance not initialized. Contact admin."
+            )
+        
+        # Check if sufficient balance
+        if leave_request.leave_type == "earned":
+            remaining = balance.earned_leave_total - balance.earned_leave_used
+        elif leave_request.leave_type == "casual":
+            remaining = balance.casual_leave_total - balance.casual_leave_used
+        elif leave_request.leave_type == "sick":
+            remaining = balance.sick_leave_total - balance.sick_leave_used
+        elif leave_request.leave_type == "comp_off":
+            remaining = balance.comp_off_total - balance.comp_off_used
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid leave type"
+            )
+        
+        if leave_request.days > remaining:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Insufficient leave balance. Available: {remaining} days"
+            )
+    
+    # Create leave request
+    # Sick leave is auto-approved if user has sufficient balance
+    is_sick_leave = leave_request.leave_type == "sick"
+    initial_status = "approved" if is_sick_leave else "pending"
+    
+    new_request = LeaveRequest(
+        user_id=current_user.id,
+        leave_type=leave_request.leave_type,
+        start_date=leave_request.start_date,
+        end_date=leave_request.end_date,
+        days=leave_request.days,
+        reason=leave_request.reason,
+        status=initial_status
+    )
+    
+    # If sick leave, auto-approve and deduct from balance
+    if is_sick_leave:
+        new_request.approved_by = current_user.id  # Self-approved
+        new_request.approved_at = datetime.utcnow()
+        
+        # Deduct from sick leave balance
+        balance = db.query(LeaveBalance).filter(
+            LeaveBalance.user_id == current_user.id,
+            LeaveBalance.year == current_year
+        ).first()
+        
+        if balance:
+            balance.sick_leave_used += leave_request.days
+    
+    db.add(new_request)
+    db.commit()
+    db.refresh(new_request)
+    
+    return new_request
+
+@leave_request_router.get("/", response_model=List[LeaveRequestResponse])
+async def get_my_leave_requests(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get current user's leave requests"""
+    requests = db.query(LeaveRequest).filter(
+        LeaveRequest.user_id == current_user.id
+    ).order_by(LeaveRequest.created_at.desc()).all()
+    
+    return requests
+
+@leave_request_router.get("/all", response_model=List[LeaveRequestResponse])
+async def get_all_leave_requests(
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Get all leave requests"""
+    requests = db.query(LeaveRequest).order_by(LeaveRequest.created_at.desc()).all()
+    return requests
+
+@leave_request_router.put("/{request_id}", response_model=LeaveRequestResponse)
+async def update_leave_request(
+    request_id: int,
+    update_data: LeaveRequestUpdate,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Approve or reject leave request"""
+    from datetime import datetime
+    current_year = datetime.now().year
+    
+    leave_req = db.query(LeaveRequest).filter(LeaveRequest.id == request_id).first()
+    
+    if not leave_req:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Leave request not found"
+        )
+    
+    # Update status
+    if update_data.status:
+        leave_req.status = update_data.status
+        leave_req.approved_by = current_admin.id
+        leave_req.approved_at = datetime.utcnow()
+        
+        # If approved, deduct from leave balance
+        if update_data.status == "approved" and leave_req.leave_type != "lop":
+            balance = db.query(LeaveBalance).filter(
+                LeaveBalance.user_id == leave_req.user_id,
+                LeaveBalance.year == current_year
+            ).first()
+            
+            if balance:
+                if leave_req.leave_type == "earned":
+                    balance.earned_leave_used += leave_req.days
+                elif leave_req.leave_type == "casual":
+                    balance.casual_leave_used += leave_req.days
+                elif leave_req.leave_type == "sick":
+                    balance.sick_leave_used += leave_req.days
+                elif leave_req.leave_type == "comp_off":
+                    balance.comp_off_used += leave_req.days
+    
+    if update_data.rejection_reason:
+        leave_req.rejection_reason = update_data.rejection_reason
+    
+    db.commit()
+    db.refresh(leave_req)
+    
+    return leave_req
+
+# Attendance router
+attendance_router = APIRouter()
+
+@attendance_router.post("/bulk", status_code=status.HTTP_201_CREATED)
+async def mark_bulk_attendance(
+    date: str,
+    status: str,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Mark attendance for all users for a specific date"""
+    from datetime import datetime
+    
+    # Parse date
+    try:
+        attendance_date = datetime.strptime(date, "%Y-%m-%d").date()
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid date format. Use YYYY-MM-DD"
+        )
+    
+    # Get all users
+    users = db.query(User).all()
+    created_count = 0
+    updated_count = 0
+    
+    for user in users:
+        # Check if attendance already exists
+        existing = db.query(Attendance).filter(
+            Attendance.user_id == user.id,
+            Attendance.date == attendance_date
+        ).first()
+        
+        if existing:
+            # Update existing
+            existing.status = status
+            existing.created_by = current_admin.id
+            updated_count += 1
+        else:
+            # Create new
+            new_attendance = Attendance(
+                user_id=user.id,
+                date=attendance_date,
+                status=status,
+                created_by=current_admin.id
+            )
+            db.add(new_attendance)
+            created_count += 1
+    
+    db.commit()
+    return {
+        "message": f"Bulk attendance marked for {date}",
+        "created": created_count,
+        "updated": updated_count
+    }
+
+@attendance_router.put("/{attendance_id}", response_model=AttendanceResponse)
+async def update_attendance(
+    attendance_id: int,
+    status: str,
+    leave_type: str = None,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Update individual attendance record"""
+    from datetime import datetime
+    current_year = datetime.now().year
+    
+    attendance = db.query(Attendance).filter(Attendance.id == attendance_id).first()
+    
+    if not attendance:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Attendance record not found"
+        )
+    
+    # Update status
+    attendance.status = status
+    attendance.leave_type = leave_type
+    attendance.created_by = current_admin.id
+    
+    # If marking as leave, deduct from balance
+    if status == "leave" and leave_type and leave_type != "lop":
+        balance = db.query(LeaveBalance).filter(
+            LeaveBalance.user_id == attendance.user_id,
+            LeaveBalance.year == current_year
+        ).first()
+        
+        if balance:
+            days_to_deduct = 0.5 if status == "half_day" else 1.0
+            
+            if leave_type == "earned":
+                balance.earned_leave_used += days_to_deduct
+            elif leave_type == "casual":
+                balance.casual_leave_used += days_to_deduct
+            elif leave_type == "sick":
+                balance.sick_leave_used += days_to_deduct
+            elif leave_type == "comp_off":
+                balance.comp_off_used += days_to_deduct
+    
+    db.commit()
+    db.refresh(attendance)
+    
+    return attendance
+
+@attendance_router.get("/date/{date}", response_model=List[AttendanceResponse])
+async def get_attendance_by_date(
+    date: str,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Get all attendance records for a specific date"""
+    from datetime import datetime
+    
+    try:
+        attendance_date = datetime.strptime(date, "%Y-%m-%d").date()
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid date format. Use YYYY-MM-DD"
+        )
+    
+    records = db.query(Attendance).filter(Attendance.date == attendance_date).all()
+    return records

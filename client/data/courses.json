@@ -1,0 +1,92 @@
+[
+  {
+    "id": 1,
+    "title": "Generative AI in HR",
+    "module": "Module 3: AI-Powered Recruitment",
+    "progress": 72,
+    "category": "AI",
+    "level": "intermediate",
+    "url": "https://www.linkedin.com/learning/generative-ai-in-hr"
+  },
+  {
+    "id": 2,
+    "title": "Introduction to Artificial Intelligence",
+    "module": "All modules completed",
+    "progress": 100,
+    "category": "AI",
+    "level": "beginner",
+    "url": "https://www.linkedin.com/learning/introduction-to-artificial-intelligence"
+  },
+  {
+    "id": 3,
+    "title": "React.js Essential Training",
+    "module": "Module 5: Hooks and State Management",
+    "progress": 45,
+    "category": "Development",
+    "level": "intermediate",
+    "url": "https://www.linkedin.com/learning/react-js-essential-training"
+  },
+  {
+    "id": 4,
+    "title": "AWS Essential Training for Developers",
+    "module": "Module 2: EC2 and Elastic Compute",
+    "progress": 30,
+    "category": "Cloud",
+    "level": "advanced",
+    "url": "https://www.linkedin.com/learning/aws-essential-training-for-developers"
+  },
+  {
+    "id": 5,
+    "title": "Python for Data Science Essential Training",
+    "module": "Module 4: Machine Learning with Scikit-Learn",
+    "progress": 60,
+    "category": "Data Science",
+    "level": "intermediate",
+    "url": "https://www.linkedin.com/learning/python-for-data-science-essential-training-part-1"
+  },
+  {
+    "id": 6,
+    "title": "Cybersecurity Foundations",
+    "module": "Module 1: Network Security Basics",
+    "progress": 15,
+    "category": "Security",
+    "level": "beginner",
+    "url": "https://www.linkedin.com/learning/cybersecurity-foundations"
+  },
+  {
+    "id": 7,
+    "title": "Learning Docker",
+    "module": "Module 3: Container Orchestration",
+    "progress": 55,
+    "category": "DevOps",
+    "level": "advanced",
+    "url": "https://www.linkedin.com/learning/learning-docker-2"
+  },
+  {
+    "id": 8,
+    "title": "React Native Essential Training",
+    "module": "Module 2: Navigation and State",
+    "progress": 40,
+    "category": "Mobile",
+    "level": "intermediate",
+    "url": "https://www.linkedin.com/learning/react-native-essential-training"
+  },
+  {
+    "id": 9,
+    "title": "Advanced SQL for Query Tuning",
+    "module": "Module 4: Query Optimization Techniques",
+    "progress": 80,
+    "category": "Database",
+    "level": "intermediate",
+    "url": "https://www.linkedin.com/learning/advanced-sql-for-query-tuning-and-performance-optimization"
+  },
+  {
+    "id": 10,
+    "title": "UX Foundations: Usability Testing",
+    "module": "Module 1: Planning User Research",
+    "progress": 25,
+    "category": "Design",
+    "level": "beginner",
+    "url": "https://www.linkedin.com/learning/ux-foundations-usability-testing"
+  }
+]

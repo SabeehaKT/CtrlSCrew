@@ -147,6 +147,13 @@ Run frontend on different port:
 npm run dev -- -p 3001
 ```
 
+### "Unable to acquire lock" when running `npm run dev`
+Another instance of Next.js is already running. Either:
+1. **Close the other terminal** where `npm run dev` is running, then run it again in this terminal, or
+2. **Remove the lock file** (Windows, from project root):  
+   `Remove-Item -Force CtrlSCrew\client\.next\dev\lock -ErrorAction SilentlyContinue`  
+   Then run `cd CtrlSCrew\client` and `npm run dev` again.
+
 ### Backend won't connect to frontend
 Make sure both servers are running and check:
 - Backend: http://localhost:8000/health

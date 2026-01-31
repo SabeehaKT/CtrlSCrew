@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
-from routes import auth_router, user_router, admin_router, payroll_router
+from routes import auth_router, user_router, admin_router, payroll_router, leave_router, leave_request_router, attendance_router
 from career import career_router
 from wellness import wellness_router
 from database import init_db, SessionLocal, User
@@ -62,6 +62,9 @@ app.include_router(career_router, prefix="/api/career", tags=["Career"])
 app.include_router(admin_router, prefix="/api/admin", tags=["Admin"])
 app.include_router(payroll_router, prefix="/api/payroll", tags=["Payroll"])
 app.include_router(wellness_router, prefix="/api/wellness", tags=["Wellness"])
+app.include_router(leave_router, prefix="/api/leave", tags=["Leave"])
+app.include_router(leave_request_router, prefix="/api/leave-requests", tags=["Leave Requests"])
+app.include_router(attendance_router, prefix="/api/attendance", tags=["Attendance"])
 
 # Root endpoint
 @app.get("/")
