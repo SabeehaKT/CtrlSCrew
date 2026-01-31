@@ -106,6 +106,20 @@ export const apiClient = {
     });
   },
 
+  /** Get career path data for the current user */
+  async getCareerPath() {
+    const token = this.getToken();
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+    return this.request('/api/career/path', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+  },
+
   /** Get AI-generated roadmap summary for Edit Roadmap flow (Career tab) */
   async getRoadmapSummary(milestoneData) {
     const token = this.getToken();
