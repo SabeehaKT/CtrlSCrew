@@ -85,6 +85,9 @@ class PayrollCreate(BaseModel):
     insurance: Optional[float] = 0.0
     other_deductions: Optional[float] = 0.0
     bonus: Optional[float] = 0.0
+    lop_days: Optional[float] = 0.0
+    absent_days: Optional[float] = 0.0
+    lop_deduction: Optional[float] = 0.0
     month: str
     year: int
     status: Optional[str] = "pending"
@@ -99,6 +102,9 @@ class PayrollUpdate(BaseModel):
     insurance: Optional[float] = None
     other_deductions: Optional[float] = None
     bonus: Optional[float] = None
+    lop_days: Optional[float] = None
+    absent_days: Optional[float] = None
+    lop_deduction: Optional[float] = None
     month: Optional[str] = None
     year: Optional[int] = None
     status: Optional[str] = None
@@ -115,27 +121,27 @@ class PayrollResponse(BaseModel):
     insurance: float
     other_deductions: float
     bonus: float
+    lop_days: float
+    absent_days: float
+    lop_deduction: float
     month: str
     year: int
     status: str
     created_at: datetime
     updated_at: datetime
-    
-    # Calculated fields
-    @property
-    def gross_salary(self) -> float:
-        return self.basic_salary + self.hra + self.transport_allowance + self.other_allowances + self.bonus
-    
-    @property
-    def total_deductions(self) -> float:
-        return self.tax + self.provident_fund + self.insurance + self.other_deductions
-    
-    @property
-    def net_salary(self) -> float:
-        return self.gross_salary - self.total_deductions
+    gross_salary: Optional[float] = None
+    total_deductions: Optional[float] = None
+    net_salary: Optional[float] = None
     
     class Config:
         from_attributes = True
+    
+    @model_validator(mode='after')
+    def calculate_salary(self):
+        self.gross_salary = self.basic_salary + self.hra + self.transport_allowance + self.other_allowances + self.bonus
+        self.total_deductions = self.tax + self.provident_fund + self.insurance + self.other_deductions + self.lop_deduction
+        self.net_salary = self.gross_salary - self.total_deductions
+        return self
 
 # Leave Balance schemas
 class LeaveBalanceCreate(BaseModel):
