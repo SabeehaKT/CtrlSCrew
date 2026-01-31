@@ -180,7 +180,6 @@ export default function Dashboard() {
   const [payrollLoading, setPayrollLoading] = useState(true);
   const [leaveBalance, setLeaveBalance] = useState(null);
   const [leaveLoading, setLeaveLoading] = useState(true);
-  const [userCourses, setUserCourses] = useState([]);
   
   // ZenX AI Training Data - Predefined Queries and Responses
   const AI_TRAINING_DATA = [
