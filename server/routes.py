@@ -396,6 +396,49 @@ async def delete_payroll(
     db.commit()
     return None
 
+@payroll_router.get("/calculate-lop/{user_id}/{month}/{year}")
+async def calculate_lop_for_user(
+    user_id: int,
+    month: str,
+    year: int,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Calculate LOP and absent days from attendance for a specific month"""
+    from datetime import datetime
+    from sqlalchemy import extract
+    
+    # Get month number from month name
+    month_map = {
+        'January': 1, 'February': 2, 'March': 3, 'April': 4,
+        'May': 5, 'June': 6, 'July': 7, 'August': 8,
+        'September': 9, 'October': 10, 'November': 11, 'December': 12
+    }
+    month_num = month_map.get(month, datetime.now().month)
+    
+    # Get attendance records for the month
+    attendance_records = db.query(Attendance).filter(
+        Attendance.user_id == user_id,
+        extract('month', Attendance.date) == month_num,
+        extract('year', Attendance.date) == year
+    ).all()
+    
+    # Count LOP and absent days
+    lop_days = len([r for r in attendance_records if r.status == 'leave' and r.leave_type == 'lop'])
+    absent_days = len([r for r in attendance_records if r.status == 'absent'])
+    half_days = len([r for r in attendance_records if r.status == 'half_day'])
+    
+    # Calculate total unpaid days
+    total_unpaid_days = lop_days + absent_days + (half_days * 0.5)
+    
+    return {
+        "lop_days": lop_days,
+        "absent_days": absent_days,
+        "half_days": half_days,
+        "total_unpaid_days": total_unpaid_days,
+        "message": f"Found {total_unpaid_days} unpaid days for {month} {year}"
+    }
+
 # Leave Balance router
 leave_router = APIRouter()
 
@@ -752,3 +795,114 @@ async def get_attendance_by_date(
     
     records = db.query(Attendance).filter(Attendance.date == attendance_date).all()
     return records
+
+@attendance_router.get("/my-attendance", response_model=List[AttendanceResponse])
+async def get_my_attendance(
+    start_date: str = None,
+    end_date: str = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get current user's attendance records"""
+    from datetime import datetime, timedelta
+    
+    # Default to current month if no dates provided
+    if not start_date or not end_date:
+        today = datetime.now()
+        start_date = today.replace(day=1).strftime("%Y-%m-%d")
+        last_day = (today.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+        end_date = last_day.strftime("%Y-%m-%d")
+    
+    try:
+        start = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end = datetime.strptime(end_date, "%Y-%m-%d").date()
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid date format. Use YYYY-MM-DD"
+        )
+    
+    records = db.query(Attendance).filter(
+        Attendance.user_id == current_user.id,
+        Attendance.date >= start,
+        Attendance.date <= end
+    ).order_by(Attendance.date.desc()).all()
+    
+    return records
+
+@attendance_router.get("/user/{user_id}", response_model=List[AttendanceResponse])
+async def get_user_attendance(
+    user_id: int,
+    start_date: str = None,
+    end_date: str = None,
+    db: Session = Depends(get_db),
+    current_admin: User = Depends(get_current_admin)
+):
+    """Admin only: Get attendance records for a specific user"""
+    from datetime import datetime, timedelta
+    
+    # Default to current month if no dates provided
+    if not start_date or not end_date:
+        today = datetime.now()
+        start_date = today.replace(day=1).strftime("%Y-%m-%d")
+        last_day = (today.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+        end_date = last_day.strftime("%Y-%m-%d")
+    
+    try:
+        start = datetime.strptime(start_date, "%Y-%m-%d").date()
+        end = datetime.strptime(end_date, "%Y-%m-%d").date()
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid date format. Use YYYY-MM-DD"
+        )
+    
+    records = db.query(Attendance).filter(
+        Attendance.user_id == user_id,
+        Attendance.date >= start,
+        Attendance.date <= end
+    ).order_by(Attendance.date.desc()).all()
+    
+    return records
+
+@attendance_router.get("/summary/my", response_model=dict)
+async def get_my_attendance_summary(
+    month: int = None,
+    year: int = None,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get current user's attendance summary for a month"""
+    from datetime import datetime
+    from sqlalchemy import func, extract
+    
+    if not month or not year:
+        today = datetime.now()
+        month = today.month
+        year = today.year
+    
+    # Get attendance records for the month
+    records = db.query(Attendance).filter(
+        Attendance.user_id == current_user.id,
+        extract('month', Attendance.date) == month,
+        extract('year', Attendance.date) == year
+    ).all()
+    
+    # Calculate summary
+    present_days = len([r for r in records if r.status == "present"])
+    absent_days = len([r for r in records if r.status == "absent"])
+    leave_days = len([r for r in records if r.status == "leave"])
+    half_days = len([r for r in records if r.status == "half_day"])
+    holiday_days = len([r for r in records if r.status == "holiday"])
+    
+    return {
+        "month": month,
+        "year": year,
+        "total_records": len(records),
+        "present_days": present_days,
+        "absent_days": absent_days,
+        "leave_days": leave_days,
+        "half_days": half_days,
+        "holiday_days": holiday_days,
+        "working_days": present_days + leave_days + (half_days * 0.5)
+    }

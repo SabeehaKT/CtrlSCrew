@@ -94,10 +94,14 @@ export default function AdminPayroll() {
     insurance: '',
     other_deductions: '',
     bonus: '',
+    lop_days: 0,
+    absent_days: 0,
+    lop_deduction: 0,
     month: months[new Date().getMonth()],
     year: currentYear,
     status: 'pending',
   });
+  const [lopCalculating, setLopCalculating] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -147,6 +151,9 @@ export default function AdminPayroll() {
         insurance: payroll.insurance,
         other_deductions: payroll.other_deductions,
         bonus: payroll.bonus,
+        lop_days: payroll.lop_days || 0,
+        absent_days: payroll.absent_days || 0,
+        lop_deduction: payroll.lop_deduction || 0,
         month: payroll.month,
         year: payroll.year,
         status: payroll.status,
@@ -207,6 +214,9 @@ export default function AdminPayroll() {
         insurance: parseFloat(formData.insurance) || 0,
         other_deductions: parseFloat(formData.other_deductions) || 0,
         bonus: parseFloat(formData.bonus) || 0,
+        lop_days: parseFloat(formData.lop_days) || 0,
+        absent_days: parseFloat(formData.absent_days) || 0,
+        lop_deduction: parseFloat(formData.lop_deduction) || 0,
         month: formData.month,
         year: parseInt(formData.year),
         status: formData.status,
@@ -249,7 +259,7 @@ export default function AdminPayroll() {
 
   const calculateNetPay = (payroll) => {
     const gross = payroll.basic_salary + payroll.hra + payroll.transport_allowance + payroll.other_allowances + payroll.bonus;
-    const deductions = payroll.tax + payroll.provident_fund + payroll.insurance + payroll.other_deductions;
+    const deductions = payroll.tax + payroll.provident_fund + payroll.insurance + payroll.other_deductions + (payroll.lop_deduction || 0);
     return gross - deductions;
   };
 
@@ -351,7 +361,7 @@ export default function AdminPayroll() {
                 ) : (
                   payrolls.map((payroll) => {
                     const grossPay = payroll.basic_salary + payroll.hra + payroll.transport_allowance + payroll.other_allowances + payroll.bonus;
-                    const totalDeductions = payroll.tax + payroll.provident_fund + payroll.insurance + payroll.other_deductions;
+                    const totalDeductions = payroll.tax + payroll.provident_fund + payroll.insurance + payroll.other_deductions + (payroll.lop_deduction || 0);
                     const netPay = calculateNetPay(payroll);
 
                     return (
@@ -593,6 +603,58 @@ export default function AdminPayroll() {
                   },
                 }}
               />
+
+              {/* LOP Calculation */}
+              <Box sx={{ gridColumn: '1 / -1', mt: 2, p: 2, bgcolor: '#1A1A1A', borderRadius: '12px', border: '1px solid #2A2A2A' }}>
+                <Typography sx={{ color: '#FBBC04', fontWeight: 600, mb: 2 }}>
+                  LOP / Absent Days Calculation
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <Button
+                    variant="outlined"
+                    onClick={async () => {
+                      if (!formData.user_id || !formData.month || !formData.year) {
+                        alert('Please select user, month, and year first');
+                        return;
+                      }
+                      setLopCalculating(true);
+                      try {
+                        const lopData = await apiClient.calculateLOP(formData.user_id, formData.month, formData.year);
+                        const dailyRate = parseFloat(formData.basic_salary) / 30;
+                        const lopAmount = dailyRate * lopData.total_unpaid_days;
+                        
+                        setFormData(prev => ({
+                          ...prev,
+                          lop_days: lopData.lop_days,
+                          absent_days: lopData.absent_days + (lopData.half_days * 0.5),
+                          lop_deduction: Math.round(lopAmount)
+                        }));
+                      } catch (error) {
+                        alert(error.message || 'Failed to calculate LOP');
+                      } finally {
+                        setLopCalculating(false);
+                      }
+                    }}
+                    disabled={lopCalculating || !formData.user_id || !formData.basic_salary}
+                    sx={{
+                      color: '#FBBC04',
+                      borderColor: '#FBBC04',
+                      textTransform: 'none',
+                      '&:hover': {
+                        borderColor: '#FCC515',
+                        bgcolor: 'rgba(251, 188, 4, 0.1)',
+                      },
+                    }}
+                  >
+                    {lopCalculating ? 'Calculating...' : 'Auto-Calculate LOP'}
+                  </Button>
+                  <Typography sx={{ color: '#888', fontSize: '0.85rem' }}>
+                    LOP Days: <strong style={{ color: '#fff' }}>{formData.lop_days || 0}</strong> | 
+                    Absent Days: <strong style={{ color: '#fff' }}>{formData.absent_days || 0}</strong> | 
+                    Deduction: <strong style={{ color: '#EA4335' }}>₹{(formData.lop_deduction || 0).toLocaleString('en-IN')}</strong>
+                  </Typography>
+                </Box>
+              </Box>
 
               {/* Deductions */}
               <Typography sx={{ color: '#f44336', fontWeight: 600, gridColumn: '1 / -1', mt: 2 }}>
