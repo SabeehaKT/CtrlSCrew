@@ -17,6 +17,12 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  Avatar,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -156,6 +162,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [chatInput, setChatInput] = useState('');
   const [payslipOpen, setPayslipOpen] = useState(false);
   const [payslipMonth, setPayslipMonth] = useState(null);
@@ -167,7 +174,8 @@ export default function Dashboard() {
   const [chatBotInput, setChatBotInput] = useState('');
   const [payrollData, setPayrollData] = useState(null);
   const [payrollLoading, setPayrollLoading] = useState(true);
-  const [userCourses, setUserCourses] = useState([]);
+  const [leaveBalance, setLeaveBalance] = useState(null);
+  const [leaveLoading, setLeaveLoading] = useState(true);
   
   // ZenX AI Training Data - Predefined Queries and Responses
   const AI_TRAINING_DATA = [
@@ -585,6 +593,17 @@ export default function Dashboard() {
         } finally {
           setPayrollLoading(false);
         }
+        
+        // Fetch leave balance
+        try {
+          const balance = await apiClient.getMyLeaveBalance();
+          setLeaveBalance(balance);
+        } catch (error) {
+          console.error('Error fetching leave balance:', error);
+          // No leave balance available - will show placeholder
+        } finally {
+          setLeaveLoading(false);
+        }
       } catch (error) {
         console.error('Authentication error:', error);
         router.push('/login');
@@ -659,26 +678,69 @@ export default function Dashboard() {
               </Box>
 
               <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    borderColor: '#FF4500',
-                    color: '#FF4500',
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    px: 2.5,
-                    py: 1,
-                    borderRadius: '8px',
-                    '&:hover': { 
-                      bgcolor: '#FF4500',
-                      color: '#fff',
-                      borderColor: '#FF4500'
+                <IconButton
+                  onClick={handleMenuOpen}
+                  sx={{ p: 0 }}
+                >
+                  <Avatar 
+                    sx={{ 
+                      bgcolor: '#FF4500', 
+                      width: 40, 
+                      height: 40,
+                      fontWeight: 700,
+                      fontSize: '1rem',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        opacity: 0.8,
+                      }
+                    }}
+                  >
+                    {firstName.charAt(0)}
+                  </Avatar>
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                  PaperProps={{
+                    sx: {
+                      backgroundColor: '#0D0D0D',
+                      border: '1px solid #1A1A1A',
+                      borderRadius: '12px',
+                      mt: 1,
+                      minWidth: 200,
                     },
                   }}
-                  onClick={handleLogout}
                 >
-                  Logout
-                </Button>
+                  <MenuItem onClick={handleProfile}>
+                    <ListItemIcon>
+                      <PersonIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="My Profile" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <MenuItem onClick={handleChangePassword}>
+                    <ListItemIcon>
+                      <LockIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Change Password" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                  <Divider sx={{ borderColor: '#1A1A1A', my: 1 }} />
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <LogoutIcon sx={{ color: '#FF4500' }} />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Logout" 
+                      primaryTypographyProps={{ sx: { color: '#fff' } }}
+                    />
+                  </MenuItem>
+                </Menu>
               </Box>
             </Toolbar>
           </Container>
@@ -753,7 +815,7 @@ export default function Dashboard() {
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
                           <Button
-                            onClick={() => { setPayslipMonth(PAYSLIP_MONTHS[0]); setPayslipOpen(true); }}
+                            onClick={() => setPayslipOpen(true)}
                             sx={{
                               color: '#fff',
                               textTransform: 'none',
@@ -789,38 +851,77 @@ export default function Dashboard() {
                         <CalendarMonth sx={{ color: '#666', fontSize: 18 }} />
                       </Box>
                     </Box>
-                    <Box sx={{ mb: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
-                        <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Annual Leave</Typography>
-                        <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>12 / 20 Days</Typography>
+                    {leaveLoading ? (
+                      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 100 }}>
+                        <CircularProgress size={30} sx={{ color: '#FF4500' }} />
                       </Box>
-                      <LinearProgress
-                        variant="determinate"
-                        value={60}
-                        sx={{
-                          height: 6,
-                          borderRadius: 3,
-                          bgcolor: '#1A1A1A',
-                          '& .MuiLinearProgress-bar': { bgcolor: '#FF4500', borderRadius: 3 },
-                        }}
-                      />
-                    </Box>
-                    <Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
-                        <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Sick Leave</Typography>
-                        <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>8 / 10 Days</Typography>
+                    ) : leaveBalance ? (
+                      <>
+                        <Box sx={{ mb: 2 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Earned Leave</Typography>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
+                              {leaveBalance.earned_leave_remaining} / {leaveBalance.earned_leave_total} Days
+                            </Typography>
+                          </Box>
+                          <LinearProgress
+                            variant="determinate"
+                            value={(leaveBalance.earned_leave_remaining / leaveBalance.earned_leave_total) * 100}
+                            sx={{
+                              height: 6,
+                              borderRadius: 3,
+                              bgcolor: '#1A1A1A',
+                              '& .MuiLinearProgress-bar': { bgcolor: '#FF4500', borderRadius: 3 },
+                            }}
+                          />
+                        </Box>
+                        <Box sx={{ mb: 2 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Casual Leave</Typography>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
+                              {leaveBalance.casual_leave_remaining} / {leaveBalance.casual_leave_total} Days
+                            </Typography>
+                          </Box>
+                          <LinearProgress
+                            variant="determinate"
+                            value={(leaveBalance.casual_leave_remaining / leaveBalance.casual_leave_total) * 100}
+                            sx={{
+                              height: 6,
+                              borderRadius: 3,
+                              bgcolor: '#1A1A1A',
+                              '& .MuiLinearProgress-bar': { bgcolor: '#4285F4', borderRadius: 3 },
+                            }}
+                          />
+                        </Box>
+                        <Box>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.75 }}>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 400 }}>Sick Leave</Typography>
+                            <Typography sx={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>
+                              {leaveBalance.sick_leave_remaining} / {leaveBalance.sick_leave_total} Days
+                            </Typography>
+                          </Box>
+                          <LinearProgress
+                            variant="determinate"
+                            value={(leaveBalance.sick_leave_remaining / leaveBalance.sick_leave_total) * 100}
+                            sx={{
+                              height: 6,
+                              borderRadius: 3,
+                              bgcolor: '#1A1A1A',
+                              '& .MuiLinearProgress-bar': { bgcolor: '#34A853', borderRadius: 3 },
+                            }}
+                          />
+                        </Box>
+                      </>
+                    ) : (
+                      <Box sx={{ textAlign: 'center', py: 3 }}>
+                        <Typography sx={{ color: '#666', fontSize: '0.85rem', mb: 1 }}>
+                          No leave balance found
+                        </Typography>
+                        <Typography sx={{ color: '#888', fontSize: '0.75rem' }}>
+                          Contact admin to initialize your leave balance
+                        </Typography>
                       </Box>
-                      <LinearProgress
-                        variant="determinate"
-                        value={80}
-                        sx={{
-                          height: 6,
-                          borderRadius: 3,
-                          bgcolor: '#1A1A1A',
-                          '& .MuiLinearProgress-bar': { bgcolor: '#4285F4', borderRadius: 3 },
-                        }}
-                      />
-                    </Box>
+                    )}
                   </StatCard>
                 </Grid>
               </Grid>
@@ -962,7 +1063,7 @@ export default function Dashboard() {
                 </Typography>
                 <Grid container spacing={1.5}>
                   <Grid item xs={6}>
-                    <QuickActionBtn>
+                    <QuickActionBtn onClick={() => router.push('/apply-leave')}>
                       <CalendarMonth sx={{ color: '#FF4500', fontSize: 28 }} />
                       Apply Leave
                     </QuickActionBtn>
@@ -1136,91 +1237,120 @@ export default function Dashboard() {
           }}
         >
           <DialogTitle sx={{ color: '#fff', fontWeight: 700, borderBottom: '1px solid #1A1A1A', pb: 2 }}>
-            Payslip — {payslipMonth?.label || 'January 2026'}
+            Payslip — {payrollData ? `${payrollData.month} ${payrollData.year}` : 'No Data'}
           </DialogTitle>
           <DialogContent sx={{ pt: 2.5 }}>
-            <Box sx={{ mb: 2.5 }}>
-              <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1, mb: 0.5 }}>
-                PAY PERIOD (CUTOFF)
-              </Typography>
-              <Typography sx={{ color: '#fff', fontSize: '0.95rem' }}>
-                {payslipMonth?.periodStart || 'Jan 1, 2026'} — {payslipMonth?.periodEnd || 'Jan 31, 2026'}
-              </Typography>
-              <Typography sx={{ color: '#888', fontSize: '0.8rem', mt: 0.5 }}>
-                Payment date: {payslipMonth?.paymentDate || 'Jan 31, 2026'}
-              </Typography>
-            </Box>
-            <Box sx={{ mb: 2.5 }}>
-              <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1, mb: 1 }}>
-                EARNINGS
-              </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Basic Salary</Typography>
-                <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>₹2,55,000</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>HRA</Typography>
-                <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>₹72,000</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Special Allowance</Typography>
-                <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>₹1,30,000</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Bonus / Other</Typography>
-                <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>₹8,000</Typography>
-              </Box>
-              {payslipMonth?.hasIncrement && (
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                  <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Increment</Typography>
-                  <Typography sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>₹5,000</Typography>
+            {payrollData ? (
+              <>
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1, mb: 0.5 }}>
+                    PAY PERIOD
+                  </Typography>
+                  <Typography sx={{ color: '#fff', fontSize: '0.95rem' }}>
+                    {payrollData.month} {payrollData.year}
+                  </Typography>
+                  <Typography sx={{ color: '#888', fontSize: '0.8rem', mt: 0.5 }}>
+                    Status: {payrollData.status.charAt(0).toUpperCase() + payrollData.status.slice(1)}
+                  </Typography>
                 </Box>
-              )}
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1, borderTop: '1px solid #222' }}>
-                <Typography sx={{ color: '#fff', fontWeight: 600 }}>Gross Pay</Typography>
-                <Typography sx={{ color: '#fff', fontWeight: 600 }}>
-                  ₹{payslipMonth?.hasIncrement ? '4,70,000' : '4,65,000'}
-                </Typography>
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1, mb: 1 }}>
+                    EARNINGS
+                  </Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                    <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Basic Salary</Typography>
+                    <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>₹{payrollData.basic_salary.toLocaleString('en-IN')}</Typography>
+                  </Box>
+                  {payrollData.hra > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                      <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>HRA</Typography>
+                      <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>₹{payrollData.hra.toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+                  {payrollData.transport_allowance > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                      <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Transport Allowance</Typography>
+                      <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>₹{payrollData.transport_allowance.toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+                  {payrollData.other_allowances > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                      <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Other Allowances</Typography>
+                      <Typography sx={{ color: '#fff', fontSize: '0.9rem' }}>₹{payrollData.other_allowances.toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+                  {payrollData.bonus > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                      <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Bonus</Typography>
+                      <Typography sx={{ color: '#4CAF50', fontSize: '0.9rem' }}>₹{payrollData.bonus.toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1, borderTop: '1px solid #222' }}>
+                    <Typography sx={{ color: '#fff', fontWeight: 600 }}>Gross Pay</Typography>
+                    <Typography sx={{ color: '#fff', fontWeight: 600 }}>
+                      ₹{(payrollData.basic_salary + payrollData.hra + payrollData.transport_allowance + payrollData.other_allowances + payrollData.bonus).toLocaleString('en-IN')}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box sx={{ mb: 2.5 }}>
+                  <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1, mb: 1 }}>
+                    DEDUCTIONS
+                  </Typography>
+                  {payrollData.provident_fund > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                      <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Provident Fund (PF)</Typography>
+                      <Typography sx={{ color: '#f44336', fontSize: '0.9rem' }}>− ₹{payrollData.provident_fund.toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+                  {payrollData.tax > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                      <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Income Tax (TDS)</Typography>
+                      <Typography sx={{ color: '#f44336', fontSize: '0.9rem' }}>− ₹{payrollData.tax.toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+                  {payrollData.insurance > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                      <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Insurance</Typography>
+                      <Typography sx={{ color: '#f44336', fontSize: '0.9rem' }}>− ₹{payrollData.insurance.toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+                  {payrollData.other_deductions > 0 && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
+                      <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Other Deductions</Typography>
+                      <Typography sx={{ color: '#f44336', fontSize: '0.9rem' }}>− ₹{payrollData.other_deductions.toLocaleString('en-IN')}</Typography>
+                    </Box>
+                  )}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1, borderTop: '1px solid #222' }}>
+                    <Typography sx={{ color: '#fff', fontWeight: 600 }}>Total Deductions</Typography>
+                    <Typography sx={{ color: '#f44336', fontWeight: 600 }}>
+                      − ₹{(payrollData.tax + payrollData.provident_fund + payrollData.insurance + payrollData.other_deductions).toLocaleString('en-IN')}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    py: 1.5,
+                    px: 1.5,
+                    bgcolor: 'rgba(76, 175, 80, 0.1)',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(76, 175, 80, 0.3)',
+                  }}
+                >
+                  <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1rem' }}>Net Pay</Typography>
+                  <Typography sx={{ color: '#4CAF50', fontWeight: 700, fontSize: '1.15rem' }}>
+                    ₹{(payrollData.basic_salary + payrollData.hra + payrollData.transport_allowance + payrollData.other_allowances + payrollData.bonus - payrollData.tax - payrollData.provident_fund - payrollData.insurance - payrollData.other_deductions).toLocaleString('en-IN')}
+                  </Typography>
+                </Box>
+              </>
+            ) : (
+              <Box sx={{ py: 4, textAlign: 'center' }}>
+                <Typography sx={{ color: '#888', mb: 1 }}>No payroll data available</Typography>
+                <Typography sx={{ color: '#666', fontSize: '0.9rem' }}>Contact your administrator to set up payroll</Typography>
               </Box>
-            </Box>
-            <Box sx={{ mb: 2.5 }}>
-              <Typography sx={{ color: '#999', fontSize: '0.7rem', fontWeight: 700, letterSpacing: 1, mb: 1 }}>
-                DEDUCTIONS
-              </Typography>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Provident Fund (PF)</Typography>
-                <Typography sx={{ color: '#f44336', fontSize: '0.9rem' }}>− ₹22,320</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Professional Tax</Typography>
-                <Typography sx={{ color: '#f44336', fontSize: '0.9rem' }}>− ₹2,500</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 0.5 }}>
-                <Typography sx={{ color: '#ccc', fontSize: '0.9rem' }}>Income Tax (TDS)</Typography>
-                <Typography sx={{ color: '#f44336', fontSize: '0.9rem' }}>− ₹15,180</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', py: 1, borderTop: '1px solid #222' }}>
-                <Typography sx={{ color: '#fff', fontWeight: 600 }}>Total Deductions</Typography>
-                <Typography sx={{ color: '#f44336', fontWeight: 600 }}>− ₹40,000</Typography>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                py: 1.5,
-                px: 1.5,
-                bgcolor: 'rgba(76, 175, 80, 0.1)',
-                borderRadius: '10px',
-                border: '1px solid rgba(76, 175, 80, 0.3)',
-              }}
-            >
-              <Typography sx={{ color: '#fff', fontWeight: 700, fontSize: '1rem' }}>Net Pay</Typography>
-              <Typography sx={{ color: '#4CAF50', fontWeight: 700, fontSize: '1.15rem' }}>
-                ₹{payslipMonth?.hasIncrement ? '4,30,000' : '4,25,000'}
-              </Typography>
-            </Box>
+            )}
           </DialogContent>
           <DialogActions sx={{ p: 2, borderTop: '1px solid #1A1A1A' }}>
             <Button

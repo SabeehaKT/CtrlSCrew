@@ -350,7 +350,7 @@ export default function AdminDashboard() {
                 Create and manage employee accounts
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
               <Button
                 variant="outlined"
                 onClick={() => router.push('/admin/payroll')}
@@ -366,6 +366,62 @@ export default function AdminDashboard() {
                 }}
               >
                 Manage Payroll
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => router.push('/admin/leave-requests')}
+                sx={{
+                  color: '#4285F4',
+                  borderColor: '#4285F4',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  '&:hover': {
+                    borderColor: '#5A95F5',
+                    bgcolor: 'rgba(66, 133, 244, 0.1)',
+                  },
+                }}
+              >
+                Leave Requests
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={() => router.push('/admin/attendance')}
+                sx={{
+                  color: '#34A853',
+                  borderColor: '#34A853',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  '&:hover': {
+                    borderColor: '#46B864',
+                    bgcolor: 'rgba(52, 168, 83, 0.1)',
+                  },
+                }}
+              >
+                Manage Attendance
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={async () => {
+                  try {
+                    await apiClient.initializeLeaveBalances();
+                    setSuccess('Leave balances initialized for all users');
+                    setTimeout(() => setSuccess(''), 3000);
+                  } catch (error) {
+                    setError(error.message || 'Failed to initialize leave balances');
+                  }
+                }}
+                sx={{
+                  color: '#FBBC04',
+                  borderColor: '#FBBC04',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  '&:hover': {
+                    borderColor: '#FCC515',
+                    bgcolor: 'rgba(251, 188, 4, 0.1)',
+                  },
+                }}
+              >
+                Initialize Leave Balances
               </Button>
               <ActionButton startIcon={<AddIcon />} onClick={() => handleOpenDialog()}>
                 Add New User
